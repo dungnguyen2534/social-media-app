@@ -1,14 +1,9 @@
 import { auth, signIn } from "@/auth";
 import { LogoutButton } from "@/components/LogoutButton";
-import { redirect } from "next/navigation";
 
 export default async function Home() {
   const session = await auth();
   const isAuthenticated = !!session;
-
-  if (session && (!session.user?.username || !session.user?.name)) {
-    redirect("/onboarding");
-  }
 
   return (
     <div>

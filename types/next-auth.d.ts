@@ -8,5 +8,6 @@ declare module "next-auth" {
   // Add custom user fields here
   interface User {
     username: string | null | undefined;
+    isOnboarded: boolean;
   }
 }
