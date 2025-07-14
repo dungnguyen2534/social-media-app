@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { completeProfile } from "../actions";
 import { useAuth } from "../../auth-context";
+import { isActionError } from "@/lib/action-error";
+import toast from "react-hot-toast";
 
 export default function CompleteProfilePage() {
   const session = useAuth();
@@ -30,7 +32,15 @@ export default function CompleteProfilePage() {
           setUserData((prev) => ({ ...prev, username: e.target.value }))
         }
       />
-      <button onClick={() => completeProfile(session!.user.id!, userData)}>
+      <button
+        onClick={async () => {
+          const result = await completeProfile(session!.user.id!, userData);
+          if (isActionError(result)) {
+            console.log(result.error);
+            toast(result.error);
+          }
+        }}
+      >
         Continue
       </button>
     </div>

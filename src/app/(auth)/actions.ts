@@ -6,7 +6,7 @@ import { userProfileData, userProfileSchema } from "@/lib/validation";
 
 export async function completeProfile(
   userId: string,
-  data: userProfileData
+  data: userProfileData,
 ): Promise<ActionResult> {
   try {
     const { name, username } = userProfileSchema.parse(data);

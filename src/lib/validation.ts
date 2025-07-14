@@ -2,6 +2,12 @@ import { z } from "zod";
 
 const requiredString = z.string().trim().min(1, "This field is required");
 
+export const emailSignInSchema = z.object({
+  email: z.email(),
+});
+
+export type emailSignInData = z.infer<typeof emailSignInSchema>;
+
 export const userProfileSchema = z.object({
   name: requiredString.max(50, "Name must be less than 50 characters"),
   username: requiredString
