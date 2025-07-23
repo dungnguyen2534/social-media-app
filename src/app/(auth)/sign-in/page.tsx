@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import emailSignIn from "./actions";
 import { useForm } from "react-hook-form";
 import { emailSignInData, emailSignInSchema } from "@/lib/validation";
@@ -9,20 +8,12 @@ import { useState, useTransition } from "react";
 import { isActionError } from "@/lib/action-error";
 import toast from "react-hot-toast";
 import LoadingButton from "@/components/LoadingButton";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { signIn } from "next-auth/react";
+import RHFForm from "@/components/form/RHFForm";
+import RHFInput from "@/components/form/RHFInput";
 
 export default function SignInPage() {
-  const [isPending, startTransition] = useTransition();
-  const [isGoogleBtnLoading, setIsGoogleBtnLoading] = useState(false);
-
   const form = useForm<emailSignInData>({
     resolver: zodResolver(emailSignInSchema),
     defaultValues: {
@@ -30,19 +21,19 @@ export default function SignInPage() {
     },
   });
 
-  const onSubmit = form.handleSubmit(
-    async (data) => {
-      startTransition(async () => {
-        const formData = new FormData();
-        formData.append("email", data.email);
-        const result = await emailSignIn(formData);
-        if (isActionError(result)) {
-          toast.error(result.error);
-        }
-      });
-    },
-    () => toast.error("Invalid email adress"),
-  );
+  const [isPending, startTransition] = useTransition();
+  const [isGoogleBtnLoading, setIsGoogleBtnLoading] = useState(false);
+
+  const onSubmit = async (data: emailSignInData) => {
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("email", data.email);
+      const result = await emailSignIn(formData);
+      if (isActionError(result)) {
+        toast.error(result.error);
+      }
+    });
+  };
 
   return (
     <div className="grid min-h-screen place-items-center">
@@ -71,31 +62,22 @@ export default function SignInPage() {
             </span>
             <div className="flex-grow border-t"></div>
           </div>
-
-          <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-2 [&>*]:w-full">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sign in with Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Your email"
-                        disabled={isPending}
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <LoadingButton loading={isPending}>
-                Send a magic link
-              </LoadingButton>
-            </form>
-          </Form>
+          <RHFForm
+            form={form}
+            className="space-y-2 [&>*]:w-full"
+            onSubmit={onSubmit}
+            onInvalid={() => toast.error("Invalid email adress")}
+          >
+            <RHFInput
+              control={form.control}
+              name="email"
+              label="Sign in with Email"
+              placeholder="Your email"
+              disabled={isPending}
+              noFormMessage
+            />
+            <LoadingButton loading={isPending}>Send a magic link</LoadingButton>
+          </RHFForm>
         </CardContent>
       </Card>
     </div>

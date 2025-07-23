@@ -1,14 +1,27 @@
-"use client";
-
+import { getSessionData, signOut } from "@/auth";
 import { ThemeToggler } from "@/components/ThemeToggler";
 import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getSessionData();
+
   return (
     <>
-      <ThemeToggler />
-      <Button onClick={() => signOut()}>Sign out</Button>
+      <div className="space-y-2">
+        <div>
+          {session?.user.name} - {session?.user.username}
+        </div>
+
+        <ThemeToggler />
+        <form
+          action={async () => {
+            "use server";
+            await signOut();
+          }}
+        >
+          <Button type="submit">Sign Out</Button>
+        </form>
+      </div>
     </>
   );
 }
