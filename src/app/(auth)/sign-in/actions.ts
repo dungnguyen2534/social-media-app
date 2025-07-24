@@ -2,15 +2,24 @@
 
 import { signIn } from "@/auth";
 import { ActionResult } from "@/lib/action-error";
-import { emailSignInSchema } from "@/lib/validation";
+import { emailSignInData, emailSignInSchema } from "@/lib/validation";
 
 export default async function emailSignIn(
-  formData: FormData,
+  data: emailSignInData,
 ): Promise<ActionResult> {
-  const email = formData.get("email");
-  const parseResult = emailSignInSchema.safeParse({ email });
-
+  const parseResult = emailSignInSchema.safeParse(data);
   if (!parseResult.success) return { error: "Invalid email address" };
 
-  await signIn("resend", formData);
+  const result = await signIn("resend", {
+    email: parseResult.data.email,
+    redirect: false,
+  });
+
+  // The "signIn" returns a redirect URL with ".../error/..." instead of catchable errors, 'redirect: false' prevents the redirect.
+  if (result.includes("error")) {
+    return {
+      error: `Oops, something went wrong.
+      Please try again later...`,
+    };
+  }
 }

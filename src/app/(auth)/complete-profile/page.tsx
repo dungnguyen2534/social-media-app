@@ -14,15 +14,16 @@ import { userProfileData, userProfileSchema } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 
 export default function CompleteProfilePage() {
+  const session = useAuth();
+
   const form = useForm<userProfileData>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
-      name: "",
+      name: session?.user.name ?? "",
       username: "",
     },
   });
 
-  const session = useAuth();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -30,7 +31,7 @@ export default function CompleteProfilePage() {
     startTransition(async () => {
       const result = await completeProfile(session!.user.id!, data);
       if (isActionError(result)) {
-        toast(result.error);
+        toast.error(result.error);
       } else {
         router.replace("/");
       }

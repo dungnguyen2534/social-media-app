@@ -3,7 +3,9 @@
 import { Session } from "next-auth";
 import React, { createContext, useContext } from "react";
 
-export const AuthContext = createContext<Session | null>(null);
+type AuthContextType = Session | null | undefined;
+
+export const AuthContext = createContext<AuthContextType>(undefined);
 
 export function AuthProvider({
   session,
@@ -17,10 +19,12 @@ export function AuthProvider({
   );
 }
 
-/**
- * Returns the current session or null if unauthenticated.
- * Must be used within an AuthProvider.
- */
-export function useAuth() {
-  return useContext(AuthContext); // Not check context and throw error because context is the session itself
+export function useAuth(): Session | null {
+  const context = useContext(AuthContext);
+
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
+  return context;
 }

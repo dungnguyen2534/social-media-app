@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { signIn } from "next-auth/react";
 import RHFForm from "@/components/form/RHFForm";
 import RHFInput from "@/components/form/RHFInput";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
   const form = useForm<emailSignInData>({
@@ -23,14 +24,17 @@ export default function SignInPage() {
 
   const [isPending, startTransition] = useTransition();
   const [isGoogleBtnLoading, setIsGoogleBtnLoading] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async (data: emailSignInData) => {
     startTransition(async () => {
-      const formData = new FormData();
-      formData.append("email", data.email);
-      const result = await emailSignIn(formData);
+      const result = await emailSignIn(data);
       if (isActionError(result)) {
-        toast.error(result.error);
+        toast.error(result.error, {
+          duration: 12000,
+        });
+      } else {
+        router.replace("/sign-in/verify-request");
       }
     });
   };
@@ -66,7 +70,6 @@ export default function SignInPage() {
             form={form}
             className="space-y-2 [&>*]:w-full"
             onSubmit={onSubmit}
-            onInvalid={() => toast.error("Invalid email adress")}
           >
             <RHFInput
               control={form.control}
@@ -74,7 +77,6 @@ export default function SignInPage() {
               label="Sign in with Email"
               placeholder="Your email"
               disabled={isPending}
-              noFormMessage
             />
             <LoadingButton loading={isPending}>Send a magic link</LoadingButton>
           </RHFForm>

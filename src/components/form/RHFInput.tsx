@@ -27,7 +27,6 @@ interface RHFInputProps<
   description?: string;
   className?: string;
   disabled?: boolean;
-  noFormMessage?: boolean;
 }
 
 export default function RHFInput<
@@ -42,7 +41,6 @@ export default function RHFInput<
   description,
   className,
   disabled,
-  noFormMessage = false,
 }: RHFInputProps<TFormValues, TName>) {
   const { errors } = useFormState({ control, name });
   const hasError = !!errors[name];
@@ -67,7 +65,7 @@ export default function RHFInput<
                 disabled={disabled}
                 {...field}
               />
-              {hasError && !noFormMessage && (
+              {hasError && (
                 <div className="absolute top-1/2 right-2">
                   <HoverCard openDelay={0}>
                     <HoverCardTrigger className="cursor-pointer">
