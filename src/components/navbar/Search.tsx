@@ -10,9 +10,9 @@ export function SearchField() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const query = (form.q as HTMLInputElement).value.trim();
-    if (!query) return;
-    router.push(`/search?q=${encodeURIComponent(query)}`);
+    const q = (form.q as HTMLInputElement).value.trim();
+    if (!q) return;
+    router.push(`/search?q=${encodeURIComponent(q)}`);
   };
 
   return (
@@ -20,10 +20,14 @@ export function SearchField() {
       onSubmit={handleSubmit}
       method="GET"
       action="/search"
-      className="ml-16 hidden w-2/5 md:block"
+      className="hidden w-full md:block"
     >
       <div className="relative">
-        <Input name="q" placeholder="Search" className="rounded-full pe-10" />
+        <Input
+          name="q"
+          placeholder="Search"
+          className="rounded-full border-0 pe-10"
+        />
         <SearchIcon className="text-muted-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2" />
       </div>
     </form>

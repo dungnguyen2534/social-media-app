@@ -26,7 +26,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const { host } = new URL(url);
         const { html, text } = await renderMagicLinkEmail(url, host);
 
-        // Code from the doc
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {

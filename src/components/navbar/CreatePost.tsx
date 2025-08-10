@@ -1,14 +1,31 @@
+"use client";
+
 import { PencilLine } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import PostEditor from "../posts/editor/PostEditor";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 export function CreatePost() {
-  // use shadcn dialog
+  const [open, setOpen] = useState(false);
+
   return (
-    <Button variant="secondary" className="hidden h-8 rounded-full md:flex">
-      <PencilLine className="mt-[0.15rem] size-4" />
-      Post
-    </Button>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="secondary" className="hidden h-8 rounded-full md:flex">
+          <PencilLine className="mt-[0.15rem] size-4" />
+          Post
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogTitle className="-mb-1 text-center text-xl font-semibold">
+          Create a post
+        </DialogTitle>
+        <hr />
+        <PostEditor onPostCreated={() => setOpen(false)} />
+      </DialogContent>
+    </Dialog>
   );
 }
 

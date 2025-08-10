@@ -19,3 +19,9 @@ export const userProfileSchema = z.object({
 });
 
 export type userProfileData = z.infer<typeof userProfileSchema>;
+
+export const createPostSchema = z.object({
+  content: requiredString,
+});
+
+export type createPostData = z.infer<typeof createPostSchema>;

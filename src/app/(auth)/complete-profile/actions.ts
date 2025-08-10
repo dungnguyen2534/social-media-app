@@ -1,5 +1,6 @@
 "use server";
 
+import { getSessionData } from "@/auth";
 import { ActionResult } from "@/lib/action-error";
 import { prisma } from "@/lib/prisma";
 import { userProfileData, userProfileSchema } from "@/lib/validation";
@@ -8,6 +9,9 @@ export async function completeProfile(
   userId: string,
   data: userProfileData,
 ): Promise<ActionResult> {
+  const session = getSessionData();
+  if (!session) return { error: "Unauthorized" };
+
   try {
     const { name, username } = userProfileSchema.parse(data);
 
@@ -31,8 +35,8 @@ export async function completeProfile(
         username,
       },
     });
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
     return { error: "Something went wrong." };
   }
 }
