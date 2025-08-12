@@ -18,8 +18,8 @@ export function CreatePost() {
           Post
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogTitle className="-mb-1 text-center text-xl font-semibold">
+      <DialogContent className="p-5">
+        <DialogTitle className="-mb-1 text-lg font-semibold">
           Create a post
         </DialogTitle>
         <hr />

@@ -6,7 +6,7 @@ import { MobileSearchButton, SearchField } from "./Search";
 
 export default function Navbar() {
   return (
-    <header className="bg-card sticky top-0 z-10 h-[3.5rem] border-b">
+    <header className="bg-card sticky top-0 z-10 h-[var(--navbar-height)] border-b">
       <div className="app-container mx-auto grid h-full grid-cols-2 items-center md:grid-cols-3">
         <div>
           <Link href="/" className="text-primary text-2xl font-bold">
