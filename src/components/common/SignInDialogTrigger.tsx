@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Dialog,
   DialogContent,
@@ -6,9 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import Link from "next/link";
+} from "../ui/dialog";
+import { Button } from "../ui/button";
 
 interface SignInDialogTrigger {
   children: React.ReactNode;

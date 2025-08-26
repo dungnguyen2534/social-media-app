@@ -4,12 +4,12 @@ import "./style.css";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
-import UserAvatar from "@/components/UserAvatar";
+import UserAvatar from "@/components/common/UserAvatar";
 import { submitPost } from "./actions";
 import { useAuth } from "@/app/auth-context";
 import { useState, useTransition } from "react";
-import LoadingButton from "@/components/LoadingButton";
 import toast from "react-hot-toast";
+import LoadingButton from "@/components/common/LoadingButton";
 
 interface PostEditorProps {
   onPostCreated?: () => void;

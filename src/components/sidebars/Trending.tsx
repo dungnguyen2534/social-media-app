@@ -13,6 +13,7 @@ const getTrendingTopics = unstable_cache(
     LIMIT 5
   `;
 
+    // convert bigint to number
     return result.map((row) => ({
       hashtag: row.hashtag,
       count: Number(row.count),

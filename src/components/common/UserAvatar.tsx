@@ -1,6 +1,6 @@
 import { UserRound } from "lucide-react";
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface UserAvatarProps {
   avatarUrl: string | null | undefined;

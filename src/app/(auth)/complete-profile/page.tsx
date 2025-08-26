@@ -7,11 +7,11 @@ import { isActionError } from "@/lib/action-error";
 import toast from "react-hot-toast";
 import RHFForm from "@/components/form/RHFForm";
 import RHFInput from "@/components/form/RHFInput";
-import LoadingButton from "@/components/LoadingButton";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userProfileData, userProfileSchema } from "@/lib/validation";
 import { useRouter } from "next/navigation";
+import LoadingButton from "@/components/common/LoadingButton";
 
 export default function CompleteProfilePage() {
   const session = useAuth();

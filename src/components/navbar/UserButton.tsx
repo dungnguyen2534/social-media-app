@@ -12,16 +12,18 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import UserAvatar from "../UserAvatar";
 import { useAuth } from "@/app/auth-context";
 import Link from "next/link";
 import { LogOutIcon, Monitor, Moon, Sun, UserRound } from "lucide-react";
 import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
-import SignInDialogTrigger from "../SignInDialogTrigger";
+import UserAvatar from "../common/UserAvatar";
+import SignInDialogTrigger from "../common/SignInDialogTrigger";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function UserButton() {
   const session = useAuth();
+  const queryClient = useQueryClient();
 
   return session ? (
     <DropdownMenu>
@@ -37,7 +39,12 @@ export default function UserButton() {
         </DropdownMenuItem>
         <ThemeChanger />
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>
+        <DropdownMenuItem
+          onClick={() => {
+            queryClient.clear();
+            signOut();
+          }}
+        >
           <LogOutIcon className="mt-[0.15rem] mr-2 size-4" />
           Sign out
         </DropdownMenuItem>

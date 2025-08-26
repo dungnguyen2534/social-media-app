@@ -7,12 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { isActionError } from "@/lib/action-error";
 import toast from "react-hot-toast";
-import LoadingButton from "@/components/LoadingButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { signIn } from "next-auth/react";
 import RHFForm from "@/components/form/RHFForm";
 import RHFInput from "@/components/form/RHFInput";
 import { useRouter } from "next/navigation";
+import LoadingButton from "@/components/common/LoadingButton";
 
 export default function SignInPage() {
   const form = useForm<emailSignInData>({

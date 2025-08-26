@@ -4,7 +4,7 @@ import { prisma } from "./lib/prisma";
 import Resend from "next-auth/providers/resend";
 import Google from "next-auth/providers/google";
 import { cache } from "react";
-import { renderMagicLinkEmail } from "./components/MagicLinkEmail";
+import { renderMagicLinkEmail } from "./components/common/MagicLinkEmail";
 
 declare module "next-auth" {
   interface Session {
