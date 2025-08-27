@@ -26,9 +26,9 @@ export function SearchField() {
         <Input
           name="q"
           placeholder="Search"
-          className="rounded-full border-0 pe-10"
+          className="h-9 rounded-full border-0 pe-10 pl-4"
         />
-        <SearchIcon className="text-muted-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2" />
+        <SearchIcon className="text-muted-foreground absolute top-1/2 right-4 size-4 -translate-y-1/2" />
       </div>
     </form>
   );
@@ -37,7 +37,7 @@ export function SearchField() {
 export function MobileSearchButton() {
   // use shadcn dialog
   return (
-    <div className="hover:bg-accent flex aspect-square h-8 cursor-pointer items-center justify-center rounded-full transition-colors md:hidden">
+    <div className="hover:bg-accent flex aspect-square h-9 cursor-pointer items-center justify-center rounded-full transition-colors md:hidden">
       <SearchIcon className="mt-[0.15rem] h-[1.1rem] w-[1.1rem]" />
     </div>
   );

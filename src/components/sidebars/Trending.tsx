@@ -36,9 +36,9 @@ export default async function Trending() {
         const title = hashtag.split("#")[1];
 
         return (
-          <Link key={title} href={`/hashtags/${title}`} className="block">
+          <Link key={title} href={`/hashtags/${title}`} className="group block">
             <p
-              className="line-clamp-1 font-semibold break-all hover:underline"
+              className="line-clamp-1 font-semibold break-all group-hover:underline"
               title={title}
             >
               #{title}

@@ -8,7 +8,7 @@ import { userProfileData, userProfileSchema } from "@/lib/validation";
 export async function completeProfile(
   userId: string,
   data: userProfileData,
-): Promise<ActionResult> {
+): ActionResult<void> {
   const session = getSessionData();
   if (!session) return { error: "Unauthorized" };
 

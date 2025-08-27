@@ -13,7 +13,10 @@ export function CreatePost() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="hidden h-8 rounded-full md:flex">
+        <Button
+          variant="secondary"
+          className="hidden h-9 rounded-full !px-4 md:flex"
+        >
           <PencilLine className="mt-[0.15rem] size-4" />
           Post
         </Button>
@@ -31,7 +34,7 @@ export function CreatePost() {
 
 export function MobileCreatePostButton() {
   return (
-    <div className="hover:bg-accent flex aspect-square h-8 cursor-pointer items-center justify-center rounded-full transition-colors md:hidden">
+    <div className="hover:bg-accent flex aspect-square h-9 cursor-pointer items-center justify-center rounded-full transition-colors md:hidden">
       <PencilLine className="mt-[0.15rem] h-[1.1rem] w-[1.1rem]" />
     </div>
   );

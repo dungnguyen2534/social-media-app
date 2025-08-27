@@ -6,7 +6,7 @@ import { emailSignInData, emailSignInSchema } from "@/lib/validation";
 
 export default async function emailSignIn(
   data: emailSignInData,
-): Promise<ActionResult> {
+): ActionResult<void> {
   const parseResult = emailSignInSchema.safeParse(data);
   if (!parseResult.success) return { error: "Invalid email address" };
 

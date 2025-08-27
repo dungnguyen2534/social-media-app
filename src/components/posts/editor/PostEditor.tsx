@@ -5,11 +5,12 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import UserAvatar from "@/components/common/UserAvatar";
-import { submitPost } from "./actions";
 import { useAuth } from "@/app/auth-context";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import LoadingButton from "@/components/common/LoadingButton";
+import { useSubmitPostMutation } from "../actions/create-post/mutations";
+import { isActionError } from "@/lib/action-error";
 
 interface PostEditorProps {
   onPostCreated?: () => void;
@@ -17,9 +18,8 @@ interface PostEditorProps {
 
 export default function PostEditor({ onPostCreated }: PostEditorProps) {
   const session = useAuth();
-
+  const mutation = useSubmitPostMutation();
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
-  const [isPending, startTransition] = useTransition();
 
   const editor = useEditor({
     extensions: [
@@ -43,18 +43,24 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
         blockSeparator: "\n",
       }) || "";
 
-    startTransition(async () => {
-      await submitPost(input);
-      editor?.commands.clearContent();
+    mutation.mutate(input, {
+      onSuccess: (result) => {
+        if (isActionError(result)) {
+          toast.error(result.error, {
+            duration: 3000,
+            position: "bottom-center",
+          });
+          return;
+        }
 
-      if (onPostCreated) {
-        onPostCreated();
-      }
+        editor?.commands.clearContent();
+        toast.success("Post created!", {
+          duration: 3000,
+          position: "bottom-center",
+        }); // TODO: Add a link to the new post
 
-      toast.success("Post created!", {
-        duration: 3000,
-        position: "bottom-center",
-      }); // TODO: Add a link to the new post
+        if (onPostCreated) onPostCreated();
+      },
     });
   };
 
@@ -73,7 +79,7 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
       <div className="flex justify-end">
         <LoadingButton
           onClick={onSubmit}
-          loading={isPending}
+          loading={mutation.isPending}
           disabled={isEditorEmpty}
           className="min-w-20"
         >

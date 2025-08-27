@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   Dialog,
@@ -9,15 +11,26 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
+import { useAuth } from "@/app/auth-context";
 
-interface SignInDialogTrigger {
+interface SignInDialog {
   children: React.ReactNode;
+  trigger?: React.ReactNode;
+  asChild?: boolean;
 }
 
-export default function SignInDialogTrigger({ children }: SignInDialogTrigger) {
+export default function SignInDialog({
+  children,
+  trigger,
+  asChild,
+}: SignInDialog) {
+  const session = useAuth();
+
   return (
     <Dialog>
-      <DialogTrigger className="cursor-pointer">{children}</DialogTrigger>
+      <DialogTrigger className="cursor-pointer" asChild={asChild}>
+        {session ? children : trigger}
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Sign in to continue</DialogTitle>
