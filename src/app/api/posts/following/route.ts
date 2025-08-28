@@ -5,13 +5,25 @@ import { getSessionData } from "@/auth";
 
 export async function GET(req: NextRequest) {
   const session = await getSessionData();
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
     const pageSize = 10;
 
     const posts = await prisma.post.findMany({
-      include: getPostDataInclude(session?.user.id),
+      where: {
+        user: {
+          followers: {
+            some: {
+              followerId: session.user.id,
+            },
+          },
+        },
+      },
+      include: getPostDataInclude(session.user.id),
       orderBy: { createdAt: "desc" },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,

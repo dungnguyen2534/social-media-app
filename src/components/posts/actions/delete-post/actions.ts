@@ -3,7 +3,7 @@
 import { getSessionData } from "@/auth";
 import { ActionError } from "@/lib/action-error";
 import { prisma } from "@/lib/prisma";
-import { PostData, postDataInclude } from "@/lib/type";
+import { getPostDataInclude, PostData } from "@/lib/type";
 
 export async function deletePost(
   postId: string,
@@ -18,7 +18,7 @@ export async function deletePost(
 
     const deletedPost = await prisma.post.delete({
       where: { id: postId },
-      include: postDataInclude,
+      include: getPostDataInclude(),
     });
 
     return deletedPost;

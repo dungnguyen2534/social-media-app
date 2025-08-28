@@ -3,7 +3,7 @@
 import { getSessionData } from "@/auth";
 import { ActionResult } from "@/lib/action-error";
 import { prisma } from "@/lib/prisma";
-import { PostData, postDataInclude } from "@/lib/type";
+import { PostData, getPostDataInclude } from "@/lib/type";
 import { createPostSchema } from "@/lib/validation";
 
 export async function submitPost(input: string): ActionResult<PostData> {
@@ -20,7 +20,7 @@ export async function submitPost(input: string): ActionResult<PostData> {
         content,
         userId: session.user.id,
       },
-      include: postDataInclude,
+      include: getPostDataInclude(session.user.id),
     });
 
     return newPost;

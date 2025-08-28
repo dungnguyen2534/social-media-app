@@ -15,7 +15,7 @@ export function CreatePost() {
       <DialogTrigger asChild>
         <Button
           variant="secondary"
-          className="hidden h-9 rounded-full !px-4 md:flex"
+          className="hidden h-9 rounded-full !px-4 lg:flex"
         >
           <PencilLine className="mt-[0.15rem] size-4" />
           Post

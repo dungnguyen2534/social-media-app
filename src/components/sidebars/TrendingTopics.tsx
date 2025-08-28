@@ -25,20 +25,24 @@ const getTrendingTopics = unstable_cache(
   },
 );
 
-export default async function Trending() {
+export default async function TrendingTopics() {
   const trendingTopics = await getTrendingTopics();
 
   return (
     <div className="bg-card space-y-3 rounded-md p-5 shadow-sm">
-      <div className="-mt-2 text-lg font-semibold">Trending Topics</div>
+      <div className="-mt-2 text-lg font-semibold">Trending topics</div>
       <hr />
       {trendingTopics.map(({ hashtag, count }) => {
         const title = hashtag.split("#")[1];
 
         return (
-          <Link key={title} href={`/hashtags/${title}`} className="group block">
+          <Link
+            key={title}
+            href={`/hashtags/${title}`}
+            className="group block min-w-0"
+          >
             <p
-              className="line-clamp-1 font-semibold break-all group-hover:underline"
+              className="line-clamp-1 min-w-0 font-semibold text-nowrap overflow-ellipsis group-hover:underline"
               title={title}
             >
               #{title}

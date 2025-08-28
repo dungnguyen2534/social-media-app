@@ -49,7 +49,7 @@ export default function UserButton() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="min-w-36">
             <DropdownMenuItem asChild>
-              <Link href={`/user/${session?.user.username}`}>
+              <Link href={`/users/${session?.user.username}`}>
                 <UserRound className="mt-[0.15rem] mr-2 size-4" />
                 Profile
               </Link>

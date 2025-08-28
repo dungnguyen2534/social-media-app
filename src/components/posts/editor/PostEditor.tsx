@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import LoadingButton from "@/components/common/LoadingButton";
 import { useSubmitPostMutation } from "../actions/create-post/mutations";
 import { isActionError } from "@/lib/action-error";
+import Link from "next/link";
 
 interface PostEditorProps {
   onPostCreated?: () => void;
@@ -54,10 +55,21 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
         }
 
         editor?.commands.clearContent();
-        toast.success("Post created!", {
-          duration: 3000,
-          position: "bottom-center",
-        }); // TODO: Add a link to the new post
+        toast.success(
+          <div>
+            Post created,{" "}
+            <Link
+              className="py-4 pr-4 text-blue-400 hover:underline"
+              href={`/posts/${result.id}`}
+            >
+              see post?
+            </Link>
+          </div>,
+          {
+            duration: 4000,
+            position: "bottom-center",
+          },
+        );
 
         if (onPostCreated) onPostCreated();
       },

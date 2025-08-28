@@ -125,5 +125,5 @@
 }
 
 .app-container {
-  @apply max-w-6xl px-3;
+  @apply max-w-7xl px-3;
 }

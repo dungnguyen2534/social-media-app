@@ -6,7 +6,7 @@ import Post from "../posts/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import InfiniteScrollContainer from "../common/InfiniteScrollContainer";
 
-export default function ForYouFeed() {
+export default function FollowingFeed() {
   const {
     data,
     status,
@@ -15,11 +15,11 @@ export default function ForYouFeed() {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["feed", "for-you-feed"],
+    queryKey: ["feed", "following-feed"],
     queryFn: ({ pageParam }) => {
       return api
         .get(
-          "posts/for-you",
+          "posts/following",
           pageParam ? { searchParams: { cursor: pageParam } } : {},
         )
         .json<PostsPage>();
@@ -45,7 +45,7 @@ export default function ForYouFeed() {
   if (status === "success" && posts.length === 0 && !hasNextPage) {
     return (
       <p className="text-destructive text-center">
-        No one has posted anything yet.
+        Start following people to see their posts
       </p>
     );
   }
