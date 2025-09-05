@@ -125,5 +125,13 @@
 }
 
 .app-container {
-  @apply max-w-7xl px-3;
+  @apply mx-auto max-w-7xl px-3;
+}
+
+.app-grid {
+  @apply mt-2 gap-2 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.75fr)_minmax(0,1fr)];
+}
+
+.app-sidebar {
+  @apply sticky top-[calc(var(--navbar-height)+0.5rem)] hidden space-y-2 self-start lg:block;
 }

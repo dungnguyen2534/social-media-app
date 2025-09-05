@@ -13,33 +13,36 @@ export default function Post({ post, className }: PostProps) {
   return (
     <article
       className={cn(
-        "round bg-card group/post space-y-3 rounded-md p-5 shadow-sm",
+        "round bg-card space-y-3 rounded-md p-5 shadow-sm",
         className,
       )}
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <Link href={`/users/${post.user.username}`}>
-          <UserAvatar avatarUrl={post.user.image} />
-        </Link>
-        <div className="h-9">
-          <Link
-            className="block text-sm font-medium hover:underline"
-            href={`/users/${post.user.username}`}
-          >
-            {post.user.name}
-          </Link>
-          <time
-            dateTime={post.createdAt.toDateString()}
-            className="text-muted-foreground block text-xs"
-          >
-            {formatRelativeDate(post.createdAt)}
-          </time>
-        </div>
+      <div className="flex items-center">
+        <Link
+          className="group flex flex-wrap items-center gap-2"
+          href={`/users/${post.user.username}`}
+        >
+          <div>
+            <UserAvatar avatarUrl={post.user.image} />
+          </div>
+          <div className="h-9">
+            <div className="flex gap-1 text-sm">
+              <div className="block text-sm font-medium group-hover:underline">
+                {post.user.name}
+              </div>
+              <div className="text-muted-foreground">@{post.user.username}</div>
+            </div>
 
-        <PostMoreButton
-          post={post}
-          className="-mt-5 ml-auto opacity-0 transition-opacity group-hover/post:opacity-100"
-        />
+            <time
+              dateTime={post.createdAt.toDateString()}
+              className="text-muted-foreground block text-xs"
+            >
+              {formatRelativeDate(post.createdAt)}
+            </time>
+          </div>
+        </Link>
+
+        <PostMoreButton post={post} className="-mt-5 ml-auto" />
       </div>
       <div className="break-words whitespace-pre-line">{post.content}</div>
     </article>

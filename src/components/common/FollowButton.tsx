@@ -2,24 +2,30 @@
 
 import useFollowerInfo from "@/hooks/useFollowerInfo";
 import api from "@/lib/ky";
-import { FollowerInfo } from "@/lib/type";
+import { FollowerInfo, FollowingInfo } from "@/lib/type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
+import { useAuth } from "@/app/auth-context";
 
 interface FollowButtonProps {
   userId: string;
   initialState: FollowerInfo;
+  className?: string;
 }
 
 export default function FollowButton({
   userId,
   initialState,
+  className,
 }: FollowButtonProps) {
   const { data } = useFollowerInfo(userId, initialState);
+  const session = useAuth();
+  const signedInUserId = session?.user.id;
 
   const queryClient = useQueryClient();
-  const queryKey = ["follower-info", userId];
+  const followerQueryKey = ["follower-info", userId];
+  const followingQueryKey = ["following-info", signedInUserId];
 
   const { mutate } = useMutation({
     mutationFn: () => {
@@ -28,19 +34,33 @@ export default function FollowButton({
         : api.post(`users/${userId}/followers`);
     },
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey });
-      const prevState = queryClient.getQueryData<FollowerInfo>(queryKey);
+      await queryClient.cancelQueries({ queryKey: followerQueryKey });
+      await queryClient.cancelQueries({ queryKey: followingQueryKey });
 
-      queryClient.setQueryData<FollowerInfo>(queryKey, () => ({
-        followers:
-          (prevState?.followers || 0) + (prevState?.isFollowing ? -1 : 1),
-        isFollowing: !prevState?.isFollowing,
+      const prevFollowerState =
+        queryClient.getQueryData<FollowerInfo>(followerQueryKey);
+      const prevFollowingState =
+        queryClient.getQueryData<FollowingInfo>(followingQueryKey);
+
+      queryClient.setQueryData<FollowerInfo>(followerQueryKey, () => ({
+        followerCount:
+          (prevFollowerState?.followerCount || 0) +
+          (prevFollowerState?.isFollowing ? -1 : 1),
+        isFollowing: !prevFollowerState?.isFollowing,
       }));
 
-      return { prevState };
+      queryClient.setQueryData<FollowingInfo>(followingQueryKey, () => ({
+        followingCount:
+          (prevFollowingState?.followingCount || 0) +
+          (!prevFollowerState?.isFollowing ? 1 : -1),
+      }));
+
+      return { prevFollowerState, prevFollowingState };
     },
     onError: (error, _, context) => {
-      queryClient.setQueryData(queryKey, context?.prevState);
+      queryClient.setQueryData(followerQueryKey, context?.prevFollowerState);
+      queryClient.setQueryData(followingQueryKey, context?.prevFollowingState);
+
       console.log(error);
       toast.error("Something went wrong, please try gain.");
     },
@@ -48,8 +68,9 @@ export default function FollowButton({
 
   return (
     <Button
-      variant={data.isFollowing ? "secondary" : "default"}
+      variant={data.isFollowing ? "secondary" : "outline"}
       onClick={() => mutate()}
+      className={className}
     >
       {data.isFollowing ? "Unfollow" : "Follow"}
     </Button>

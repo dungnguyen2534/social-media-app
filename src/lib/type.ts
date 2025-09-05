@@ -6,10 +6,13 @@ export function getUserDataSelect(SignedInUserId?: string) {
     username: true,
     name: true,
     image: true,
+    bio: true,
     createdAt: true,
     _count: {
       select: {
         followers: true,
+        following: true,
+        posts: true,
       },
     },
   };
@@ -31,6 +34,10 @@ export function getUserDataSelect(SignedInUserId?: string) {
   } satisfies Prisma.UserSelect;
 }
 
+export type UserData = Prisma.UserGetPayload<{
+  select: ReturnType<typeof getUserDataSelect>;
+}>;
+
 export function getPostDataInclude(SignedInUserId?: string) {
   return {
     user: { select: getUserDataSelect(SignedInUserId) },
@@ -47,6 +54,10 @@ export type PostsPage = {
 };
 
 export type FollowerInfo = {
-  followers: number;
-  isFollowing: boolean;
+  followerCount: number;
+  isFollowing?: boolean;
+};
+
+export type FollowingInfo = {
+  followingCount: number;
 };

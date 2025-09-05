@@ -5,16 +5,38 @@ import Link from "next/link";
 
 const getTrendingTopics = unstable_cache(
   async () => {
-    const result = await prisma.$queryRaw<{ hashtag: string; count: bigint }[]>`
-    SELECT LOWER(unnest(regexp_matches(content, '#[[:alnum:]_]+', 'g'))) AS hashtag, COUNT(*) AS count
-    FROM posts
-    GROUP BY (hashtag)
-    ORDER BY count DESC, hashtag ASC
-    LIMIT 5
-  `;
+    // Attempt to get trending topics from the last week
+    const recentTopics = await prisma.$queryRaw<
+      { hashtag: string; count: bigint }[]
+    >`
+      SELECT LOWER(unnest(regexp_matches(content, '#[[:alnum:]_]+', 'g'))) AS hashtag, COUNT(*) AS count
+      FROM posts
+      WHERE "createdAt" >= NOW() - INTERVAL '7 days'
+      GROUP BY (hashtag)
+      ORDER BY count DESC, hashtag ASC
+      LIMIT 5
+    `;
 
-    // convert bigint to number
-    return result.map((row) => ({
+    // If there are 5 or more recent topics, return them
+    if (recentTopics.length >= 5) {
+      return recentTopics.map((row) => ({
+        hashtag: row.hashtag,
+        count: Number(row.count),
+      }));
+    }
+
+    // If not enough recent topics, fetch topics from all time
+    const allTimeTopics = await prisma.$queryRaw<
+      { hashtag: string; count: bigint }[]
+    >`
+      SELECT LOWER(unnest(regexp_matches(content, '#[[:alnum:]_]+', 'g'))) AS hashtag, COUNT(*) AS count
+      FROM posts
+      GROUP BY (hashtag)
+      ORDER BY count DESC, hashtag ASC
+      LIMIT 5
+    `;
+
+    return allTimeTopics.map((row) => ({
       hashtag: row.hashtag,
       count: Number(row.count),
     }));

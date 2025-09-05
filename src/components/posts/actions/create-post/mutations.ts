@@ -7,10 +7,12 @@ import {
 import { submitPost } from "./actions";
 import { PostsPage } from "@/lib/type";
 import { isActionError } from "@/lib/action-error";
+import { useAuth } from "@/app/auth-context";
 
 // Mutate the cache instead of refetching everything when creating a new post
 export function useSubmitPostMutation() {
   const queryClient = useQueryClient();
+  const session = useAuth();
 
   const mutation = useMutation({
     mutationFn: submitPost,
@@ -20,7 +22,21 @@ export function useSubmitPostMutation() {
         return;
       }
 
-      const queryFilter: QueryFilters = { queryKey: ["feed", "for-you-feed"] };
+      const queryFilter = {
+        queryKey: ["feed"],
+
+        // Target "for-you" and the current user's "user-posts" feeds for cache updates.
+        predicate: (query) => {
+          const isForYouFeed = query.queryKey.includes("for-you-feed");
+          const isUserOwnFeed =
+            query.queryKey.includes("user-profile-feed") &&
+            query.queryKey.includes(session?.user.id);
+
+          return isForYouFeed || isUserOwnFeed;
+        },
+      } satisfies QueryFilters;
+
+      // Cancels any ongoing fetches for the targeted feeds to prevent them from overwriting our manual cache update.
       await queryClient.cancelQueries(queryFilter);
 
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
@@ -42,11 +58,10 @@ export function useSubmitPostMutation() {
         },
       );
 
+      // Invalidate the feeds that currently have no data in the cache, forcing them to refetch when accessed.
       queryClient.invalidateQueries({
         queryKey: queryFilter.queryKey,
-        predicate(query) {
-          return !query.state.data;
-        },
+        predicate: (query) => queryFilter.predicate(query) && !query.state.data,
       });
     },
   });

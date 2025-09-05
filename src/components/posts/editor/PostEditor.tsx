@@ -12,6 +12,7 @@ import LoadingButton from "@/components/common/LoadingButton";
 import { useSubmitPostMutation } from "../actions/create-post/mutations";
 import { isActionError } from "@/lib/action-error";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface PostEditorProps {
   onPostCreated?: () => void;
@@ -56,17 +57,17 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
 
         editor?.commands.clearContent();
         toast.success(
-          <div>
+          <div className="flex items-center gap-1">
             Post created,{" "}
             <Link
-              className="py-4 pr-4 text-blue-400 hover:underline"
+              className="flex items-center gap-1 py-4 pr-4 text-blue-400 hover:underline"
               href={`/posts/${result.id}`}
             >
-              see post?
+              view <ArrowRight className="mt-[0.2rem] size-3" />
             </Link>
           </div>,
           {
-            duration: 4000,
+            duration: 5000,
             position: "bottom-center",
           },
         );

@@ -17,6 +17,7 @@ export async function GET(
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
+        // TODO: Get followers list if needed
         followers: {
           where: { followerId: session.user.id },
           select: { followerId: true },
@@ -32,7 +33,7 @@ export async function GET(
     }
 
     const data: FollowerInfo = {
-      followers: user._count.followers,
+      followerCount: user._count.followers,
       isFollowing: user.followers.length > 0,
     };
 
