@@ -72,7 +72,7 @@ export default function RHFInput<
                       <CircleAlert color="#DC2626" />
                     </HoverCardTrigger>
                     <HoverCardContent className="border-destructive w-fit px-3 py-2">
-                      <FormMessage className="text-sm font-semibold" />
+                      <FormMessage className="font-semibold" />
                     </HoverCardContent>
                   </HoverCard>
                 </div>

@@ -5,6 +5,8 @@ import { PostsPage } from "@/lib/type";
 import Post from "../posts/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import InfiniteScrollContainer from "../common/InfiniteScrollContainer";
+import { Annoyed } from "lucide-react";
+import FeedSkeletons from "./FeedSkeletons";
 
 export default function FollowingFeed() {
   const {
@@ -30,23 +32,28 @@ export default function FollowingFeed() {
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
-  // TODO: skeleton
-  if (status === "pending") return <div>Loading...</div>;
+  if (status === "pending") {
+    return <FeedSkeletons count={4} />;
+  }
 
-  // TODO: use something better
   if (status === "error") {
     return (
-      <p className="text-destructive text-center">
-        An error occured while loading posts
-      </p>
+      <div className="mt-8 flex h-full flex-col items-center gap-8">
+        <p className="text-xl font-medium">
+          An error occured while loading posts...
+        </p>
+        <Annoyed className="size-48" />
+      </div>
     );
   }
 
   if (status === "success" && posts.length === 0 && !hasNextPage) {
     return (
-      <p className="text-destructive text-center">
-        Start following people to see their posts
-      </p>
+      <div className="bg-card flex h-fit flex-col gap-8 rounded-md p-5 shadow-sm">
+        <p className="text-center font-medium">
+          Your following feed is empty...
+        </p>
+      </div>
     );
   }
 
@@ -59,7 +66,7 @@ export default function FollowingFeed() {
       ))}
 
       {/* TODO: skeleton*/}
-      {isFetchingNextPage && <div>Loading...</div>}
+      {isFetchingNextPage && <FeedSkeletons count={2} />}
     </InfiniteScrollContainer>
   );
 }

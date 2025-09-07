@@ -8,7 +8,7 @@ export default function useFollowerInfo(
 ) {
   const query = useQuery({
     queryKey: ["follower-info", userId],
-    queryFn: () => api.get(`users/${userId}/followers`).json<FollowerInfo>(),
+    queryFn: () => api.get(`users/id/${userId}/followers`).json<FollowerInfo>(),
     initialData: initialState,
     staleTime: Infinity, // only revalidate when asked to
   });

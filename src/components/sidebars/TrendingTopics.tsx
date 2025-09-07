@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { formatNumber } from "@/lib/utils";
 import { unstable_cache } from "next/cache";
 import Link from "next/link";
+import SidebarSkeletonWrapper from "./SidebarSkeletonWrapper";
+import { Skeleton } from "../ui/skeleton";
 
 const getTrendingTopics = unstable_cache(
   async () => {
@@ -47,35 +49,48 @@ const getTrendingTopics = unstable_cache(
   },
 );
 
-export default async function TrendingTopics() {
+export async function TrendingTopics() {
   const trendingTopics = await getTrendingTopics();
 
   return (
-    <div className="bg-card space-y-3 rounded-md p-5 shadow-sm">
-      <div className="-mt-2 text-lg font-semibold">Trending topics</div>
-      <hr />
-      {trendingTopics.map(({ hashtag, count }) => {
-        const title = hashtag.split("#")[1];
+    <div className="bg-card overflow-hidden rounded-md p-2 shadow-sm">
+      <div className="p-2 text-lg font-semibold">Trending topics</div>
+      <hr className="my-1" />
+      <div>
+        {trendingTopics.map(({ hashtag, count }) => {
+          const title = hashtag.split("#")[1];
 
-        return (
-          <Link
-            key={title}
-            href={`/hashtags/${title}`}
-            className="group block min-w-0"
-          >
-            <p
-              className="line-clamp-1 min-w-0 font-semibold text-nowrap overflow-ellipsis group-hover:underline"
-              title={title}
+          return (
+            <Link
+              key={title}
+              href={`/hashtags/${title}`}
+              className="group hover:bg-accent block min-w-0 rounded-sm p-2 transition-colors duration-75"
             >
-              #{title}
-            </p>
-            <p className="text-muted-foreground text-sm">
-              {formatNumber(count)}
-              {count == 1 ? " post" : " posts"}
-            </p>
-          </Link>
-        );
-      })}
+              <p
+                className="line-clamp-1 min-w-0 font-medium text-nowrap overflow-ellipsis"
+                title={title}
+              >
+                #{title}
+              </p>
+              <p className="text-muted-foreground text-sm">
+                {formatNumber(count)}
+                {count == 1 ? " post" : " posts"}
+              </p>
+            </Link>
+          );
+        })}
+      </div>
     </div>
+  );
+}
+
+export function TrendingTopicsSkeleton({ count = 5 }: { count?: number }) {
+  return (
+    <SidebarSkeletonWrapper skeletonCount={count} title="Trending topics">
+      <div className="flex h-10 flex-col justify-center gap-2">
+        <Skeleton className="h-[0.9rem] w-3/4" />
+        <Skeleton className="h-[0.8rem] w-1/3" />
+      </div>
+    </SidebarSkeletonWrapper>
   );
 }

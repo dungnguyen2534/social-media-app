@@ -17,7 +17,8 @@ export function FollowerCount({ userId, initialState }: FollowerCountProps) {
   return (
     <div className="flex items-center justify-center gap-1">
       <UsersRound size={17} className="mt-[0.1rem]" />
-      {formatNumber(data.followerCount)} followers
+      {formatNumber(data.followerCount)}{" "}
+      {data.followerCount === 1 ? "follower" : "followers"}
     </div>
   );
 }

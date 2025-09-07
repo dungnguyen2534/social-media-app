@@ -43,7 +43,7 @@ export default function CompleteProfilePage() {
       <div className="mx-auto mt-56 w-[85%] justify-center px-3 sm:w-[30rem]">
         <div>
           <h1 className="text-3xl font-bold">Welcome to Socius!</h1>
-          <p className="text-accent-foreground text-sm">
+          <p className="text-accent-foreground">
             Let&apos;s quickly set up your profile so you can start connecting.
           </p>
         </div>

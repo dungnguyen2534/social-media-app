@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} overflow-y-scroll antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} overflow-y-scroll text-sm antialiased`}
       >
         <ReactQueryProvider>
           <ThemeProvider

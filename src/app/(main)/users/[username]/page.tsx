@@ -1,7 +1,13 @@
 import { getSessionData } from "@/auth";
 import UserProfileFeed from "@/components/feeds/UserProfileFeed";
-import TrendingTopics from "@/components/sidebars/TrendingTopics";
-import WhoToFollow from "@/components/sidebars/WhoToFollow";
+import {
+  TrendingTopics,
+  TrendingTopicsSkeleton,
+} from "@/components/sidebars/TrendingTopics";
+import {
+  WhoToFollow,
+  WhoToFollowSkeleton,
+} from "@/components/sidebars/WhoToFollow";
 import { prisma } from "@/lib/prisma";
 import {
   FollowerInfo,
@@ -9,16 +15,15 @@ import {
   getUserDataSelect,
   UserData,
 } from "@/lib/type";
-import { Loader2 } from "lucide-react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
-import { Card } from "@/components/ui/card";
 import UserAvatar from "@/components/common/UserAvatar";
 import { formatDate } from "date-fns";
 import { Button } from "@/components/ui/button";
 import FollowButton from "@/components/common/FollowButton";
 import { FollowerCount, FollowingCount } from "@/components/common/FollowCount";
+import Linkify from "@/components/common/Linkify";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -71,13 +76,14 @@ export default async function UserProfilePage({ params }: PageProps) {
       <aside className="app-sidebar"></aside>
       <div className="space-y-2">
         <UserProfile user={user} signedInUserId={signedInUser?.id} />
-        <UserProfileFeed userId={user.id} />
+        <UserProfileFeed user={user} />
       </div>
 
       <aside className="app-sidebar">
-        {/* TODO: Skeleton loading for the fallback */}
-        <Suspense fallback={<Loader2 className="mx-auto animate-spin" />}>
+        <Suspense fallback={<WhoToFollowSkeleton count={3} />}>
           <WhoToFollow />
+        </Suspense>
+        <Suspense fallback={<TrendingTopicsSkeleton count={5} />}>
           <TrendingTopics />
         </Suspense>
       </aside>
@@ -104,7 +110,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
 
   return (
     <div>
-      <Card className="relative h-fit gap-2 rounded-md border-0 p-5">
+      <div className="bg-card relative flex h-fit flex-col gap-2 rounded-md p-5 shadow-sm">
         <div className="flex">
           <div className="flex flex-col gap-2">
             <UserAvatar
@@ -114,7 +120,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
             />
             <div className="">
               <h1 className="text-lg font-bold md:text-xl">{user.name}</h1>
-              <div className="text-muted-foreground text-sm font-medium">
+              <div className="text-muted-foreground font-medium">
                 <div>
                   @{user.username} - Joined{" "}
                   {formatDate(user.createdAt, "MMM d, yyyy")}
@@ -137,15 +143,21 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
           </div>
         </div>
 
-        {user.bio && <p>{user.bio}</p>}
+        {user.bio && (
+          <Linkify>
+            <p className="overflow-hidden break-words whitespace-pre-line">
+              {user.bio}
+            </p>
+          </Linkify>
+        )}
 
         <hr />
-        <div className="flex gap-3">
+        <div className="flex gap-3 text-base">
           <FollowerCount userId={user.id} initialState={followerInfo} />
           |
           <FollowingCount userId={user.id} initialState={followingInfo} />
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

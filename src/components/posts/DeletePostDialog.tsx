@@ -45,6 +45,7 @@ export default function DeletePostDialog({
           <LoadingButton
             onClick={() => mutation.mutate(post.id, { onSuccess: onClose })}
             loading={mutation.isPending}
+            className="w-24"
           >
             Delete
           </LoadingButton>
@@ -52,6 +53,7 @@ export default function DeletePostDialog({
             variant="outline"
             onClick={() => onClose()}
             disabled={mutation.isPending}
+            className="w-24"
           >
             Cancel
           </Button>

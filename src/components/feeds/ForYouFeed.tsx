@@ -5,6 +5,8 @@ import { PostsPage } from "@/lib/type";
 import Post from "../posts/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import InfiniteScrollContainer from "../common/InfiniteScrollContainer";
+import { Annoyed } from "lucide-react";
+import FeedSkeletons from "./FeedSkeletons";
 
 export default function ForYouFeed() {
   const {
@@ -30,23 +32,18 @@ export default function ForYouFeed() {
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
-  // TODO: skeleton
-  if (status === "pending") return <div>Loading...</div>;
-
-  // TODO: use something better
-  if (status === "error") {
-    return (
-      <p className="text-destructive text-center">
-        An error occured while loading posts
-      </p>
-    );
+  if (status === "pending") {
+    return <FeedSkeletons count={4} />;
   }
 
-  if (status === "success" && posts.length === 0 && !hasNextPage) {
+  if (status === "error") {
     return (
-      <p className="text-destructive text-center">
-        No one has posted anything yet.
-      </p>
+      <div className="mt-8 flex h-full flex-col items-center gap-8">
+        <p className="text-xl font-medium">
+          An error occured while loading posts...
+        </p>
+        <Annoyed className="size-48" />
+      </div>
     );
   }
 
@@ -58,8 +55,7 @@ export default function ForYouFeed() {
         <Post post={post} className="mb-2" key={post.id} />
       ))}
 
-      {/* TODO: skeleton*/}
-      {isFetchingNextPage && <div>Loading...</div>}
+      {isFetchingNextPage && <FeedSkeletons count={2} />}
     </InfiniteScrollContainer>
   );
 }

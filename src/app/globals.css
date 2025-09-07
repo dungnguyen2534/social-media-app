@@ -135,3 +135,7 @@
 .app-sidebar {
   @apply sticky top-[calc(var(--navbar-height)+0.5rem)] hidden space-y-2 self-start lg:block;
 }
+
+.app-link {
+  @apply text-blue-500 decoration-1 underline-offset-2 hover:underline;
+}

@@ -8,7 +8,8 @@ export default function useFollowingInfo(
 ) {
   const query = useQuery({
     queryKey: ["following-info", userId],
-    queryFn: () => api.get(`users/${userId}/following`).json<FollowingInfo>(),
+    queryFn: () =>
+      api.get(`users/id/${userId}/following`).json<FollowingInfo>(),
     initialData: initialState,
     staleTime: Infinity,
   });

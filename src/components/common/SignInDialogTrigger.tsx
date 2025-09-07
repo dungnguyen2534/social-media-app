@@ -26,17 +26,20 @@ export default function SignInDialog({
 }: SignInDialog) {
   const session = useAuth();
 
+  if (session) {
+    return <>{children}</>;
+  }
+
   return (
     <Dialog>
       <DialogTrigger className="cursor-pointer" asChild={asChild}>
-        {session ? children : trigger}
+        {trigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Sign in to continue</DialogTitle>
           <DialogDescription>
-            Sign in to continue and enjoy the full experience. We&apos;re happy
-            to have you!
+            Continue and enjoy the full experience.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

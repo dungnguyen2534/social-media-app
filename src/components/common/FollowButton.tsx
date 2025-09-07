@@ -30,8 +30,8 @@ export default function FollowButton({
   const { mutate } = useMutation({
     mutationFn: () => {
       return data.isFollowing
-        ? api.delete(`users/${userId}/followers`)
-        : api.post(`users/${userId}/followers`);
+        ? api.delete(`users/id/${userId}/followers`)
+        : api.post(`users/id/${userId}/followers`);
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: followerQueryKey });

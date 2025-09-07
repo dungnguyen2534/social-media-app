@@ -18,7 +18,6 @@ import { LogOutIcon, Monitor, Moon, Sun, UserRound } from "lucide-react";
 import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
 import UserAvatar from "../common/UserAvatar";
-import SignInDialog from "../common/SignInDialogTrigger";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -39,31 +38,26 @@ export default function UserButton() {
 
   return (
     <>
-      <SignInDialog
-        trigger={<UserAvatar avatarUrl={null} />}
-        asChild={!!session}
-      >
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <UserAvatar avatarUrl={session?.user.image} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="min-w-36">
-            <DropdownMenuItem asChild>
-              <Link href={`/users/${session?.user.username}`}>
-                <UserRound className="mt-[0.15rem] mr-2 size-4" />
-                Profile
-              </Link>
-            </DropdownMenuItem>
-            <ThemeChanger />
-            <DropdownMenuSeparator />
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <UserAvatar avatarUrl={session?.user.image} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="min-w-36">
+          <DropdownMenuItem asChild>
+            <Link href={`/users/${session?.user.username}`}>
+              <UserRound className="mt-[0.15rem] mr-2 size-4" />
+              Profile
+            </Link>
+          </DropdownMenuItem>
+          <UserButtonThemeChanger />
+          <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={() => setIsSignOutDialogOpen(true)}>
-              <LogOutIcon className="mt-[0.15rem] mr-2 size-4" />
-              Sign out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SignInDialog>
+          <DropdownMenuItem onClick={() => setIsSignOutDialogOpen(true)}>
+            <LogOutIcon className="mt-[0.15rem] mr-2 size-4" />
+            Sign out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <Dialog open={isSignOutDialogOpen} onOpenChange={setIsSignOutDialogOpen}>
         <DialogContent>
@@ -100,7 +94,7 @@ export default function UserButton() {
   );
 }
 
-function ThemeChanger() {
+function UserButtonThemeChanger() {
   const { theme, setTheme } = useTheme();
   const themeIconStyle = "text-muted-foreground mr-4 size-4 mt-[0.15rem]";
 

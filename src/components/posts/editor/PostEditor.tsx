@@ -30,7 +30,7 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
         italic: false,
       }),
       Placeholder.configure({
-        placeholder: "What is happening?",
+        placeholder: "What's on your mind?",
       }),
     ],
     onUpdate: ({ editor }) => {
@@ -86,7 +86,7 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
         />
         <EditorContent
           editor={editor}
-          className="dark:bg-input/30 bg-background focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 transition-all focus-within:ring-[3px]"
+          className="bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]"
         />
       </div>
       <div className="flex justify-end">
@@ -94,7 +94,7 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
           onClick={onSubmit}
           loading={mutation.isPending}
           disabled={isEditorEmpty}
-          className="min-w-20"
+          className="w-24"
         >
           Post
         </LoadingButton>
