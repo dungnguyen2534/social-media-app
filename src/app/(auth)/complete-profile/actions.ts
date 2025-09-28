@@ -9,12 +9,12 @@ export async function completeProfile(
   userId: string,
   data: userProfileData,
 ): ActionResult<void> {
+  const { name, username } = userProfileSchema.parse(data);
+
   const session = getSessionData();
   if (!session) return { error: "Unauthorized" };
 
   try {
-    const { name, username } = userProfileSchema.parse(data);
-
     const existingUsername = await prisma.user.findFirst({
       where: {
         username: {

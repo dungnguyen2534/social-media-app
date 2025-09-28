@@ -16,6 +16,7 @@ export const userProfileSchema = z.object({
     .regex(/^[a-zA-Z0-9_-]+$/, "Only letters, numbers, _ and - are allowed")
     .min(3, "Username must be at least 3 characters")
     .max(25, "Username must be less than 25 characters"),
+  bio: z.string().max(160, "Bio must be less than 160 characters").optional(),
 });
 
 export type userProfileData = z.infer<typeof userProfileSchema>;

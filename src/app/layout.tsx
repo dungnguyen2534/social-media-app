@@ -4,6 +4,9 @@ import "./globals.css";
 import ThemeProvider from "@/app/ThemeProvider";
 import ReactQueryProvider from "./ReactQueryProvider";
 import { Toaster } from "react-hot-toast";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "./api/uploadthing/core";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +37,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} overflow-y-scroll text-sm antialiased`}
       >
         <ReactQueryProvider>
+          {/* Uploadthing SSR Plugin */}
+          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

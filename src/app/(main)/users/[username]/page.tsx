@@ -20,10 +20,10 @@ import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 import UserAvatar from "@/components/common/UserAvatar";
 import { formatDate } from "date-fns";
-import { Button } from "@/components/ui/button";
 import FollowButton from "@/components/common/FollowButton";
 import { FollowerCount, FollowingCount } from "@/components/common/FollowCount";
 import Linkify from "@/components/common/Linkify";
+import { ProfileEditor } from "./ProfileEditor";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -132,7 +132,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
           <div className="absolute top-5 right-5">
             {signedInUserId &&
               (signedInUserId === user.id ? (
-                <Button variant="secondary">Edit Profile</Button>
+                <ProfileEditor user={user} />
               ) : (
                 <FollowButton
                   initialState={followerInfo}

@@ -12,7 +12,7 @@ export default async function Navbar() {
 
   return (
     <header className="bg-card sticky top-0 z-10 h-[var(--navbar-height)] border-b">
-      <div className="app-container mx-auto grid h-full grid-cols-2 items-center gap-2 lg:grid-cols-[1fr_1.75fr_1fr]">
+      <div className="app-container mx-auto grid h-full grid-cols-2 items-center gap-2 lg:grid-cols-3">
         <div>
           <Link href="/" className="text-primary text-2xl font-bold">
             Socius

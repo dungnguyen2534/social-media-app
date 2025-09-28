@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/auth-context";
+import { useTheme } from "next-themes";
 
 interface FollowButtonProps {
   userId: string;
@@ -26,6 +27,8 @@ export default function FollowButton({
   const queryClient = useQueryClient();
   const followerQueryKey = ["follower-info", userId];
   const followingQueryKey = ["following-info", signedInUserId];
+
+  const { theme } = useTheme();
 
   const { mutate } = useMutation({
     mutationFn: () => {
@@ -68,7 +71,7 @@ export default function FollowButton({
 
   return (
     <Button
-      variant={data.isFollowing ? "secondary" : "outline"}
+      variant={theme === "light" ? "outline" : "secondary"}
       onClick={() => mutate()}
       className={className}
     >

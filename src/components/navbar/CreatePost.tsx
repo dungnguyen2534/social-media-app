@@ -6,16 +6,18 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import PostEditor from "../posts/editor/PostEditor";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { useTheme } from "next-themes";
 
 export function CreatePost() {
   const [open, setOpen] = useState(false);
+  const { theme } = useTheme();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          variant="secondary"
-          className="hidden h-9 rounded-full !px-4 lg:flex"
+          variant={theme === "light" ? "outline" : "secondary"}
+          className="hidden h-9 !px-4 lg:flex"
         >
           <PencilLine className="mt-[0.15rem] size-4" />
           Post
