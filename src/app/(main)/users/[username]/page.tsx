@@ -80,11 +80,11 @@ export default async function UserProfilePage({ params }: PageProps) {
       </div>
 
       <aside className="app-sidebar">
-        <Suspense fallback={<WhoToFollowSkeleton count={3} />}>
-          <WhoToFollow />
-        </Suspense>
         <Suspense fallback={<TrendingTopicsSkeleton count={5} />}>
           <TrendingTopics />
+        </Suspense>
+        <Suspense fallback={<WhoToFollowSkeleton count={3} />}>
+          <WhoToFollow />
         </Suspense>
       </aside>
     </main>

@@ -40,7 +40,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
   const [croppedAvatar, setCroppedAvatar] = useState<Blob | null>(null);
 
   const [showDialog, setShowDialog] = useState(false);
-  const [, startTransition] = useTransition();
+  const [isPendingTransition, startTransition] = useTransition();
 
   const mutation = useUpdateProfileMutation();
   const onSubmit = async (data: userProfileData) => {
@@ -108,7 +108,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
             <DialogFooter>
               <LoadingButton
                 type="submit"
-                loading={mutation.isPending}
+                loading={mutation.isPending || isPendingTransition}
                 disabled={!form.formState.isDirty}
                 className="w-full"
               >
@@ -163,7 +163,7 @@ function AvatarInput({
       <button
         type="button"
         onClick={() => fileInputRef.current?.click()}
-        className="group relative block"
+        className="relative block"
       >
         <UserAvatar
           avatarUrl={avatarUrl}

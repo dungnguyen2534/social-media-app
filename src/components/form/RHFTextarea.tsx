@@ -63,7 +63,7 @@ export default function RHFTextarea<
                 {...field}
               />
               {hasError && (
-                <div className="absolute top-1/2 right-2">
+                <div className="absolute top-7 right-2">
                   <HoverCard openDelay={0}>
                     <HoverCardTrigger className="cursor-pointer">
                       <CircleAlert color="#DC2626" />

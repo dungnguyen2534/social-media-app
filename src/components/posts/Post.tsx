@@ -5,6 +5,15 @@ import { PostData } from "@/lib/type";
 import PostMoreButton from "./PostMoreButton";
 import Linkify from "../common/Linkify";
 import { MiniProfile } from "../common/MiniProfile";
+import { Media } from "@prisma/client";
+import Image from "next/image";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
 
 interface PostProps {
   post: PostData;
@@ -55,6 +64,63 @@ export default function Post({ post, className }: PostProps) {
           {post.content}
         </div>
       </Linkify>
+      {!!post.attachments.length && (
+        <MediaView attachments={post.attachments} />
+      )}
     </article>
+  );
+}
+
+interface MediaViewProps {
+  attachments: Media[];
+}
+
+// TODO: show current slide number
+function MediaView({ attachments }: MediaViewProps) {
+  return (
+    <Carousel className="relative overflow-hidden rounded-md">
+      <CarouselContent className="-ml-0">
+        {attachments.map((a) => {
+          if (a.type === "IMAGE") {
+            return (
+              <CarouselItem
+                key={a.id}
+                className="bg-background flex items-center pl-0"
+              >
+                <Image
+                  src={a.url}
+                  width={500}
+                  height={500}
+                  alt="Attachment"
+                  className="w-full object-contain"
+                />
+              </CarouselItem>
+            );
+          }
+
+          if (a.type === "VIDEO") {
+            return (
+              <CarouselItem key={a.id} className="pl-0">
+                <video controls className="aspect-video w-full">
+                  <source src={a.url} />
+                </video>
+              </CarouselItem>
+            );
+          }
+
+          return (
+            <p key={a.id} className="text-destructive">
+              Unsupported media type
+            </p>
+          );
+        })}
+      </CarouselContent>
+      {attachments.length > 1 && (
+        <>
+          <CarouselPrevious className="left-3" variant="outline" />
+          <CarouselNext className="right-3" variant="outline" />
+        </>
+      )}
+    </Carousel>
   );
 }

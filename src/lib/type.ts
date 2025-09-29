@@ -41,6 +41,7 @@ export type UserData = Prisma.UserGetPayload<{
 export function getPostDataInclude(SignedInUserId?: string) {
   return {
     user: { select: getUserDataSelect(SignedInUserId) },
+    attachments: true,
   } satisfies Prisma.PostInclude;
 }
 
