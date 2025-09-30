@@ -6,7 +6,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import UserAvatar from "@/components/common/UserAvatar";
 import { useAuth } from "@/app/auth-context";
-import { useRef, useState } from "react";
+import { ClipboardEvent, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import LoadingButton from "@/components/common/LoadingButton";
 import { useSubmitPostMutation } from "../actions/create-post/mutations";
@@ -24,12 +24,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useDropzone } from "@uploadthing/react";
 
 interface PostEditorProps {
   onPostCreated?: () => void;
 }
 
-// TODO: drag and drop image/video
 export default function PostEditor({ onPostCreated }: PostEditorProps) {
   const session = useAuth();
   const mutation = useSubmitPostMutation();
@@ -106,6 +106,23 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
     );
   };
 
+  // Uploadthing drag and drop
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: startUpload,
+  });
+
+  const rootProps = getRootProps();
+  delete rootProps.onClick;
+
+  // Copy/paste media
+  const onPaste = (e: ClipboardEvent<HTMLInputElement>) => {
+    const files = Array.from(e.clipboardData.items)
+      .filter((item) => item.kind === "file")
+      .map((item) => item.getAsFile()) as File[];
+
+    startUpload(files);
+  };
+
   return (
     <div className="flex flex-col gap-3 rounded-md">
       <div className="flex gap-3">
@@ -113,10 +130,17 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
           avatarUrl={session?.user.image}
           className="hidden sm:inline"
         />
-        <EditorContent
-          editor={editor}
-          className="bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]"
-        />
+        <div {...rootProps} className="w-full">
+          <EditorContent
+            editor={editor}
+            className={cn(
+              "bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]",
+              isDragActive && "outline-dashed",
+            )}
+            onPaste={onPaste}
+          />
+          <input {...getInputProps()} />
+        </div>
       </div>
       <div>
         {!!attachments.length && (
