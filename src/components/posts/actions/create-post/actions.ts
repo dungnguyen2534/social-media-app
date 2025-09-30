@@ -5,6 +5,7 @@ import { ActionResult } from "@/lib/action-error";
 import { prisma } from "@/lib/prisma";
 import { PostData, getPostDataInclude } from "@/lib/type";
 import { createPostSchema } from "@/lib/validation";
+import z from "zod";
 
 export async function submitPost(input: {
   content: string;
@@ -18,7 +19,7 @@ export async function submitPost(input: {
   const validation = createPostSchema.safeParse(input);
 
   if (!validation.success) {
-    const formErrors = validation.error.flatten().formErrors;
+    const formErrors = z.treeifyError(validation.error).errors;
     const errorMessage =
       formErrors.length > 0
         ? formErrors[0]

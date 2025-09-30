@@ -29,7 +29,7 @@ interface PostEditorProps {
   onPostCreated?: () => void;
 }
 
-// TODO: drag and drop image/video, cron job delete orphan uploads
+// TODO: drag and drop image/video
 export default function PostEditor({ onPostCreated }: PostEditorProps) {
   const session = useAuth();
   const mutation = useSubmitPostMutation();
