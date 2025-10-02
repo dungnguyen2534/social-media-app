@@ -4,13 +4,17 @@ import toast from "react-hot-toast";
 
 export interface Attachment {
   file: File;
-  mediaId?: string;
   isUploading: boolean;
+
+  // Not avaiable before upload
+  mediaId?: string;
+  url?: string;
 }
 
 export default function useMediaUpload() {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number>();
+  const [uploadCompleted, setUploadCompleted] = useState(false);
 
   const { startUpload, isUploading } = useUploadThing("attachment", {
     onBeforeUploadBegin: (files) => {
@@ -31,6 +35,7 @@ export default function useMediaUpload() {
         ...renamedFiles.map((file) => ({ file, isUploading: true })),
       ]);
 
+      setUploadCompleted(false);
       return renamedFiles;
     },
 
@@ -51,6 +56,8 @@ export default function useMediaUpload() {
           };
         }),
       );
+
+      setUploadCompleted(true);
     },
 
     onUploadError: (e) => {
@@ -82,9 +89,11 @@ export default function useMediaUpload() {
     );
   };
 
-  const reset = () => {
+  const reset = (onReset: () => void) => {
     setAttachments([]);
     setUploadProgress(undefined);
+
+    if (onReset) onReset();
   };
 
   return {
@@ -92,6 +101,8 @@ export default function useMediaUpload() {
     attachments,
     isUploading,
     uploadProgress,
+    uploadCompleted,
+    setAttachments,
     removeAttachment,
     reset,
   };

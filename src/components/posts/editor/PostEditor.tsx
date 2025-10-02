@@ -6,45 +6,103 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import UserAvatar from "@/components/common/UserAvatar";
 import { useAuth } from "@/app/auth-context";
-import { ClipboardEvent, useRef, useState } from "react";
+import { ClipboardEvent, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import LoadingButton from "@/components/common/LoadingButton";
 import { useSubmitPostMutation } from "../actions/create-post/mutations";
 import { isActionError } from "@/lib/action-error";
 import Link from "next/link";
-import { ArrowRight, ImagePlus, Loader2, X } from "lucide-react";
+import { ArrowRight, ImagePlus, Loader2, PencilLine } from "lucide-react";
 import useMediaUpload, { Attachment } from "./useMediaUpload";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { useDropzone } from "@uploadthing/react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useTheme } from "next-themes";
+import AttachmentPreviews from "./AttachmentPreviews";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/ky";
+import { Media } from "@prisma/client";
 
-interface PostEditorProps {
-  onPostCreated?: () => void;
+interface Draft {
+  content: string;
+  mediaIds: string[];
+  mediaExpiresAt?: number;
 }
 
-export default function PostEditor({ onPostCreated }: PostEditorProps) {
+const remoteDataToAttachments = (media: Media): Attachment => {
+  const mimeType = media.type.toLowerCase();
+  const dummyFile = new File([], media.id, { type: mimeType });
+
+  return {
+    file: dummyFile,
+    isUploading: false,
+    mediaId: media.id,
+    url: media.url,
+  };
+};
+
+export default function PostEditor() {
+  const { theme } = useTheme();
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+
   const session = useAuth();
+  const userId = session?.user.id;
+
   const mutation = useSubmitPostMutation();
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [isDraftMediaLoaded, setIsDraftMediaLoaded] = useState(false);
 
   const {
     attachments,
     startUpload,
     isUploading,
     uploadProgress,
+    uploadCompleted,
+    setAttachments,
     removeAttachment,
     reset: resetMediaUpload,
   } = useMediaUpload();
 
+  const localDraftKey = `draft_${userId}`;
+
+  const localDraft: Draft = (() => {
+    if (typeof window === "undefined" || !userId) return {} as Draft;
+    const storedDraft = localStorage.getItem(localDraftKey);
+
+    if (!storedDraft) return {} as Draft;
+
+    const draft: Draft = JSON.parse(storedDraft);
+    const currentTime = Date.now();
+
+    if (draft.mediaExpiresAt && draft.mediaExpiresAt < currentTime) {
+      const expiredDraft = {
+        content: draft.content,
+        mediaIds: [],
+        mediaExpiresAt: undefined,
+      } as Draft;
+
+      localStorage.setItem(localDraftKey, JSON.stringify(expiredDraft));
+      toast("Draft media has expired  and was removed.", {
+        duration: 10000,
+      });
+
+      return expiredDraft;
+    }
+
+    return draft;
+  })();
+
+  const localAttachmentIds = localDraft.mediaIds || [];
+
   const editor = useEditor({
+    content: localDraft.content || "",
     extensions: [
       StarterKit.configure({
         bold: false,
@@ -82,7 +140,10 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
           }
 
           editor?.commands.clearContent();
-          resetMediaUpload();
+          setIsEditorOpen(false);
+          resetMediaUpload(() => {
+            localStorage.setItem(localDraftKey, JSON.stringify({}));
+          });
 
           toast.success(
             <div className="flex items-center gap-1">
@@ -99,12 +160,85 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
               position: "bottom-center",
             },
           );
-
-          if (onPostCreated) onPostCreated();
         },
       },
     );
   };
+
+  // Draft
+  const { data: remoteMedia, isLoading } = useQuery({
+    queryKey: ["draft", userId],
+    queryFn: () =>
+      api.get(`media?ids=${localAttachmentIds.join(",")}`).json<Media[]>(),
+
+    enabled: localAttachmentIds.length > 0 && !!userId && !isDraftMediaLoaded,
+    staleTime: Infinity,
+  });
+
+  useEffect(() => {
+    if (remoteMedia) setIsDraftMediaLoaded(true);
+
+    const remoteData = remoteMedia?.map(remoteDataToAttachments) || [];
+    const remoteDataIds = new Set(remoteData.map((m) => m.mediaId));
+
+    setAttachments((prevAttachments) => {
+      const filteredLocalData = prevAttachments.filter(
+        (a) => !a.mediaId || !remoteDataIds.has(a.mediaId),
+      );
+
+      const newAttachments = [...remoteData, ...filteredLocalData];
+
+      if (
+        newAttachments.length === prevAttachments.length &&
+        newAttachments.every(
+          (attachment, index) => attachment === prevAttachments[index],
+        )
+      ) {
+        return prevAttachments;
+      }
+
+      return newAttachments;
+    });
+  }, [remoteMedia, setAttachments]);
+
+  useEffect(() => {
+    const saveDraft = () => {
+      if (!editor || !userId) return;
+
+      const mediaIds = attachments
+        .filter((a) => !a.isUploading && a.mediaId)
+        .map((a) => a.mediaId) as string[];
+
+      const currentDraft: Draft = JSON.parse(
+        localStorage.getItem(localDraftKey) || "{}",
+      );
+
+      const TWENTY_FOUR_HOURS_IN_MS = 24 * 60 * 60 * 1000;
+
+      const draft: Draft = {
+        content: editor.getHTML(),
+        mediaIds: mediaIds,
+        mediaExpiresAt:
+          mediaIds.length > 0
+            ? currentDraft.mediaExpiresAt ||
+              Date.now() + TWENTY_FOUR_HOURS_IN_MS
+            : undefined,
+      };
+      localStorage.setItem(localDraftKey, JSON.stringify(draft));
+    };
+
+    if (uploadCompleted) saveDraft();
+    return () => {
+      if (isEditorOpen) saveDraft();
+    };
+  }, [
+    attachments,
+    uploadCompleted,
+    isEditorOpen,
+    editor,
+    userId,
+    localDraftKey,
+  ]);
 
   // Uploadthing drag and drop
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -124,54 +258,80 @@ export default function PostEditor({ onPostCreated }: PostEditorProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 rounded-md">
-      <div className="flex gap-3">
-        <UserAvatar
-          avatarUrl={session?.user.image}
-          className="hidden sm:inline"
-        />
-        <div {...rootProps} className="w-full">
-          <EditorContent
-            editor={editor}
-            className={cn(
-              "bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]",
-              isDragActive && "outline-dashed",
-            )}
-            onPaste={onPaste}
-          />
-          <input {...getInputProps()} />
+    <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
+      <DialogTrigger asChild>
+        <div>
+          <Button
+            variant={theme === "light" ? "outline" : "secondary"}
+            className="hidden h-9 !px-4 lg:flex"
+          >
+            <PencilLine className="mt-[0.15rem] size-4" />
+            Post
+          </Button>
+          <div className="hover:bg-accent flex aspect-square h-9 cursor-pointer items-center justify-center rounded-full transition-colors md:hidden">
+            <PencilLine className="mt-[0.15rem] h-[1.1rem] w-[1.1rem]" />
+          </div>
         </div>
-      </div>
-      <div>
-        {!!attachments.length && (
-          <AttachmentPreviews
-            attachments={attachments}
-            removeAttachment={removeAttachment}
-          />
-        )}
-      </div>
-      <div className="flex items-center justify-end gap-3">
-        {isUploading && (
-          <>
-            <span className="text-sm">{uploadProgress ?? 0}%</span>
-            <Loader2 className="text-primary size-5 animate-spin" />
-          </>
-        )}
+      </DialogTrigger>
+      <DialogContent className="p-5">
+        <DialogTitle className="-mb-1 text-lg font-semibold">
+          Create a post
+        </DialogTitle>
+        <DialogDescription />
+        <hr />
+        <div className="space-y-3 rounded-md" suppressHydrationWarning>
+          <div className="flex gap-3">
+            <UserAvatar
+              avatarUrl={session?.user.image}
+              className="hidden sm:inline"
+            />
+            <div {...rootProps} className="w-full">
+              <EditorContent
+                editor={editor}
+                className={cn(
+                  "bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]",
+                  isDragActive && "outline-dashed",
+                )}
+                onPaste={onPaste}
+              />
+              <input {...getInputProps()} />
+            </div>
+          </div>
+          <div>
+            {!!attachments.length && (
+              <AttachmentPreviews
+                isLoading={isLoading}
+                attachments={attachments}
+                removeAttachment={removeAttachment}
+              />
+            )}
+          </div>
+          <div className={"flex items-center justify-end gap-3"}>
+            {isUploading && (
+              <>
+                <span className="text-sm">{uploadProgress ?? 0}%</span>
+                <Loader2 className="text-primary size-5 animate-spin" />
+              </>
+            )}
 
-        <AddAttachmentsButton
-          onFilesSelected={startUpload}
-          disabled={isUploading || attachments.length >= 5}
-        />
-        <LoadingButton
-          onClick={onSubmit}
-          loading={mutation.isPending}
-          disabled={(isEditorEmpty && attachments.length === 0) || isUploading}
-          className="w-24"
-        >
-          Post
-        </LoadingButton>
-      </div>
-    </div>
+            <AddAttachmentsButton
+              onFilesSelected={startUpload}
+              disabled={isUploading || attachments.length >= 5}
+            />
+            <LoadingButton
+              onClick={onSubmit}
+              loading={mutation.isPending}
+              disabled={
+                (isEditorEmpty && attachments.length === 0) || isUploading
+              }
+              className="w-24"
+            >
+              Post
+            </LoadingButton>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -213,91 +373,4 @@ function AddAttachmentsButton({
       />
     </>
   );
-}
-
-interface AttachmentPreviewsProps {
-  attachments: Attachment[];
-  removeAttachment: (fileName: string) => void;
-}
-
-function AttachmentPreviews({
-  attachments,
-  removeAttachment,
-}: AttachmentPreviewsProps) {
-  return (
-    <Carousel className="relative overflow-hidden rounded-md">
-      <CarouselContent className="-ml-0">
-        {attachments.map((a) => (
-          <AttachmentPreview
-            key={a.file.name}
-            attachment={a}
-            onRemoveClick={() => removeAttachment(a.file.name)}
-          />
-        ))}
-      </CarouselContent>
-      {attachments.length > 1 && (
-        <>
-          <CarouselPrevious className="left-3" variant="outline" />
-          <CarouselNext className="right-3" variant="outline" />
-        </>
-      )}
-    </Carousel>
-  );
-}
-
-interface AttachmentPreviewProps {
-  attachment: Attachment;
-  onRemoveClick: () => void;
-}
-
-function AttachmentPreview({
-  attachment: { file, isUploading },
-  onRemoveClick,
-}: AttachmentPreviewProps) {
-  const src = URL.createObjectURL(file);
-
-  if (file.type.startsWith("image")) {
-    return (
-      <CarouselItem className="bg-background flex items-center pl-0">
-        <Image
-          src={src}
-          width={500}
-          height={500}
-          alt="Attachment"
-          className={cn("w-full object-contain", isUploading && "opacity-50")}
-        />
-        {!isUploading && (
-          <button
-            onClick={onRemoveClick}
-            className="transition-color absolute top-3 right-3 cursor-pointer rounded-full bg-white p-1.5 text-black"
-          >
-            <X className="size-5" />
-          </button>
-        )}
-      </CarouselItem>
-    );
-  }
-
-  if (file.type.startsWith("video")) {
-    return (
-      <CarouselItem className="pl-0">
-        <video
-          controls
-          className={cn("aspect-video w-full", isUploading && "opacity-50")}
-        >
-          <source src={src} />
-        </video>
-        {!isUploading && (
-          <button
-            onClick={onRemoveClick}
-            className="transition-color absolute top-3 right-3 cursor-pointer rounded-full bg-white/50 p-1.5 hover:bg-white"
-          >
-            <X className="size-5" />
-          </button>
-        )}
-      </CarouselItem>
-    );
-  }
-
-  return <p className="text-destructive">Unsupported media type</p>;
 }

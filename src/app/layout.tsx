@@ -3,10 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/app/ThemeProvider";
 import ReactQueryProvider from "./ReactQueryProvider";
-import { Toaster } from "react-hot-toast";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import ClientToaster from "@/components/common/ClientToaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +46,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
-            <Toaster
+            <ClientToaster
               toastOptions={{
                 style: {
                   borderRadius: "var(--radius-md)",

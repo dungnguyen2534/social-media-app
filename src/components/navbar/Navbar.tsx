@@ -1,11 +1,11 @@
 import Link from "next/link";
 import UserButton from "./UserButton";
 import Notification from "./Notification";
-import { CreatePost, MobileCreatePostButton } from "./CreatePost";
 import { MobileSearchButton, SearchField } from "./Search";
 import { getSessionData } from "@/auth";
 import { Button } from "../ui/button";
 import { ThemeChanger } from "./ThemeChanger";
+import PostEditor from "../posts/editor/PostEditor";
 
 export default async function Navbar() {
   const session = await getSessionData();
@@ -25,9 +25,8 @@ export default async function Navbar() {
 
         {session ? (
           <div className="ml-auto flex items-center gap-3">
-            <CreatePost />
             <MobileSearchButton />
-            <MobileCreatePostButton />
+            <PostEditor />
             <Notification />
             <UserButton />
           </div>
