@@ -52,7 +52,7 @@ export default function ForYouFeed() {
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
       {posts.map((post) => (
-        <Post post={post} className="mb-2" key={post.id} />
+        <Post post={post} className="mb-1 lg:mb-2" key={post.id} />
       ))}
 
       {isFetchingNextPage && <FeedSkeletons count={2} />}

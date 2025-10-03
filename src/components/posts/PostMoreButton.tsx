@@ -32,6 +32,7 @@ export default function PostMoreButton({
       <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
         <DropdownMenuTrigger asChild>
           <Button
+            title="More options"
             size="icon"
             variant="ghost"
             className={cn(

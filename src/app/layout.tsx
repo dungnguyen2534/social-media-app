@@ -53,6 +53,7 @@ export default function RootLayout({
                   background: "var(--toast-background)",
                   color: "var(--toast-text-color)",
                 },
+                position: "bottom-right",
               }}
             />
           </ThemeProvider>

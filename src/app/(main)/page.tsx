@@ -14,13 +14,12 @@ import { Suspense } from "react";
 
 export default async function Home() {
   return (
-    <main className="app-container app-grid">
+    <main className="app-container app-grid mt-1 !px-0 lg:mt-2 lg:px-3">
       <aside className="app-sidebar"></aside>
 
-      <Tabs defaultValue="for-you">
-        <TabsList>
+      <Tabs defaultValue="for-you" className="gap-1 lg:gap-2">
+        <TabsList className="rounded-none lg:rounded-lg">
           <TabsTrigger value="for-you">For you</TabsTrigger>
-
           <SignInDialog
             asChild
             trigger={

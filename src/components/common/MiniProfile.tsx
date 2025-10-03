@@ -42,7 +42,7 @@ export function MiniProfile({ children, user }: MiniProfileProps) {
       <Tooltip delayDuration={500}>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent
-          className="w-fit max-w-64 space-y-3 p-3 pb-0"
+          className="w-fit max-w-64 space-y-3 p-3 pb-0 text-sm"
           sideOffset={5}
         >
           <div>
@@ -70,7 +70,7 @@ export function MiniProfile({ children, user }: MiniProfileProps) {
             <FollowingCount userId={user.id} initialState={followingInfo} />
           </div>
           {user.id === signedInUser?.id ? (
-            <Button className="w-full" variant="outline">
+            <Button className="w-full" variant="custom">
               <Link href={`/users/${user.username}`}>Your profile</Link>
             </Button>
           ) : (

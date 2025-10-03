@@ -129,7 +129,7 @@
 }
 
 .app-grid {
-  @apply mt-2 gap-2 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.75fr)_minmax(0,1fr)];
+  @apply gap-2 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.75fr)_minmax(0,1fr)];
 }
 
 .app-sidebar {

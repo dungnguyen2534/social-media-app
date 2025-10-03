@@ -63,7 +63,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
 
   return (
     <>
-      <Button variant="secondary" onClick={() => setShowDialog(true)}>
+      <Button variant="custom" onClick={() => setShowDialog(true)}>
         Edit Profile
       </Button>
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -103,13 +103,14 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
               name="bio"
               label="Bio"
               placeholder="A short bio about yourself"
+              autoFocus
             />
 
             <DialogFooter>
               <LoadingButton
                 type="submit"
                 loading={mutation.isPending || isPendingTransition}
-                disabled={!form.formState.isDirty}
+                disabled={!form.formState.isDirty && !croppedAvatar}
                 className="w-full"
               >
                 Save

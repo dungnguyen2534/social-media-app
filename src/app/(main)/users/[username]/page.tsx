@@ -72,9 +72,9 @@ export default async function UserProfilePage({ params }: PageProps) {
   const { user, signedInUser } = await getProfilePageData(username);
 
   return (
-    <main className="app-container app-grid">
+    <main className="app-container app-grid mt-1 !px-0 lg:mt-2 lg:px-3">
       <aside className="app-sidebar"></aside>
-      <div className="space-y-2">
+      <div className="space-y-1 lg:space-y-2">
         <UserProfile user={user} signedInUserId={signedInUser?.id} />
         <UserProfileFeed user={user} />
       </div>
@@ -109,8 +109,8 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
   };
 
   return (
-    <div>
-      <div className="bg-card relative flex h-fit flex-col gap-2 rounded-md p-5 shadow-sm">
+    <div className="text-base">
+      <div className="bg-card relative flex h-fit flex-col gap-2 p-5 shadow-sm lg:rounded-md">
         <div className="flex">
           <div className="flex flex-col gap-2">
             <UserAvatar
@@ -120,7 +120,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
             />
             <div className="">
               <h1 className="text-lg font-bold md:text-xl">{user.name}</h1>
-              <div className="text-muted-foreground font-medium">
+              <div className="text-muted-foreground">
                 <div>
                   @{user.username} - Joined{" "}
                   {formatDate(user.createdAt, "MMM d, yyyy")}
@@ -145,14 +145,14 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
 
         {user.bio && (
           <Linkify>
-            <p className="overflow-hidden break-words whitespace-pre-line">
+            <p className="mb-1 overflow-hidden break-words whitespace-pre-line">
               {user.bio}
             </p>
           </Linkify>
         )}
 
         <hr />
-        <div className="flex gap-3 text-base">
+        <div className="flex gap-3">
           <FollowerCount userId={user.id} initialState={followerInfo} />
           |
           <FollowingCount userId={user.id} initialState={followingInfo} />

@@ -21,14 +21,14 @@ export default function FeedSkeletons({ count }: FeedSkeletonsProps) {
     "bg-card w-full [animation-duration:1s] rounded-md";
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1 lg:space-y-2">
       {Array.from({ length: count }).map((_, index) => {
         const randomIndex = Math.floor(Math.random() * heightClasses.length);
         const randomHeightClass = heightClasses[randomIndex];
         return (
           <Skeleton
             key={index}
-            className={`${skeletonFixedStyles} ${randomHeightClass}`}
+            className={`${skeletonFixedStyles} ${randomHeightClass} rounded-none lg:rounded-md`}
             suppressHydrationWarning
           />
         );

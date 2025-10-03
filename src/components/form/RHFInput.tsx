@@ -27,6 +27,7 @@ interface RHFInputProps<
   description?: string;
   className?: string;
   disabled?: boolean;
+  autoFocus?: boolean;
 }
 
 export default function RHFInput<
@@ -41,6 +42,7 @@ export default function RHFInput<
   description,
   className,
   disabled,
+  autoFocus,
 }: RHFInputProps<TFormValues, TName>) {
   const { errors } = useFormState({ control, name });
   const hasError = !!errors[name];
@@ -63,6 +65,7 @@ export default function RHFInput<
                     : `pr-9 ${className}`
                 }
                 disabled={disabled}
+                autoFocus={autoFocus}
                 {...field}
               />
               {hasError && (

@@ -18,6 +18,10 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import { useEffect, useState } from "react";
+import LikeButton from "./LikeButton";
+import { useAuth } from "@/app/auth-context";
+import { Button } from "../ui/button";
+import { Bookmark, MessageCircle, Send } from "lucide-react";
 
 interface PostProps {
   post: PostData;
@@ -25,10 +29,12 @@ interface PostProps {
 }
 
 export default function Post({ post, className }: PostProps) {
+  const session = useAuth();
+
   return (
     <article
       className={cn(
-        "round bg-card space-y-3 rounded-md p-5 shadow-sm",
+        "round bg-card space-y-3 p-5 pb-2 shadow-sm lg:rounded-md",
         className,
       )}
     >
@@ -68,9 +74,35 @@ export default function Post({ post, className }: PostProps) {
           {post.content}
         </div>
       </Linkify>
+
       {!!post.attachments.length && (
         <MediaView attachments={post.attachments} />
       )}
+
+      <hr className="my-2" />
+      <div className="flex justify-between">
+        <div className="flex w-fit gap-1">
+          <LikeButton
+            postId={post.id}
+            initialState={{
+              likes: post._count.likes,
+              isLikedByUser: post.likes.some(
+                (like) => like.userId === session?.user.id,
+              ),
+            }}
+          />
+          <Button title="Comment" variant="ghost">
+            <MessageCircle className="size-5" />
+          </Button>
+          <Button variant="ghost" title="Share">
+            <Send className="size-5" />
+          </Button>
+        </div>
+
+        <Button variant="ghost" title="Bookmark">
+          <Bookmark className="size-5" />
+        </Button>
+      </div>
     </article>
   );
 }
@@ -98,13 +130,13 @@ function MediaView({ attachments }: MediaViewProps) {
   return (
     <div>
       <Carousel className="relative overflow-hidden rounded-md" setApi={setApi}>
-        <CarouselContent className="-ml-0">
+        <CarouselContent className="-ml-1">
           {attachments.map((a) => {
             if (a.type === "IMAGE") {
               return (
                 <CarouselItem
                   key={a.id}
-                  className="bg-background flex items-center pl-0"
+                  className="bg-background flex items-center pl-1"
                 >
                   <Image
                     src={a.url}
@@ -119,7 +151,7 @@ function MediaView({ attachments }: MediaViewProps) {
 
             if (a.type === "VIDEO") {
               return (
-                <CarouselItem key={a.id} className="pl-0">
+                <CarouselItem key={a.id} className="pl-1">
                   <video controls className="aspect-video w-full">
                     <source src={a.url} />
                   </video>
@@ -136,13 +168,19 @@ function MediaView({ attachments }: MediaViewProps) {
         </CarouselContent>
         {attachments.length > 1 && (
           <>
-            <CarouselPrevious className="left-3" variant="outline" />
-            <CarouselNext className="right-3" variant="outline" />
+            <CarouselPrevious
+              className="left-3 opacity-0 md:opacity-100"
+              variant="outline"
+            />
+            <CarouselNext
+              className="right-3 opacity-0 md:opacity-100"
+              variant="outline"
+            />
           </>
         )}
       </Carousel>
       {attachments.length > 1 && (
-        <div className="flex w-full items-center justify-center space-x-2 py-2">
+        <div className="mt-3 flex w-full items-center justify-center space-x-2">
           {Array.from({ length: count }).map((_, index) => (
             <div
               key={index}

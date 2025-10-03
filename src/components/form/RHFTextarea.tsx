@@ -26,6 +26,7 @@ interface RHFTextareaProps<
   description?: string;
   className?: string;
   disabled?: boolean;
+  autoFocus?: boolean;
 }
 
 export default function RHFTextarea<
@@ -39,6 +40,7 @@ export default function RHFTextarea<
   description,
   className,
   disabled,
+  autoFocus,
 }: RHFTextareaProps<TFormValues, TName>) {
   const { errors } = useFormState({ control, name });
   const hasError = !!errors[name];
@@ -60,6 +62,7 @@ export default function RHFTextarea<
                     : `pr-9 ${className}`
                 }
                 disabled={disabled}
+                autoFocus={autoFocus}
                 {...field}
               />
               {hasError && (

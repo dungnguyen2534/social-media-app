@@ -49,7 +49,7 @@ export default function FollowingFeed() {
 
   if (status === "success" && posts.length === 0 && !hasNextPage) {
     return (
-      <div className="bg-card flex h-fit flex-col gap-8 rounded-md p-5 shadow-sm">
+      <div className="bg-card flex h-fit flex-col gap-8 p-5 shadow-sm lg:rounded-md">
         <p className="text-center font-medium">
           Your following feed is empty...
         </p>
@@ -62,7 +62,7 @@ export default function FollowingFeed() {
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
       {posts.map((post) => (
-        <Post post={post} className="mb-2" key={post.id} />
+        <Post post={post} className="mb-1 lg:mb-2" key={post.id} />
       ))}
 
       {/* TODO: skeleton*/}

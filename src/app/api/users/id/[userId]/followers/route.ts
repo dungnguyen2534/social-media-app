@@ -7,12 +7,12 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
-    const { userId } = await params;
-
     const session = await getSessionData();
     if (!session) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const { userId } = await params;
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -49,12 +49,12 @@ export async function POST(
   { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
-    const { userId } = await params;
-
     const session = await getSessionData();
     if (!session?.user.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const { userId } = await params;
 
     // upsert (update and insert) ignore the operation instead of throwing error if the follow already exists
     await prisma.follow.upsert({
@@ -72,8 +72,8 @@ export async function POST(
     });
 
     return new Response(); // empty success response
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -83,12 +83,12 @@ export async function DELETE(
   { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
-    const { userId } = await params;
-
     const session = await getSessionData();
     if (!session) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const { userId } = await params;
 
     // the couter part of upsert, if things don't exists - do nothing
     await prisma.follow.deleteMany({
@@ -99,8 +99,8 @@ export async function DELETE(
     });
 
     return new Response();
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

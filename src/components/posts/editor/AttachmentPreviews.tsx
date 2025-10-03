@@ -48,7 +48,7 @@ export default function AttachmentPreviews({
   return (
     <div>
       <Carousel className="overflow-hidden rounded-md" setApi={setApi}>
-        <CarouselContent className="-ml-0">
+        <CarouselContent className="-ml-1">
           {isLoading ? (
             <div className="bg-background flex aspect-square w-full items-center justify-center">
               <div className="text-muted-foreground text-center">
@@ -68,13 +68,19 @@ export default function AttachmentPreviews({
         </CarouselContent>
         {!!attachments.length && !isLoading && (
           <>
-            <CarouselPrevious className="left-3" variant="outline" />
-            <CarouselNext className="right-3" variant="outline" />
+            <CarouselPrevious
+              className="left-3 opacity-0 md:opacity-100"
+              variant="outline"
+            />
+            <CarouselNext
+              className="right-3 opacity-0 md:opacity-100"
+              variant="outline"
+            />
           </>
         )}
       </Carousel>
       {attachments.length > 1 && (
-        <div className="flex w-full items-center justify-center space-x-2 pt-2">
+        <div className="mt-3 flex w-full items-center justify-center space-x-2">
           {Array.from({ length: count }).map((_, index) => (
             <div
               key={index}
@@ -107,7 +113,7 @@ function AttachmentPreview({
 
   if (isImage) {
     return (
-      <CarouselItem className="bg-background relative flex items-center pl-0">
+      <CarouselItem className="bg-background relative flex items-center pl-1">
         <Image
           src={src}
           width={500}
@@ -129,7 +135,7 @@ function AttachmentPreview({
 
   if (isVideo) {
     return (
-      <CarouselItem className="bg-background relative flex items-center pl-0">
+      <CarouselItem className="bg-background relative flex items-center pl-1">
         <video
           controls
           className={cn("aspect-video w-full", isUploading && "opacity-50")}

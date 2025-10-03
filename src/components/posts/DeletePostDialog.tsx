@@ -50,7 +50,7 @@ export default function DeletePostDialog({
             Delete
           </LoadingButton>
           <Button
-            variant="outline"
+            variant="custom"
             onClick={() => onClose()}
             disabled={mutation.isPending}
             className="w-24"

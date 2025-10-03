@@ -23,7 +23,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useTheme } from "next-themes";
 import AttachmentPreviews from "./AttachmentPreviews";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
@@ -49,7 +48,6 @@ const remoteDataToAttachments = (media: Media): Attachment => {
 };
 
 export default function PostEditor() {
-  const { theme } = useTheme();
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const session = useAuth();
@@ -116,6 +114,7 @@ export default function PostEditor() {
       setIsEditorEmpty(editor.isEmpty);
     },
     immediatelyRender: false,
+    autofocus: true,
   });
 
   const onSubmit = async () => {
@@ -202,6 +201,7 @@ export default function PostEditor() {
   }, [remoteMedia, setAttachments]);
 
   useEffect(() => {
+    if (isEditorOpen && editor) editor.commands.focus("end");
     const saveDraft = () => {
       if (!editor || !userId) return;
 
@@ -261,23 +261,20 @@ export default function PostEditor() {
     <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
       <DialogTrigger asChild>
         <div>
-          <Button
-            variant={theme === "light" ? "outline" : "secondary"}
-            className="hidden h-9 !px-4 lg:flex"
-          >
+          <Button variant="custom" className="hidden h-9 !px-4 lg:flex">
             <PencilLine className="mt-[0.15rem] size-4" />
             Post
           </Button>
-          <div className="hover:bg-accent flex aspect-square h-9 cursor-pointer items-center justify-center rounded-full transition-colors md:hidden">
+          <div className="hover:bg-accent flex aspect-square h-9 cursor-pointer items-center justify-center rounded-full transition-colors lg:hidden">
             <PencilLine className="mt-[0.15rem] h-[1.1rem] w-[1.1rem]" />
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="p-5">
+      <DialogContent className="flex h-screen !max-w-screen flex-col rounded-none p-5 lg:grid lg:h-fit lg:!max-w-lg lg:rounded-md">
         <DialogTitle className="-mb-1 text-lg font-semibold">
           Create a post
         </DialogTitle>
-        <DialogDescription />
+        <DialogDescription className="hidden" />
         <hr />
         <div className="space-y-3 rounded-md" suppressHydrationWarning>
           <div className="flex gap-3">
@@ -306,28 +303,36 @@ export default function PostEditor() {
               />
             )}
           </div>
-          <div className={"flex items-center justify-end gap-3"}>
-            {isUploading && (
-              <>
-                <span className="text-sm">{uploadProgress ?? 0}%</span>
-                <Loader2 className="text-primary size-5 animate-spin" />
-              </>
-            )}
+          <div
+            className={
+              "flex items-center justify-between gap-3 [&>*]:flex [&>*]:items-center [&>*]:gap-2"
+            }
+          >
+            <div>
+              {isUploading && (
+                <>
+                  <Loader2 className="text-primary size-5 animate-spin" />
+                  <span className="text-sm">{uploadProgress ?? 0}%</span>
+                </>
+              )}
+            </div>
 
-            <AddAttachmentsButton
-              onFilesSelected={startUpload}
-              disabled={isUploading || attachments.length >= 5}
-            />
-            <LoadingButton
-              onClick={onSubmit}
-              loading={mutation.isPending}
-              disabled={
-                (isEditorEmpty && attachments.length === 0) || isUploading
-              }
-              className="w-24"
-            >
-              Post
-            </LoadingButton>
+            <div>
+              <AddAttachmentsButton
+                onFilesSelected={startUpload}
+                disabled={isUploading || attachments.length >= 5}
+              />
+              <LoadingButton
+                onClick={onSubmit}
+                loading={mutation.isPending}
+                disabled={
+                  (isEditorEmpty && attachments.length === 0) || isUploading
+                }
+                className="w-24"
+              >
+                Post
+              </LoadingButton>
+            </div>
           </div>
         </div>
       </DialogContent>
@@ -351,7 +356,6 @@ function AddAttachmentsButton({
       <Button
         variant="ghost"
         size="icon"
-        className="h-full"
         disabled={disabled}
         onClick={() => fileInputRef.current?.click()}
       >
