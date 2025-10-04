@@ -21,7 +21,8 @@ import { useEffect, useState } from "react";
 import LikeButton from "./LikeButton";
 import { useAuth } from "@/app/auth-context";
 import { Button } from "../ui/button";
-import { Bookmark, MessageCircle, Send } from "lucide-react";
+import { MessageCircle, Send } from "lucide-react";
+import BookmarkButton from "./BookmarkButton";
 
 interface PostProps {
   post: PostData;
@@ -99,9 +100,14 @@ export default function Post({ post, className }: PostProps) {
           </Button>
         </div>
 
-        <Button variant="ghost" title="Bookmark">
-          <Bookmark className="size-5" />
-        </Button>
+        <BookmarkButton
+          postId={post.id}
+          initialState={{
+            isBookmarkedByUser: post.bookmarks.some(
+              (bookmark) => bookmark.userId === session?.user.id,
+            ),
+          }}
+        />
       </div>
     </article>
   );

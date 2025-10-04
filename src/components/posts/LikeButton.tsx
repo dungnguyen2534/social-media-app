@@ -42,8 +42,6 @@ export default function LikeButton({ postId, initialState }: LikeButtonProps) {
         isLikedByUser: !prevState?.isLikedByUser,
       }));
 
-      console.log(prevState);
-
       return { prevState };
     },
     onError: (error, _, context) => {

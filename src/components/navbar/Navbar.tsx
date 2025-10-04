@@ -34,7 +34,7 @@ export default async function Navbar() {
           <div className="ml-auto flex w-full justify-end gap-3">
             <MobileSearchButton />
             <ThemeChanger />
-            <Button asChild className="w-28" variant="outline">
+            <Button asChild className="w-28">
               <Link href="/sign-in">Sign in</Link>
             </Button>
           </div>

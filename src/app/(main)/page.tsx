@@ -1,6 +1,7 @@
 import SignInDialog from "@/components/common/SignInDialogTrigger";
 import FollowingFeed from "@/components/feeds/FollowingFeed";
 import ForYouFeed from "@/components/feeds/ForYouFeed";
+import FeaturePanel from "@/components/sidebars/FeaturePanel";
 import {
   TrendingTopics,
   TrendingTopicsSkeleton,
@@ -15,7 +16,9 @@ import { Suspense } from "react";
 export default async function Home() {
   return (
     <main className="app-container app-grid mt-1 !px-0 lg:mt-2 lg:px-3">
-      <aside className="app-sidebar"></aside>
+      <aside className="app-sidebar">
+        <FeaturePanel />
+      </aside>
 
       <Tabs defaultValue="for-you" className="gap-1 lg:gap-2">
         <TabsList className="rounded-none lg:rounded-lg">

@@ -24,6 +24,7 @@ import FollowButton from "@/components/common/FollowButton";
 import { FollowerCount, FollowingCount } from "@/components/common/FollowCount";
 import Linkify from "@/components/common/Linkify";
 import { ProfileEditor } from "./ProfileEditor";
+import FeaturePanel from "@/components/sidebars/FeaturePanel";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -73,7 +74,10 @@ export default async function UserProfilePage({ params }: PageProps) {
 
   return (
     <main className="app-container app-grid mt-1 !px-0 lg:mt-2 lg:px-3">
-      <aside className="app-sidebar"></aside>
+      <aside className="app-sidebar">
+        <FeaturePanel />
+      </aside>
+
       <div className="space-y-1 lg:space-y-2">
         <UserProfile user={user} signedInUserId={signedInUser?.id} />
         <UserProfileFeed user={user} />

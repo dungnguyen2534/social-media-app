@@ -7,6 +7,7 @@ import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import ClientToaster from "@/components/common/ClientToaster";
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <NextTopLoader height={1.2} showSpinner={false} />
             {children}
             <ClientToaster
               toastOptions={{

@@ -5,22 +5,34 @@ import { getSessionData } from "@/auth";
 
 export async function GET(req: NextRequest) {
   const session = await getSessionData();
+  const userId = session?.user.id;
+  if (!userId) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
   const pageSize = 10;
 
   try {
-    const posts = await prisma.post.findMany({
-      include: getPostDataInclude(session?.user.id),
+    const bookmarks = await prisma.bookmark.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        post: {
+          include: getPostDataInclude(userId),
+        },
+      },
       orderBy: { createdAt: "desc" },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,
     });
 
-    const nextCursor = posts.length > pageSize ? posts[pageSize].id : null;
+    const nextCursor =
+      bookmarks.length > pageSize ? bookmarks[pageSize].id : null;
 
     const data: PostsPage = {
-      posts: posts.slice(0, pageSize),
+      posts: bookmarks.slice(0, pageSize).map((bookmark) => bookmark.post),
       nextCursor,
     };
 

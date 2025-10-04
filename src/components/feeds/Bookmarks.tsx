@@ -1,22 +1,14 @@
 "use client";
 
 import api from "@/lib/ky";
-import { PostsPage, UserData } from "@/lib/type";
+import { PostsPage } from "@/lib/type";
 import Post from "../posts/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import InfiniteScrollContainer from "../common/InfiniteScrollContainer";
 import { Annoyed } from "lucide-react";
 import FeedSkeletons from "./FeedSkeletons";
-import { useAuth } from "@/app/auth-context";
 
-interface UserProfileFeed {
-  user: UserData;
-}
-
-export default function UserProfileFeed({ user }: UserProfileFeed) {
-  const userHasNoPosts = user._count.posts === 0;
-  const session = useAuth();
-
+export default function Bookmarks() {
   const {
     data,
     status,
@@ -25,15 +17,11 @@ export default function UserProfileFeed({ user }: UserProfileFeed) {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["feed", "user-profile-feed", user.id],
+    queryKey: ["feed", "bookmarks"],
     queryFn: ({ pageParam }) => {
-      if (userHasNoPosts) {
-        return Promise.resolve({ posts: [], nextCursor: null } as PostsPage);
-      }
-
       return api
         .get(
-          `users/id/${user.id}/posts`,
+          "posts/bookmarked",
           pageParam ? { searchParams: { cursor: pageParam } } : {},
         )
         .json<PostsPage>();
@@ -44,29 +32,25 @@ export default function UserProfileFeed({ user }: UserProfileFeed) {
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
-  const noPostPlaceholder = (
-    <div className="bg-card flex h-fit flex-col gap-8 rounded-md p-5 shadow-sm">
-      <p className="text-center font-medium">
-        {user.id === session?.user.id ? "You" : "This user"} hasn&apos;t posted
-        anything yet.{" "}
-      </p>
-    </div>
-  );
-
   if (status === "pending") {
-    if (userHasNoPosts) return noPostPlaceholder;
     return <FeedSkeletons count={4} />;
   }
 
   if (status === "success" && posts.length === 0 && !hasNextPage) {
-    return noPostPlaceholder;
+    return (
+      <div className="bg-card flex h-fit flex-col gap-8 p-5 shadow-sm lg:rounded-md">
+        <p className="text-center font-medium">
+          You don&apos;t have any bookmark.
+        </p>
+      </div>
+    );
   }
 
   if (status === "error") {
     return (
       <div className="mt-8 flex h-full flex-col items-center gap-8">
         <p className="text-xl font-medium">
-          An error occured while loading {user.username}&apos;s posts...
+          An error occured while loading bookmarks...
         </p>
         <Annoyed className="size-48" />
       </div>
@@ -81,7 +65,7 @@ export default function UserProfileFeed({ user }: UserProfileFeed) {
         <Post post={post} className="mb-1 lg:mb-2" key={post.id} />
       ))}
 
-      {isFetchingNextPage && <FeedSkeletons count={1} />}
+      {isFetchingNextPage && <FeedSkeletons count={2} />}
     </InfiniteScrollContainer>
   );
 }

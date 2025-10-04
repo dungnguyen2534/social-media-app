@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getPostDataInclude } from "@/lib/type";
+import { getPostDataInclude, PostsPage } from "@/lib/type";
 import { NextRequest } from "next/server";
 import { getSessionData } from "@/auth";
 
@@ -9,10 +9,10 @@ export async function GET(req: NextRequest) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
-    const pageSize = 10;
+  const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
+  const pageSize = 10;
 
+  try {
     const posts = await prisma.post.findMany({
       where: {
         user: {
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 
     const nextCursor = posts.length > pageSize ? posts[pageSize].id : null;
 
-    const data = {
+    const data: PostsPage = {
       posts: posts.slice(0, pageSize),
       nextCursor,
     };
