@@ -40,7 +40,7 @@ export default function Bookmarks() {
     return (
       <div className="bg-card flex h-fit flex-col gap-8 p-5 shadow-sm lg:rounded-md">
         <p className="text-center font-medium">
-          You don&apos;t have any bookmark.
+          You don&apos;t have any bookmark...
         </p>
       </div>
     );

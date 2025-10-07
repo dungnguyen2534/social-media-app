@@ -48,7 +48,7 @@ export default function UserProfileFeed({ user }: UserProfileFeed) {
     <div className="bg-card flex h-fit flex-col gap-8 rounded-md p-5 shadow-sm">
       <p className="text-center font-medium">
         {user.id === session?.user.id ? "You" : "This user"} hasn&apos;t posted
-        anything yet.{" "}
+        anything yet...{" "}
       </p>
     </div>
   );

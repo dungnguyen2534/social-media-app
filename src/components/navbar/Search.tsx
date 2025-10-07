@@ -3,6 +3,7 @@
 import { SearchIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 
 export function SearchField() {
   const router = useRouter();
@@ -38,8 +39,8 @@ export function SearchField() {
 export function MobileSearchButton() {
   // use shadcn dialog
   return (
-    <div className="hover:bg-accent flex aspect-square h-9 cursor-pointer items-center justify-center rounded-full transition-colors lg:hidden">
+    <Button className="lg:hidden" size="icon" variant="ghost">
       <SearchIcon className="mt-[0.15rem] h-[1.1rem] w-[1.1rem]" />
-    </div>
+    </Button>
   );
 }

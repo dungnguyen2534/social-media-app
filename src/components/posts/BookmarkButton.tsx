@@ -11,7 +11,8 @@ import { Bookmark } from "lucide-react";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 
-interface BookmarkButtonProps {
+interface BookmarkButtonProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {
   postId: string;
   initialState: BookmarkInfo;
 }
@@ -19,6 +20,7 @@ interface BookmarkButtonProps {
 export default function BookmarkButton({
   postId,
   initialState,
+  ...rest
 }: BookmarkButtonProps) {
   const queryClient = useQueryClient();
   const queryKey: QueryKey = ["bookmark-info", postId];
@@ -57,7 +59,7 @@ export default function BookmarkButton({
   });
 
   return (
-    <Button title="Bookmark" variant="ghost" onClick={() => mutate()}>
+    <Button title="Bookmark" variant="ghost" onClick={() => mutate()} {...rest}>
       <Bookmark
         className={cn(
           "size-5",

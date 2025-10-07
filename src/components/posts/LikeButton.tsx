@@ -11,12 +11,17 @@ import { Heart } from "lucide-react";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 
-interface LikeButtonProps {
+interface LikeButtonProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {
   postId: string;
   initialState: LikeInfo;
 }
 
-export default function LikeButton({ postId, initialState }: LikeButtonProps) {
+export default function LikeButton({
+  postId,
+  initialState,
+  ...rest
+}: LikeButtonProps) {
   const queryClient = useQueryClient();
   const queryKey: QueryKey = ["like-info", postId];
 
@@ -53,7 +58,7 @@ export default function LikeButton({ postId, initialState }: LikeButtonProps) {
   });
 
   return (
-    <Button title="Like" variant="ghost" onClick={() => mutate()}>
+    <Button title="Like" variant="ghost" onClick={() => mutate()} {...rest}>
       <Heart
         className={cn(
           "size-5",

@@ -21,7 +21,7 @@ export default async function Home() {
       </aside>
 
       <Tabs defaultValue="for-you" className="gap-1 lg:gap-2">
-        <TabsList className="rounded-none lg:rounded-lg">
+        <TabsList className="rounded-none lg:rounded-md">
           <TabsTrigger value="for-you">For you</TabsTrigger>
           <SignInDialog
             asChild

@@ -91,11 +91,12 @@ export default function Post({ post, className }: PostProps) {
                 (like) => like.userId === session?.user.id,
               ),
             }}
+            disabled={!session}
           />
-          <Button title="Comment" variant="ghost">
+          <Button title="Comment" variant="ghost" disabled={!session}>
             <MessageCircle className="size-5" />
           </Button>
-          <Button variant="ghost" title="Share">
+          <Button variant="ghost" title="Share" disabled={!session}>
             <Send className="size-5" />
           </Button>
         </div>
@@ -107,6 +108,7 @@ export default function Post({ post, className }: PostProps) {
               (bookmark) => bookmark.userId === session?.user.id,
             ),
           }}
+          disabled={!session}
         />
       </div>
     </article>

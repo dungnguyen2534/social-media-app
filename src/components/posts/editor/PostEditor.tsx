@@ -258,85 +258,90 @@ export default function PostEditor() {
   };
 
   return (
-    <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-      <DialogTrigger asChild>
-        <div>
-          <Button variant="custom" className="hidden h-9 !px-4 lg:flex">
-            <PencilLine className="mt-[0.15rem] size-4" />
-            Post
-          </Button>
-          <div className="hover:bg-accent flex aspect-square h-9 cursor-pointer items-center justify-center rounded-full transition-colors lg:hidden">
-            <PencilLine className="mt-[0.15rem] h-[1.1rem] w-[1.1rem]" />
+    <div className="lg:w-full">
+      <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
+        <DialogTrigger asChild>
+          <div className="w-full">
+            <Button
+              variant="custom"
+              className="hidden h-12 w-full rounded-full !px-4 lg:flex"
+            >
+              <PencilLine className="mt-[0.15rem] size-4" />
+              Create a post
+            </Button>
+            <Button className="lg:hidden" size="icon" variant="ghost">
+              <PencilLine className="mt-[0.15rem] h-[1.1rem] w-[1.1rem]" />
+            </Button>
           </div>
-        </div>
-      </DialogTrigger>
-      <DialogContent className="flex h-screen !max-w-screen flex-col rounded-none p-5 lg:grid lg:h-fit lg:!max-w-lg lg:rounded-md">
-        <DialogTitle className="-mb-1 text-lg font-semibold">
-          Create a post
-        </DialogTitle>
-        <DialogDescription className="hidden" />
-        <hr />
-        <div className="space-y-3 rounded-md" suppressHydrationWarning>
-          <div className="flex gap-3">
-            <UserAvatar
-              avatarUrl={session?.user.image}
-              className="hidden sm:inline"
-            />
-            <div {...rootProps} className="w-full">
-              <EditorContent
-                editor={editor}
-                className={cn(
-                  "bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]",
-                  isDragActive && "outline-dashed",
-                )}
-                onPaste={onPaste}
+        </DialogTrigger>
+        <DialogContent className="flex h-screen !max-w-screen flex-col rounded-none p-5 lg:grid lg:h-fit lg:!max-w-lg lg:rounded-md">
+          <DialogTitle className="-mb-1 text-lg font-semibold">
+            Create a post
+          </DialogTitle>
+          <DialogDescription className="hidden" />
+          <hr />
+          <div className="space-y-3 rounded-md" suppressHydrationWarning>
+            <div className="flex gap-3">
+              <UserAvatar
+                avatarUrl={session?.user.image}
+                className="hidden sm:inline"
               />
-              <input {...getInputProps()} />
+              <div {...rootProps} className="w-full">
+                <EditorContent
+                  editor={editor}
+                  className={cn(
+                    "bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]",
+                    isDragActive && "outline-dashed",
+                  )}
+                  onPaste={onPaste}
+                />
+                <input {...getInputProps()} />
+              </div>
             </div>
-          </div>
-          <div>
-            {!!attachments.length && (
-              <AttachmentPreviews
-                isLoading={isLoading}
-                attachments={attachments}
-                removeAttachment={removeAttachment}
-              />
-            )}
-          </div>
-          <div
-            className={
-              "flex items-center justify-between gap-3 [&>*]:flex [&>*]:items-center [&>*]:gap-2"
-            }
-          >
             <div>
-              {isUploading && (
-                <>
-                  <Loader2 className="text-primary size-5 animate-spin" />
-                  <span className="text-sm">{uploadProgress ?? 0}%</span>
-                </>
+              {!!attachments.length && (
+                <AttachmentPreviews
+                  isLoading={isLoading}
+                  attachments={attachments}
+                  removeAttachment={removeAttachment}
+                />
               )}
             </div>
+            <div
+              className={
+                "flex items-center justify-between gap-3 [&>*]:flex [&>*]:items-center [&>*]:gap-2"
+              }
+            >
+              <div>
+                {isUploading && (
+                  <>
+                    <Loader2 className="text-primary size-5 animate-spin" />
+                    <span className="text-sm">{uploadProgress ?? 0}%</span>
+                  </>
+                )}
+              </div>
 
-            <div>
-              <AddAttachmentsButton
-                onFilesSelected={startUpload}
-                disabled={isUploading || attachments.length >= 5}
-              />
-              <LoadingButton
-                onClick={onSubmit}
-                loading={mutation.isPending}
-                disabled={
-                  (isEditorEmpty && attachments.length === 0) || isUploading
-                }
-                className="w-24"
-              >
-                Post
-              </LoadingButton>
+              <div>
+                <AddAttachmentsButton
+                  onFilesSelected={startUpload}
+                  disabled={isUploading || attachments.length >= 5}
+                />
+                <LoadingButton
+                  onClick={onSubmit}
+                  loading={mutation.isPending}
+                  disabled={
+                    (isEditorEmpty && attachments.length === 0) || isUploading
+                  }
+                  className="w-24"
+                >
+                  Post
+                </LoadingButton>
+              </div>
             </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
 

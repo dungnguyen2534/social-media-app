@@ -50,7 +50,9 @@ export default function FollowingFeed() {
   if (status === "success" && posts.length === 0 && !hasNextPage) {
     return (
       <div className="bg-card flex h-fit flex-col gap-8 p-5 shadow-sm lg:rounded-md">
-        <p className="text-center font-medium">Your following feed is empty.</p>
+        <p className="text-center font-medium">
+          Your following feed is empty...
+        </p>
       </div>
     );
   }
