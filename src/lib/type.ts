@@ -42,6 +42,14 @@ export function getPostDataInclude(SignedInUserId?: string) {
   return {
     user: { select: getUserDataSelect(SignedInUserId) },
     attachments: true,
+
+    sharedPost: {
+      include: {
+        user: { select: getUserDataSelect(SignedInUserId) },
+        attachments: true,
+      },
+    },
+
     likes: {
       where: {
         userId: SignedInUserId,
@@ -61,6 +69,7 @@ export function getPostDataInclude(SignedInUserId?: string) {
     _count: {
       select: {
         likes: true,
+        shares: true,
       },
     },
   } satisfies Prisma.PostInclude;
@@ -69,6 +78,11 @@ export function getPostDataInclude(SignedInUserId?: string) {
 export type PostData = Prisma.PostGetPayload<{
   include: ReturnType<typeof getPostDataInclude>;
 }>;
+
+export type SharedPostData = Omit<
+  PostData,
+  "likes" | "bookmarks" | "_count" | "sharedPost"
+>;
 
 export type PostsPage = {
   posts: PostData[];

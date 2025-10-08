@@ -91,7 +91,7 @@ export default function FeaturePanel() {
           <hr />
 
           <div className="mt-2 ml-1 flex h-14 items-center gap-2">
-            <UserButton className="h-12 w-12 shadow-sm" iconSize="size-6" />
+            <UserButton className="h-12 w-12 shadow-sm" iconStyle="size-6" />
             <PostEditor />
           </div>
         </div>

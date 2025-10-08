@@ -18,8 +18,7 @@ export default async function emailSignIn(
   // The "signIn" returns a redirect URL with ".../error/..." instead of catchable errors, 'redirect: false' prevents the redirect.
   if (result.includes("error")) {
     return {
-      error: `Oops, something went wrong.
-      Please try again later...`,
+      error: "Something went wrong, please try again later...",
     };
   }
 }

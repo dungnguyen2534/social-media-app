@@ -1,0 +1,67 @@
+"use client";
+
+import Link from "next/link";
+import UserAvatar from "../common/UserAvatar";
+import { cn, formatRelativeDate } from "@/lib/utils";
+import { SharedPostData } from "@/lib/type";
+import Linkify from "../common/Linkify";
+import { MiniProfile } from "../common/MiniProfile";
+import MediaView from "./MediaView";
+
+interface SharedPostProps {
+  post: SharedPostData;
+  className?: string;
+}
+
+export default function SharedPost({ post, className }: SharedPostProps) {
+  return (
+    <article
+      className={cn(
+        "round bg-card overflow-hidden rounded-md border-1",
+        className,
+      )}
+    >
+      {!!post.attachments.length && (
+        <MediaView attachments={post.attachments} />
+      )}
+
+      <div className={cn("p-3", !!post.attachments.length && "pt-1")}>
+        <div className="mb-2 flex items-center">
+          <MiniProfile user={post.user}>
+            <Link
+              className="group flex flex-wrap items-center gap-2"
+              href={`/users/${post.user.username}`}
+            >
+              <div>
+                <UserAvatar avatarUrl={post.user.image} />
+              </div>
+              <div className="h-9">
+                <div className="flex gap-1">
+                  <div className="block font-medium underline-offset-2 group-hover:underline">
+                    {post.user.name}
+                  </div>
+                  <div className="text-muted-foreground">
+                    @{post.user.username}
+                  </div>
+                </div>
+
+                <time
+                  dateTime={post.createdAt.toDateString()}
+                  className="text-muted-foreground block text-xs"
+                >
+                  {formatRelativeDate(post.createdAt)}
+                </time>
+              </div>
+            </Link>
+          </MiniProfile>
+        </div>
+
+        <Linkify>
+          <div className="text-base break-words whitespace-pre-line">
+            {post.content}
+          </div>
+        </Linkify>
+      </div>
+    </article>
+  );
+}

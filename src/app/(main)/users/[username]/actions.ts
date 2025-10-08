@@ -9,12 +9,12 @@ import { userProfileData, userProfileSchema } from "@/lib/validation";
 export async function updateUserProfile(
   data: userProfileData,
 ): ActionResult<UserData> {
-  const validatedData = userProfileSchema.parse(data);
-
   const session = await getSessionData();
   if (!session) return { error: "Unauthorized" };
 
   try {
+    const validatedData = userProfileSchema.parse(data);
+
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
       data: validatedData,

@@ -59,7 +59,12 @@ export default function PostMoreButton({
           {isUserPost && (
             <>
               <hr />
-              <DropdownMenuItem onClick={() => setShowDeleteDialog(true)}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setShowDeleteDialog(true);
+                  setIsMenuOpen(false);
+                }}
+              >
                 <Trash2 className="mt-[0.1rem] mr-2 size-4" /> Delete
               </DropdownMenuItem>
             </>

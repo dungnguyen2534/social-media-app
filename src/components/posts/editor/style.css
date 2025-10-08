@@ -1,3 +1,8 @@
+.tiptap {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 .tiptap p.is-editor-empty:first-child::before {
   color: #757575;
   content: attr(data-placeholder);

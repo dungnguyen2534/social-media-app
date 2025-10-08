@@ -7,22 +7,14 @@ import { PostData } from "@/lib/type";
 import PostMoreButton from "./PostMoreButton";
 import Linkify from "../common/Linkify";
 import { MiniProfile } from "../common/MiniProfile";
-import { Media } from "@prisma/client";
-import Image from "next/image";
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../ui/carousel";
-import { useEffect, useState } from "react";
 import LikeButton from "./LikeButton";
 import { useAuth } from "@/app/auth-context";
 import { Button } from "../ui/button";
-import { MessageCircle, Send } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import BookmarkButton from "./BookmarkButton";
+import ShareButton from "./ShareButton";
+import MediaView from "./MediaView";
+import SharedPost from "./SharedPost";
 
 interface PostProps {
   post: PostData;
@@ -35,11 +27,11 @@ export default function Post({ post, className }: PostProps) {
   return (
     <article
       className={cn(
-        "round bg-card space-y-3 p-5 pb-2 shadow-sm lg:rounded-md",
+        "round bg-card p-5 pb-2 shadow-sm lg:rounded-md",
         className,
       )}
     >
-      <div className="flex items-center">
+      <div className="mb-2 flex items-center">
         <MiniProfile user={post.user}>
           <Link
             className="group flex flex-wrap items-center gap-2"
@@ -71,14 +63,16 @@ export default function Post({ post, className }: PostProps) {
         <PostMoreButton post={post} className="-mt-5 ml-auto" />
       </div>
       <Linkify>
-        <div className="text-base break-words whitespace-pre-line">
+        <div className="my-1 text-base break-words whitespace-pre-line">
           {post.content}
         </div>
       </Linkify>
 
       {!!post.attachments.length && (
-        <MediaView attachments={post.attachments} />
+        <MediaView attachments={post.attachments} className="my-1 rounded-md" />
       )}
+
+      {!!post.sharedPost && <SharedPost post={post.sharedPost} />}
 
       <hr className="my-2" />
       <div className="flex justify-between">
@@ -96,9 +90,9 @@ export default function Post({ post, className }: PostProps) {
           <Button title="Comment" variant="ghost" disabled={!session}>
             <MessageCircle className="size-5" />
           </Button>
-          <Button variant="ghost" title="Share" disabled={!session}>
-            <Send className="size-5" />
-          </Button>
+          <ShareButton
+            postId={!!post.sharedPost ? post.sharedPost.id : post.id}
+          />
         </div>
 
         <BookmarkButton
@@ -112,94 +106,5 @@ export default function Post({ post, className }: PostProps) {
         />
       </div>
     </article>
-  );
-}
-
-interface MediaViewProps {
-  attachments: Media[];
-}
-
-function MediaView({ attachments }: MediaViewProps) {
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    });
-  }, [api]);
-
-  return (
-    <div>
-      <Carousel className="relative overflow-hidden rounded-md" setApi={setApi}>
-        <CarouselContent className="-ml-1">
-          {attachments.map((a) => {
-            if (a.type === "IMAGE") {
-              return (
-                <CarouselItem
-                  key={a.id}
-                  className="bg-background flex items-center pl-1"
-                >
-                  <Image
-                    src={a.url}
-                    width={500}
-                    height={500}
-                    alt="Attachment"
-                    className="w-full object-contain"
-                  />
-                </CarouselItem>
-              );
-            }
-
-            if (a.type === "VIDEO") {
-              return (
-                <CarouselItem key={a.id} className="pl-1">
-                  <video controls className="aspect-video w-full">
-                    <source src={a.url} />
-                  </video>
-                </CarouselItem>
-              );
-            }
-
-            return (
-              <p key={a.id} className="text-destructive">
-                Unsupported media type
-              </p>
-            );
-          })}
-        </CarouselContent>
-        {attachments.length > 1 && (
-          <>
-            <CarouselPrevious
-              className="left-3 opacity-0 md:opacity-100"
-              variant="outline"
-            />
-            <CarouselNext
-              className="right-3 opacity-0 md:opacity-100"
-              variant="outline"
-            />
-          </>
-        )}
-      </Carousel>
-      {attachments.length > 1 && (
-        <div className="mt-3 flex w-full items-center justify-center space-x-2">
-          {Array.from({ length: count }).map((_, index) => (
-            <div
-              key={index}
-              className={cn(
-                "h-1.5 w-1.5 rounded-full transition-all duration-300",
-                index + 1 === current ? "bg-primary" : "bg-muted-foreground/50",
-              )}
-            />
-          ))}
-        </div>
-      )}
-    </div>
   );
 }

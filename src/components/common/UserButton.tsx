@@ -16,21 +16,22 @@ import SignOutDialog from "./SignOutDialog";
 
 interface UserButtonProps {
   className?: string;
-  iconSize?: string;
+  iconStyle?: string;
 }
 
-export default function UserButton({ className, iconSize }: UserButtonProps) {
+export default function UserButton({ className, iconStyle }: UserButtonProps) {
   const session = useAuth();
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger>
           <UserAvatar
             avatarUrl={session?.user.image}
             className={className}
-            iconSize={iconSize}
+            iconStyle={iconStyle}
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="min-w-36">
@@ -41,7 +42,14 @@ export default function UserButton({ className, iconSize }: UserButtonProps) {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setIsSignOutDialogOpen(true)}>
+          <DropdownMenuItem
+            onClick={() => {
+              setIsSignOutDialogOpen(true);
+
+              // To prevent a bug where the dropdown modal remains open even when the sign out dialog is closed
+              setIsDropdownOpen(false);
+            }}
+          >
             <LogOutIcon className="mt-[0.15rem] mr-2 size-4" />
             Sign out
           </DropdownMenuItem>

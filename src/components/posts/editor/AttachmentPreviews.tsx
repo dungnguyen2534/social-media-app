@@ -52,8 +52,7 @@ export default function AttachmentPreviews({
           {isLoading ? (
             <div className="bg-background flex aspect-square w-full items-center justify-center">
               <div className="text-muted-foreground text-center">
-                <Loader2 className="mx-auto mt-2 size-8 animate-spin" />
-                <p>Media drafts expire after 24 hours.</p>
+                <Loader2 className="mx-auto mb-2 size-8 animate-spin" />
               </div>
             </div>
           ) : (

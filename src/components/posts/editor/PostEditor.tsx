@@ -99,6 +99,11 @@ export default function PostEditor() {
 
   const localAttachmentIds = localDraft.mediaIds || [];
 
+  const initialLocalAttachmentIdsRef = useRef(localAttachmentIds);
+  const initialLocalAttachmentIds = initialLocalAttachmentIdsRef.current;
+
+  const shouldFetchInitialDraftMedia = initialLocalAttachmentIds.length > 0;
+
   const editor = useEditor({
     content: localDraft.content || "",
     extensions: [
@@ -170,7 +175,7 @@ export default function PostEditor() {
     queryFn: () =>
       api.get(`media?ids=${localAttachmentIds.join(",")}`).json<Media[]>(),
 
-    enabled: localAttachmentIds.length > 0 && !!userId && !isDraftMediaLoaded,
+    enabled: shouldFetchInitialDraftMedia && !!userId && !isDraftMediaLoaded,
     staleTime: Infinity,
   });
 
@@ -284,13 +289,13 @@ export default function PostEditor() {
             <div className="flex gap-3">
               <UserAvatar
                 avatarUrl={session?.user.image}
-                className="hidden sm:inline"
+                className="hidden h-12 w-12 sm:inline"
               />
               <div {...rootProps} className="w-full">
                 <EditorContent
                   editor={editor}
                   className={cn(
-                    "bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]",
+                    "bg-accent focus-within:ring-ring/50 white max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]",
                     isDragActive && "outline-dashed",
                   )}
                   onPaste={onPaste}

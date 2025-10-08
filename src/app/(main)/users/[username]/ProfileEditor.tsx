@@ -169,7 +169,7 @@ function AvatarInput({
         <UserAvatar
           avatarUrl={avatarUrl}
           className="size-20 md:size-28"
-          iconSize="size-10 md:size-16"
+          iconStyle="size-10 md:size-16"
         />
         <span className="absolute -right-1 bottom-0 flex size-10 cursor-pointer items-center justify-center rounded-full bg-black/25 text-white transition-colors duration-200 hover:bg-black/50">
           <Camera className="size-5" />

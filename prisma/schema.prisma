@@ -93,8 +93,12 @@ model Post {
     id          String  @id @default(cuid())
     content     String?
     attachments Media[]
-    likes       Like[]
 
+    sharedPostId String?
+    sharedPost   Post?   @relation("SharedPost", fields: [sharedPostId], references: [id], onDelete: SetNull)
+
+    likes     Like[]
+    shares    Post[]     @relation("SharedPost")
     bookmarks Bookmark[]
 
     userId String

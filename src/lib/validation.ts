@@ -31,15 +31,33 @@ export const createPostSchema = z
       .array(z.string())
       .max(5, "Cannot have more than 5 attachments")
       .optional(),
+
+    sharedPostId: z.string().optional(),
   })
+  .refine(
+    (data) => {
+      const hasMedia = data.mediaIds && data.mediaIds.length > 0;
+      const hasSharedPost = !!data.sharedPostId;
+
+      return !(hasMedia && hasSharedPost);
+    },
+    {
+      message:
+        "A post cannot contain both media attachments and a shared post ID.",
+      path: ["sharedPostId"],
+    },
+  )
   .refine(
     (data) => {
       const hasContent = !!data.content;
       const hasMedia = data.mediaIds && data.mediaIds.length > 0;
-      return hasContent || hasMedia;
+      const hasSharedPost = !!data.sharedPostId;
+
+      return hasContent || hasMedia || hasSharedPost;
     },
     {
-      message: "A post must have either content or at least one attachment.",
+      message:
+        "A post must have either content, at least one attachment, or a shared post ID.",
       path: ["content"],
     },
   );

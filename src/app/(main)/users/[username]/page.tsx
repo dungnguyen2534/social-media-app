@@ -120,7 +120,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
             <UserAvatar
               avatarUrl={user.image}
               className="size-20 md:size-28"
-              iconSize="size-10 md:size-16"
+              iconStyle="size-10 md:size-16"
             />
             <div className="">
               <h1 className="text-lg font-bold md:text-xl">{user.name}</h1>
