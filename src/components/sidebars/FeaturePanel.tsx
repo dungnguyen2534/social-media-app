@@ -6,8 +6,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import PostEditor from "../posts/editor/PostEditor";
 import UserButton from "../common/UserButton";
-import { ThemeChanger } from "../navbar/ThemeChanger";
 import { useAuth } from "@/app/auth-context";
+import { ThemeSwitcher } from "../ui/theme-switcher";
 
 export default function FeaturePanel() {
   const session = useAuth();
@@ -23,7 +23,7 @@ export default function FeaturePanel() {
           >
             Socius
           </Link>
-          <ThemeChanger variant="ghost" className="text-muted-foreground" />
+          <ThemeSwitcher />
         </div>
 
         <hr className="my-1" />

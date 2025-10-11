@@ -89,21 +89,24 @@ export default function Post({ post, className }: PostProps) {
           />
           <Button title="Comment" variant="ghost" disabled={!session}>
             <MessageCircle className="size-5" />
+            Comment
           </Button>
+        </div>
+
+        <div>
           <ShareButton
             postId={!!post.sharedPost ? post.sharedPost.id : post.id}
           />
+          <BookmarkButton
+            postId={post.id}
+            initialState={{
+              isBookmarkedByUser: post.bookmarks.some(
+                (bookmark) => bookmark.userId === session?.user.id,
+              ),
+            }}
+            disabled={!session}
+          />
         </div>
-
-        <BookmarkButton
-          postId={post.id}
-          initialState={{
-            isBookmarkedByUser: post.bookmarks.some(
-              (bookmark) => bookmark.userId === session?.user.id,
-            ),
-          }}
-          disabled={!session}
-        />
       </div>
     </article>
   );

@@ -65,12 +65,12 @@ export default function LikeButton({
           data.isLikedByUser && "fill-red-500 text-red-500",
         )}
       />
-
       {data.likes > 0 && (
         <span className="font-medium tabular-nums">
           {formatNumber(data.likes)}
         </span>
       )}
+      {data.likes > 1 ? " Likes" : " Like"}
     </Button>
   );
 }

@@ -1,7 +1,7 @@
 import { getSessionData } from "@/auth";
 import { redirect } from "next/navigation";
 import { AuthProvider } from "../auth-context";
-import Navbar from "@/components/navbar/Navbar";
+import MobileNavbar from "@/components/mobile-navbar/MobileNavbar";
 
 export default async function Layout({
   children,
@@ -13,7 +13,7 @@ export default async function Layout({
 
   return (
     <AuthProvider session={session}>
-      <Navbar />
+      <MobileNavbar />
       {children}
     </AuthProvider>
   );

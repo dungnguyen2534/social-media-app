@@ -15,7 +15,7 @@ import { useAuth } from "@/app/auth-context";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import SignOutDialog from "../common/SignOutDialog";
-import { ThemeChanger } from "./ThemeChanger";
+import { ThemeSwitcher } from "../ui/theme-switcher";
 
 export default function HamburgerMenu() {
   const session = useAuth();
@@ -42,12 +42,7 @@ export default function HamburgerMenu() {
             <SheetDescription />
           </SheetHeader>
 
-          <ThemeChanger
-            switchMode
-            className="text-muted-foreground absolute top-3 left-3"
-            iconStyle="size-4"
-            variant={"secondary"}
-          />
+          <ThemeSwitcher className="text-muted-foreground absolute top-4 left-3" />
 
           <div className="space-y-1 [&>*]:cursor-pointer [&>*]:text-right">
             <Link
