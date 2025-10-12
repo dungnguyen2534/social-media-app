@@ -61,13 +61,18 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
     });
   };
 
+  const isUsernameChangeable = user.usernameUpdatedAt
+    ? new Date().getTime() - user.usernameUpdatedAt.getTime() >
+      30 * 24 * 60 * 60 * 1000
+    : true;
+
   return (
     <>
       <Button variant="custom" onClick={() => setShowDialog(true)}>
         Edit Profile
       </Button>
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
+        <DialogContent className="responsive-dialog">
           <DialogHeader>
             <DialogTitle className="text-lg font-medium">
               Edit Profile
@@ -96,6 +101,8 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
               name="username"
               label="Username"
               placeholder="something_unique"
+              disabled={!isUsernameChangeable}
+              description="You can only change your username once every 30 days."
             />
 
             <RHFTextarea

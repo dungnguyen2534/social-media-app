@@ -35,7 +35,7 @@ export default function CropImageDialog({
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="responsive-dialog">
         <DialogHeader>
           <DialogTitle>Crop image</DialogTitle>
         </DialogHeader>

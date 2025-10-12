@@ -20,15 +20,15 @@ import LoadingButton from "../common/LoadingButton";
 import UserAvatar from "../common/UserAvatar";
 import { useAuth } from "@/app/auth-context";
 import { useState } from "react";
+import { SharedPostData } from "@/lib/type";
+import SharedPost from "./SharedPost";
 
 interface ShareButtonProps
   extends React.ComponentPropsWithoutRef<typeof Button> {
-  postId: string;
+  post: SharedPostData;
 }
 
-// TODO: share count
-
-export default function ShareButton({ postId }: ShareButtonProps) {
+export default function ShareButton({ post, ...rest }: ShareButtonProps) {
   const session = useAuth();
   const mutation = useSubmitPostMutation();
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -58,7 +58,7 @@ export default function ShareButton({ postId }: ShareButtonProps) {
     mutation.mutate(
       {
         content: input,
-        sharedPostId: postId,
+        sharedPostId: post.id,
       },
       {
         onSuccess: (result) => {
@@ -86,7 +86,7 @@ export default function ShareButton({ postId }: ShareButtonProps) {
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/posts/${postId}`);
+    navigator.clipboard.writeText(`${window.location.origin}/posts/${post.id}`);
     setIsShareDialogOpen(false);
     toast("Post link copied to clipboard");
   };
@@ -94,11 +94,11 @@ export default function ShareButton({ postId }: ShareButtonProps) {
   return (
     <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" title="Share">
+        <Button variant="ghost" title="Share" {...rest}>
           <Send className="size-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="responsive-dialog">
         <DialogTitle className="-mb-1 text-lg font-semibold">Share</DialogTitle>
         <DialogDescription className="hidden" />
         <hr />
@@ -110,10 +110,17 @@ export default function ShareButton({ postId }: ShareButtonProps) {
           />
 
           <div className="flex-1 space-y-3">
-            <EditorContent
-              editor={editor}
-              className="bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]"
-            />
+            <div>
+              <EditorContent
+                editor={editor}
+                className="bg-accent focus-within:ring-ring/50 max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]"
+              />
+            </div>
+
+            <div>
+              <SharedPost post={post} />
+            </div>
+
             <div className="grid grid-cols-2 gap-2">
               <Button variant="secondary" onClick={handleCopyLink}>
                 Copy link

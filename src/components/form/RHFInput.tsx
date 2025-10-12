@@ -82,7 +82,11 @@ export default function RHFInput<
               )}
             </div>
           </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
+          {description && (
+            <FormDescription className="-mt-1 text-xs">
+              {description}
+            </FormDescription>
+          )}
         </FormItem>
       )}
     />

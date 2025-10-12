@@ -39,7 +39,7 @@ export default function MediaView({ attachments, className }: MediaViewProps) {
         setApi={setApi}
         key={attachments.length}
       >
-        <CarouselContent className="-ml-1">
+        <CarouselContent className="-ml-1 max-h-dvh">
           {attachments.map((a) => {
             if (a.type === "IMAGE") {
               return (

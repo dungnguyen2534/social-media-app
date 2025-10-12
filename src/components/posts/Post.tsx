@@ -50,12 +50,15 @@ export default function Post({ post, className }: PostProps) {
                 </div>
               </div>
 
-              <time
-                dateTime={post.createdAt.toDateString()}
-                className="text-muted-foreground block text-xs"
-              >
-                {formatRelativeDate(post.createdAt)}
-              </time>
+              <div className="text-muted-foreground flex items-center gap-1 text-xs">
+                <time dateTime={post.createdAt.toDateString()}>
+                  {formatRelativeDate(post.createdAt)}
+                </time>
+
+                {post.createdAt.getTime() !== post.updatedAt.getTime() && (
+                  <>- Edited</>
+                )}
+              </div>
             </div>
           </Link>
         </MiniProfile>
@@ -94,9 +97,7 @@ export default function Post({ post, className }: PostProps) {
         </div>
 
         <div>
-          <ShareButton
-            postId={!!post.sharedPost ? post.sharedPost.id : post.id}
-          />
+          <ShareButton post={!!post.sharedPost ? post.sharedPost : post} />
           <BookmarkButton
             postId={post.id}
             initialState={{

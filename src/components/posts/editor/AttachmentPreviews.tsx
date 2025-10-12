@@ -48,7 +48,7 @@ export default function AttachmentPreviews({
   return (
     <div>
       <Carousel className="overflow-hidden rounded-md" setApi={setApi}>
-        <CarouselContent className="-ml-1">
+        <CarouselContent className="-ml-1 max-h-dvh">
           {isLoading ? (
             <div className="bg-background flex aspect-square w-full items-center justify-center">
               <div className="text-muted-foreground text-center">

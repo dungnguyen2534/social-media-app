@@ -2,36 +2,47 @@
 
 import useFollowerInfo from "@/hooks/useFollowerInfo";
 import api from "@/lib/ky";
-import { FollowerInfo, FollowingInfo } from "@/lib/type";
+import { FollowerInfo, FollowingInfo, UserData } from "@/lib/type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/auth-context";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { useState } from "react";
 
 interface FollowButtonProps {
-  userId: string;
+  user: UserData;
   initialState: FollowerInfo;
   className?: string;
 }
 
 export default function FollowButton({
-  userId,
+  user,
   initialState,
   className,
 }: FollowButtonProps) {
-  const { data } = useFollowerInfo(userId, initialState);
+  const { data } = useFollowerInfo(user.id, initialState);
   const session = useAuth();
   const signedInUserId = session?.user.id;
 
+  const [isUnfollowDialogOpen, setIsUnfollowDialogOpen] = useState(false);
+
   const queryClient = useQueryClient();
-  const followerQueryKey = ["follower-info", userId];
+  const followerQueryKey = ["follower-info", user.id];
   const followingQueryKey = ["following-info", signedInUserId];
 
   const { mutate } = useMutation({
     mutationFn: () => {
       return data.isFollowing
-        ? api.delete(`users/id/${userId}/followers`)
-        : api.post(`users/id/${userId}/followers`);
+        ? api.delete(`users/id/${user.id}/followers`)
+        : api.post(`users/id/${user.id}/followers`);
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: followerQueryKey });
@@ -67,8 +78,51 @@ export default function FollowButton({
   });
 
   return (
-    <Button variant="custom" onClick={() => mutate()} className={className}>
-      {data.isFollowing ? "Unfollow" : "Follow"}
-    </Button>
+    <>
+      <Button
+        variant="custom"
+        onClick={
+          data.isFollowing
+            ? () => setIsUnfollowDialogOpen(true)
+            : () => mutate()
+        }
+        className={className}
+      >
+        {data.isFollowing ? "Unfollow" : "Follow"}
+      </Button>
+
+      <Dialog
+        open={isUnfollowDialogOpen}
+        onOpenChange={setIsUnfollowDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Unfollow @{user.username}?</DialogTitle>
+            <hr />
+            <DialogDescription>
+              Their posts will no longer show up in your following feed.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              className="sm:w-24"
+              onClick={() => {
+                mutate();
+                setIsUnfollowDialogOpen(false);
+              }}
+            >
+              Unfollow
+            </Button>
+            <Button
+              className="sm:w-24"
+              variant="outline"
+              onClick={() => setIsUnfollowDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

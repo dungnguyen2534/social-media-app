@@ -20,7 +20,7 @@ import { ClipboardEvent, useEffect, useState } from "react";
 import SharedPost from "./SharedPost";
 import useMediaUpload from "./editor/useMediaUpload";
 import AttachmentPreviews from "./editor/AttachmentPreviews";
-import { cn, remoteMediaToAttachments } from "@/lib/utils";
+import { cn, plainTextToHtml, remoteMediaToAttachments } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import AddAttachmentsButton from "./editor/AddAttachmentsButton";
 import { useDropzone } from "@uploadthing/react";
@@ -57,7 +57,7 @@ export default function EditPostDialog({
   } = useMediaUpload();
 
   const editor = useEditor({
-    content: editorInput,
+    content: plainTextToHtml(editorInput),
     extensions: [
       StarterKit.configure({
         bold: false,
@@ -138,7 +138,11 @@ export default function EditPostDialog({
 
   // Uploadthing drag and drop
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: startUpload,
+    onDrop: (files) => {
+      if (post.sharedPost) return;
+      startUpload(files);
+      setIsAttachmentsDirty(true);
+    },
   });
 
   const rootProps = getRootProps();
@@ -146,6 +150,7 @@ export default function EditPostDialog({
 
   // Copy/paste media
   const onPaste = (e: ClipboardEvent<HTMLInputElement>) => {
+    if (post.sharedPost) return;
     const files = Array.from(e.clipboardData.items)
       .filter((item) => item.kind === "file")
       .map((item) => item.getAsFile()) as File[];
@@ -155,7 +160,7 @@ export default function EditPostDialog({
 
   return (
     <Dialog open={isEditPostDialogOpen} onOpenChange={setIsEditPostDialogOpen}>
-      <DialogContent className="flex h-screen !max-w-screen flex-col rounded-none p-5 lg:grid lg:h-fit lg:!max-w-lg lg:rounded-md">
+      <DialogContent className="responsive-dialog">
         <DialogTitle className="-mb-1 text-lg font-semibold">
           Edit post
         </DialogTitle>
@@ -174,7 +179,7 @@ export default function EditPostDialog({
                 editor={editor}
                 className={cn(
                   "bg-accent focus-within:ring-ring/50 white max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base transition-all focus-within:ring-[3px]",
-                  isDragActive && "outline-dashed",
+                  isDragActive && !post.sharedPost && "outline-dashed",
                 )}
                 onPaste={onPaste}
               />
@@ -218,7 +223,9 @@ export default function EditPostDialog({
                     startUpload(file);
                     setIsAttachmentsDirty(true);
                   }}
-                  disabled={isUploading || attachments.length >= 5}
+                  disabled={
+                    isUploading || attachments.length >= 5 || !!post.sharedPost
+                  }
                 />
                 <LoadingButton
                   onClick={onSubmit}

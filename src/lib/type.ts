@@ -29,6 +29,7 @@ export function getUserDataSelect(SignedInUserId?: string) {
               followerId: true,
             },
           },
+          usernameUpdatedAt: true,
         }
       : {}),
   } satisfies Prisma.UserSelect;

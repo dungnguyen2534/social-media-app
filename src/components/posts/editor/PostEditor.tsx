@@ -268,7 +268,7 @@ export default function PostEditor() {
             </Button>
           </div>
         </DialogTrigger>
-        <DialogContent className="flex h-screen !max-w-screen flex-col rounded-none p-5 lg:grid lg:h-fit lg:!max-w-lg lg:rounded-md">
+        <DialogContent className="responsive-dialog">
           <DialogTitle className="-mb-1 text-lg font-semibold">
             Create a post
           </DialogTitle>

@@ -29,7 +29,7 @@ export function formatRelativeDate(from: Date) {
   }
 }
 
-export const remoteMediaToAttachments = (media: Media): Attachment => {
+export function remoteMediaToAttachments(media: Media): Attachment {
   const mimeType = media.type.toLowerCase();
   const dummyFile = new File([], media.id, { type: mimeType });
 
@@ -39,4 +39,9 @@ export const remoteMediaToAttachments = (media: Media): Attachment => {
     mediaId: media.id,
     url: media.url,
   };
-};
+}
+
+export function plainTextToHtml(text: string): string {
+  const htmlContent = `<p>${text.trim().replace(/\n/g, "</p><p>")}</p>`;
+  return htmlContent;
+}

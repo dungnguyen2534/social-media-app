@@ -44,13 +44,15 @@ export default function SharedPost({ post, className }: SharedPostProps) {
                     @{post.user.username}
                   </div>
                 </div>
+                <div className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <time dateTime={post.createdAt.toDateString()}>
+                    {formatRelativeDate(post.createdAt)}
+                  </time>
 
-                <time
-                  dateTime={post.createdAt.toDateString()}
-                  className="text-muted-foreground block text-xs"
-                >
-                  {formatRelativeDate(post.createdAt)}
-                </time>
+                  {post.createdAt.getTime() !== post.updatedAt.getTime() && (
+                    <>- Edited</>
+                  )}
+                </div>
               </div>
             </Link>
           </MiniProfile>

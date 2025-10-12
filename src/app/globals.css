@@ -139,3 +139,7 @@
 .app-link {
   @apply text-blue-500 decoration-1 underline-offset-2 hover:underline;
 }
+
+.responsive-dialog {
+  @apply flex h-screen !max-w-screen flex-col overflow-y-auto rounded-none p-5 lg:grid lg:h-fit lg:max-h-dvh lg:!max-w-lg lg:rounded-md;
+}

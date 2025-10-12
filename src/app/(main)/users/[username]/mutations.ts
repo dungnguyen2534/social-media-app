@@ -32,7 +32,7 @@ export function useUpdateProfileMutation() {
     },
     onSuccess: async ([updatedUserResult, uploadAvatarResult]) => {
       if (isActionError(updatedUserResult)) {
-        console.error(updatedUserResult.error);
+        toast.error(updatedUserResult.error);
         return;
       }
 

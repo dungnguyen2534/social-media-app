@@ -44,7 +44,7 @@ export default async function Home() {
         <Suspense fallback={<TrendingTopicsSkeleton count={5} />}>
           <TrendingTopics />
         </Suspense>
-        <Suspense fallback={<WhoToFollowSkeleton count={3} />}>
+        <Suspense fallback={<WhoToFollowSkeleton count={5} />}>
           <WhoToFollow />
         </Suspense>
       </aside>

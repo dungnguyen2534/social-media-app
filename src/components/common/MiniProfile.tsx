@@ -77,7 +77,7 @@ export function MiniProfile({ children, user }: MiniProfileProps) {
             <>
               {signedInUser && (
                 <FollowButton
-                  userId={user.id}
+                  user={user}
                   initialState={followerInfo}
                   className="w-full"
                 />

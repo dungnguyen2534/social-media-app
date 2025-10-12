@@ -22,12 +22,6 @@ export async function WhoToFollow() {
       NOT: {
         id: session.user.id,
       },
-      ...(pathname?.startsWith("/users/") && {
-        username: {
-          not: pathname.split("/").pop(),
-        },
-      }),
-
       followers: {
         none: {
           followerId: session.user.id,
@@ -35,6 +29,11 @@ export async function WhoToFollow() {
       },
     },
     select: getUserDataSelect(session.user.id),
+    orderBy: {
+      followers: {
+        _count: "desc",
+      },
+    },
     take: 5,
   });
 
@@ -66,7 +65,7 @@ export async function WhoToFollow() {
               </Link>
             </MiniProfile>
             <FollowButton
-              userId={user.id}
+              user={user}
               initialState={{
                 followerCount: user._count.followers,
                 isFollowing: user.followers.some(
@@ -82,7 +81,7 @@ export async function WhoToFollow() {
   );
 }
 
-export function WhoToFollowSkeleton({ count = 3 }: { count?: number }) {
+export function WhoToFollowSkeleton({ count = 5 }: { count?: number }) {
   return (
     <SidebarSkeletonWrapper
       skeletonCount={count}
