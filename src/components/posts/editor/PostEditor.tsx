@@ -12,10 +12,10 @@ import LoadingButton from "@/components/common/LoadingButton";
 import { useSubmitPostMutation } from "../actions/create-post/mutations";
 import { isActionError } from "@/lib/action-error";
 import Link from "next/link";
-import { ArrowRight, ImagePlus, Loader2, PencilLine } from "lucide-react";
-import useMediaUpload, { Attachment } from "./useMediaUpload";
+import { ArrowRight, Loader2, PencilLine } from "lucide-react";
+import useMediaUpload from "./useMediaUpload";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, remoteMediaToAttachments } from "@/lib/utils";
 import { useDropzone } from "@uploadthing/react";
 import {
   Dialog,
@@ -28,24 +28,13 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/ky";
 import { Media } from "@prisma/client";
+import AddAttachmentsButton from "./AddAttachmentsButton";
 
 interface Draft {
   content: string;
   mediaIds: string[];
   mediaExpiresAt?: number;
 }
-
-const remoteDataToAttachments = (media: Media): Attachment => {
-  const mimeType = media.type.toLowerCase();
-  const dummyFile = new File([], media.id, { type: mimeType });
-
-  return {
-    file: dummyFile,
-    isUploading: false,
-    mediaId: media.id,
-    url: media.url,
-  };
-};
 
 export default function PostEditor() {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -182,7 +171,7 @@ export default function PostEditor() {
   useEffect(() => {
     if (remoteMedia) setIsDraftMediaLoaded(true);
 
-    const remoteData = remoteMedia?.map(remoteDataToAttachments) || [];
+    const remoteData = remoteMedia?.map(remoteMediaToAttachments) || [];
     const remoteDataIds = new Set(remoteData.map((m) => m.mediaId));
 
     setAttachments((prevAttachments) => {
@@ -347,44 +336,5 @@ export default function PostEditor() {
         </DialogContent>
       </Dialog>
     </div>
-  );
-}
-
-interface AddAttachmentsButtonProps {
-  onFilesSelected: (files: File[]) => void;
-  disabled: boolean;
-}
-
-function AddAttachmentsButton({
-  onFilesSelected,
-  disabled,
-}: AddAttachmentsButtonProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  return (
-    <>
-      <Button
-        variant="ghost"
-        size="icon"
-        disabled={disabled}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <ImagePlus className="size-6" />
-      </Button>
-      <input
-        type="file"
-        accept="image/*, video/*"
-        multiple
-        ref={fileInputRef}
-        className="sr-only hidden"
-        onChange={(e) => {
-          const files = Array.from(e.target.files || []);
-          if (files.length) {
-            onFilesSelected(files);
-            e.target.value = "";
-          }
-        }}
-      />
-    </>
   );
 }

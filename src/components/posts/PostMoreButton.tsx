@@ -7,12 +7,13 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { Button } from "../ui/button";
-import { Copy, MoreHorizontal, Trash2 } from "lucide-react";
+import { Copy, MoreHorizontal, SquarePen, Trash2 } from "lucide-react";
 import { DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu";
 import { PostData } from "@/lib/type";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/app/auth-context";
 import toast from "react-hot-toast";
+import EditPostDialog from "./EditPostDialog";
 
 interface PostMoreButtonProps {
   post: PostData;
@@ -26,6 +27,7 @@ export default function PostMoreButton({
   const session = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   const isUserPost = session?.user.id === post.user.id;
 
@@ -56,8 +58,18 @@ export default function PostMoreButton({
             <Copy className="mt-[0.1rem] mr-2 size-4" />
             Copy link
           </DropdownMenuItem>
+
           {isUserPost && (
             <>
+              <DropdownMenuItem
+                onClick={() => {
+                  setShowEditDialog(true);
+                  setIsMenuOpen(false);
+                }}
+              >
+                <SquarePen className="mt-[0.1rem] mr-2 size-4" />
+                Edit
+              </DropdownMenuItem>
               <hr />
               <DropdownMenuItem
                 onClick={() => {
@@ -72,10 +84,16 @@ export default function PostMoreButton({
         </DropdownMenuContent>
       </DropdownMenu>
 
+      <EditPostDialog
+        post={post}
+        isEditPostDialogOpen={showEditDialog}
+        setIsEditPostDialogOpen={() => setShowEditDialog(false)}
+      />
+
       <DeletePostDialog
         post={post}
-        open={showDeleteDialog}
-        onClose={() => setShowDeleteDialog(false)}
+        isDeletePostDialog={showDeleteDialog}
+        setIsDeletePostDialog={() => setShowDeleteDialog(false)}
       />
     </>
   );

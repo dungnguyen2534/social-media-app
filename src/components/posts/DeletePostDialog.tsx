@@ -15,23 +15,19 @@ import LoadingButton from "../common/LoadingButton";
 
 interface DeletePostDialogProps {
   post: PostData;
-  open: boolean;
-  onClose: () => void;
+  isDeletePostDialog: boolean;
+  setIsDeletePostDialog: (open: boolean) => void;
 }
 
 export default function DeletePostDialog({
   post,
-  open,
-  onClose,
+  isDeletePostDialog,
+  setIsDeletePostDialog,
 }: DeletePostDialogProps) {
   const mutation = useDeletePostMutation();
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open || !mutation.isPending) onClose();
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={isDeletePostDialog} onOpenChange={setIsDeletePostDialog}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete post</DialogTitle>
@@ -43,7 +39,11 @@ export default function DeletePostDialog({
         </DialogHeader>
         <DialogFooter>
           <LoadingButton
-            onClick={() => mutation.mutate(post.id, { onSuccess: onClose })}
+            onClick={() =>
+              mutation.mutate(post.id, {
+                onSuccess: () => setIsDeletePostDialog(false),
+              })
+            }
             loading={mutation.isPending}
             className="w-24"
           >
@@ -51,7 +51,7 @@ export default function DeletePostDialog({
           </LoadingButton>
           <Button
             variant="custom"
-            onClick={() => onClose()}
+            onClick={() => setIsDeletePostDialog(false)}
             disabled={mutation.isPending}
             className="w-24"
           >

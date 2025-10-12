@@ -19,7 +19,13 @@ export async function submitPost(input: {
   try {
     const { content, mediaIds, sharedPostId } = createPostSchema.parse(input);
 
-    // Ensure there are no nested shares, this only happens if a user modifies the frontend code.
+    if (mediaIds !== undefined && sharedPostId !== undefined) {
+      return {
+        error:
+          "A post cannot have both media attachments and a shared post simultaneously.",
+      };
+    }
+
     if (sharedPostId) {
       const sharedPostData = await prisma.post.findUnique({
         where: {

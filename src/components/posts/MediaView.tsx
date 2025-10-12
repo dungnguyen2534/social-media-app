@@ -37,6 +37,7 @@ export default function MediaView({ attachments, className }: MediaViewProps) {
       <Carousel
         className={cn("relative overflow-hidden", className)}
         setApi={setApi}
+        key={attachments.length}
       >
         <CarouselContent className="-ml-1">
           {attachments.map((a) => {

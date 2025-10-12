@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { formatDate, formatDistanceToNowStrict } from "date-fns";
+import { Media } from "@prisma/client";
+import { Attachment } from "@/components/posts/editor/useMediaUpload";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -26,3 +28,15 @@ export function formatRelativeDate(from: Date) {
     }
   }
 }
+
+export const remoteMediaToAttachments = (media: Media): Attachment => {
+  const mimeType = media.type.toLowerCase();
+  const dummyFile = new File([], media.id, { type: mimeType });
+
+  return {
+    file: dummyFile,
+    isUploading: false,
+    mediaId: media.id,
+    url: media.url,
+  };
+};
