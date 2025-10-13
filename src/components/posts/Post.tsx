@@ -9,19 +9,25 @@ import Linkify from "../common/Linkify";
 import { MiniProfile } from "../common/MiniProfile";
 import LikeButton from "./LikeButton";
 import { useAuth } from "@/app/auth-context";
-import { Button } from "../ui/button";
-import { MessageCircle } from "lucide-react";
 import BookmarkButton from "./BookmarkButton";
 import ShareButton from "./ShareButton";
 import MediaView from "./MediaView";
 import SharedPost from "./SharedPost";
+import CommentButton from "./CommentButton";
 
 interface PostProps {
   post: PostData;
   className?: string;
+  noCommentButton?: boolean;
+  postMoreButtonStyle?: string;
 }
 
-export default function Post({ post, className }: PostProps) {
+export default function Post({
+  post,
+  className,
+  noCommentButton,
+  postMoreButtonStyle,
+}: PostProps) {
   const session = useAuth();
 
   return (
@@ -63,12 +69,15 @@ export default function Post({ post, className }: PostProps) {
           </Link>
         </MiniProfile>
 
-        <PostMoreButton post={post} className="-mt-5 ml-auto" />
+        <PostMoreButton
+          post={post}
+          className={cn("-mt-5 ml-auto", postMoreButtonStyle)}
+        />
       </div>
       <Linkify>
-        <div className="my-1 text-base break-words whitespace-pre-line">
+        <p className="my-1 text-base break-words whitespace-pre-line">
           {post.content}
-        </div>
+        </p>
       </Linkify>
 
       {!!post.attachments.length && (
@@ -90,14 +99,17 @@ export default function Post({ post, className }: PostProps) {
             }}
             disabled={!session}
           />
-          <Button title="Comment" variant="ghost" disabled={!session}>
-            <MessageCircle className="size-5" />
-            Comment
-          </Button>
+
+          {!noCommentButton && (
+            <CommentButton post={post} disabled={!session} />
+          )}
         </div>
 
         <div>
-          <ShareButton post={!!post.sharedPost ? post.sharedPost : post} />
+          <ShareButton
+            post={!!post.sharedPost ? post.sharedPost : post}
+            disabled={!session}
+          />
           <BookmarkButton
             postId={post.id}
             initialState={{

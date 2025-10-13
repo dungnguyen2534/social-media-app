@@ -85,7 +85,7 @@ export default function EditPostDialog({
     mutation.mutate(
       {
         postId: post.id,
-        input: {
+        data: {
           content: editorInput,
           mediaIds: !!attachments.length
             ? (attachments.map((a) => a.mediaId).filter(Boolean) as string[])

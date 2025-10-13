@@ -27,9 +27,12 @@ model User {
     updatedAt         DateTime  @updatedAt
     usernameUpdatedAt DateTime?
 
-    posts     Post[]
-    likes     Like[]
-    bookmarks Bookmark[]
+    posts      Post[]
+    post_likes PostLike[]
+    bookmarks  Bookmark[]
+
+    comments      Comment[]
+    comment_likes CommentLike[]
 
     following Follow[] @relation("Following")
     followers Follow[] @relation("Followers")
@@ -98,7 +101,8 @@ model Post {
     sharedPostId String?
     sharedPost   Post?   @relation("SharedPost", fields: [sharedPostId], references: [id], onDelete: SetNull)
 
-    likes     Like[]
+    likes     PostLike[]
+    comments  Comment[]
     shares    Post[]     @relation("SharedPost")
     bookmarks Bookmark[]
 
@@ -125,14 +129,14 @@ model Media {
     @@map("post_media")
 }
 
-model Like {
+model PostLike {
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     postId String
     post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
     @@unique([userId, postId])
-    @@map("likes")
+    @@map("post_likes")
 }
 
 model Bookmark {
@@ -146,4 +150,34 @@ model Bookmark {
 
     @@unique([userId, postId])
     @@map("bookmarks")
+}
+
+model Comment {
+    id     String @id @default(cuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    postId String
+    post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+    content String
+
+    parentCommentId String?
+    parent          Comment?      @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+    replies         Comment[]     @relation("CommentReplies")
+    likes           CommentLike[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("comments")
+}
+
+model CommentLike {
+    userId    String
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    commentId String
+    comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, commentId])
+    @@map("comments_likes")
 }

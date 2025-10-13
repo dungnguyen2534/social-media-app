@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin 'tailwind-scrollbar';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -141,5 +142,5 @@
 }
 
 .responsive-dialog {
-  @apply flex h-screen !max-w-screen flex-col overflow-y-auto rounded-none p-5 lg:grid lg:h-fit lg:max-h-dvh lg:!max-w-lg lg:rounded-md;
+  @apply scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent flex h-screen !max-w-screen flex-col overflow-y-auto rounded-none p-5 lg:grid lg:h-fit lg:max-h-dvh lg:!max-w-[36.875rem] lg:rounded-md;
 }

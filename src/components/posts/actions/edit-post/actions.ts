@@ -6,21 +6,24 @@ import { prisma } from "@/lib/prisma";
 import { PostData, getPostDataInclude } from "@/lib/type";
 import { createPostSchema } from "@/lib/validation";
 
-export async function editPost(
-  postId: string,
-  input: {
+export async function editPost({
+  postId,
+  data,
+}: {
+  postId: string;
+  data: {
     content: string | null;
     mediaIds?: string[];
     sharedPostId?: string;
-  },
-): ActionResult<PostData> {
+  };
+}): ActionResult<PostData> {
   const session = await getSessionData();
   if (!session || !session.user.id) {
     return { error: "Unauthorized" };
   }
 
   try {
-    const { content, mediaIds, sharedPostId } = createPostSchema.parse(input);
+    const { content, mediaIds, sharedPostId } = createPostSchema.parse(data);
 
     if (mediaIds !== undefined && sharedPostId !== undefined) {
       return {

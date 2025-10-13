@@ -39,6 +39,7 @@ export type UserData = Prisma.UserGetPayload<{
   select: ReturnType<typeof getUserDataSelect>;
 }>;
 
+// Post data
 export function getPostDataInclude(SignedInUserId?: string) {
   return {
     user: { select: getUserDataSelect(SignedInUserId) },
@@ -70,7 +71,7 @@ export function getPostDataInclude(SignedInUserId?: string) {
     _count: {
       select: {
         likes: true,
-        shares: true,
+        comments: true,
       },
     },
   } satisfies Prisma.PostInclude;
@@ -90,6 +91,28 @@ export type PostsPage = {
   nextCursor: string | null;
 };
 
+// Comment data
+export function getCommentDataInclude(SignedInUserId?: string) {
+  return {
+    user: { select: getUserDataSelect(SignedInUserId) },
+    _count: {
+      select: {
+        replies: true,
+      },
+    },
+  } satisfies Prisma.CommentInclude;
+}
+
+export type CommentData = Prisma.CommentGetPayload<{
+  include: ReturnType<typeof getCommentDataInclude>;
+}>;
+
+export type CommentsPage = {
+  comments: CommentData[];
+  nextCursor: string | null;
+};
+
+// Additional info types
 export type FollowerInfo = {
   followerCount: number;
   isFollowing?: boolean;

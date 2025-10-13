@@ -63,3 +63,12 @@ export const createPostSchema = z
   );
 
 export type createPostData = z.infer<typeof createPostSchema>;
+
+// Create comment validation
+export const createCommentSchema = z.object({
+  parentCommentId: z.string().optional().nullable(),
+  content: requiredString.max(
+    2200,
+    "Comment must be less than 2200 characters", // Instagram limit
+  ),
+});

@@ -58,7 +58,13 @@ export default function LikeButton({
   });
 
   return (
-    <Button title="Like" variant="ghost" onClick={() => mutate()} {...rest}>
+    <Button
+      title="Like"
+      variant="ghost"
+      onClick={() => mutate()}
+      {...rest}
+      className="gap-1"
+    >
       <Heart
         className={cn(
           "size-5",

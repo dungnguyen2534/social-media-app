@@ -10,8 +10,6 @@ import { editPost } from "./actions";
 import { isActionError } from "@/lib/action-error";
 import toast from "react-hot-toast";
 
-type EditPostArgs = Parameters<typeof editPost>;
-
 export function useEditPostMutation() {
   const queryClient = useQueryClient();
 
@@ -19,13 +17,7 @@ export function useEditPostMutation() {
   const pathname = usePathname();
 
   const mutation = useMutation({
-    mutationFn: ({
-      postId,
-      input,
-    }: {
-      postId: EditPostArgs[0];
-      input: EditPostArgs[1];
-    }) => editPost(postId, input),
+    mutationFn: editPost,
 
     onSuccess: async (result) => {
       if (isActionError(result)) {

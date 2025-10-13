@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { PostData, getPostDataInclude } from "@/lib/type";
 import { createPostSchema } from "@/lib/validation";
 
-export async function submitPost(input: {
+export async function submitPost(data: {
   content: string;
   mediaIds?: string[];
   sharedPostId?: string;
@@ -17,7 +17,7 @@ export async function submitPost(input: {
   }
 
   try {
-    const { content, mediaIds, sharedPostId } = createPostSchema.parse(input);
+    const { content, mediaIds, sharedPostId } = createPostSchema.parse(data);
 
     if (mediaIds !== undefined && sharedPostId !== undefined) {
       return {

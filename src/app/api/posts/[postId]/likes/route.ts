@@ -66,7 +66,7 @@ export async function POST(
   const { postId } = await params;
 
   try {
-    await prisma.like.upsert({
+    await prisma.postLike.upsert({
       where: {
         userId_postId: {
           userId,
@@ -100,7 +100,7 @@ export async function DELETE(
   const { postId } = await params;
 
   try {
-    await prisma.like.deleteMany({
+    await prisma.postLike.deleteMany({
       where: {
         userId,
         postId,
