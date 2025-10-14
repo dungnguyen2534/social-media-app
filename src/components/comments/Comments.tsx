@@ -46,8 +46,10 @@ export default function Comments({ post }: CommentsProps) {
       });
     }) || [];
 
+  if (post._count.comments === 0) return null;
+
   if (status === "pending") {
-    return <CommentSkeletons count={2} />;
+    return <CommentSkeletons count={1} />;
   }
 
   return (

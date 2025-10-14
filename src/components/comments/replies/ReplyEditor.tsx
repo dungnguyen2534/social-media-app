@@ -7,13 +7,13 @@ import StarterKit from "@tiptap/starter-kit";
 import {
   useSubmitReplyMutation,
   useUpdatePostCommentCount,
-} from "./actions/create-comments/mutations";
+} from "../actions/create-comments/mutations";
 import { CommentData, PostData } from "@/lib/type";
 import { isActionError } from "@/lib/action-error";
 import toast from "react-hot-toast";
-import LoadingButton from "../common/LoadingButton";
+import LoadingButton from "../../common/LoadingButton";
 import { SendHorizontal } from "lucide-react";
-import { useCommentContext } from "./comment-context";
+import { useCommentContext } from "../comment-context";
 import { useAuth } from "@/app/auth-context";
 
 interface ReplyEditorProps {
@@ -31,7 +31,7 @@ export default function ReplyEditor({
 }: ReplyEditorProps) {
   const session = useAuth();
 
-  const { setNewReplies } = useCommentContext();
+  const { setNewLocalReplies } = useCommentContext();
   const mutation = useSubmitReplyMutation(parentCommentId);
   const { incrementCommentCount } = useUpdatePostCommentCount();
 
@@ -82,7 +82,7 @@ export default function ReplyEditor({
           }
 
           if (onReplySuccess) onReplySuccess(result);
-          setNewReplies((prev) => [...prev, result]);
+          setNewLocalReplies((prev) => [...prev, result]);
           incrementCommentCount(post.id);
 
           editor?.commands.clearContent();

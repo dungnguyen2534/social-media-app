@@ -149,7 +149,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
 
         {user.bio && (
           <Linkify>
-            <p className="mb-1 overflow-hidden break-words whitespace-pre-line">
+            <p className="mb-1 overflow-hidden break-words break-all whitespace-pre-line">
               {user.bio}
             </p>
           </Linkify>

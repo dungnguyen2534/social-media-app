@@ -21,7 +21,6 @@ export default async function MobileNavbar() {
             <PostEditor />
             <MobileSearchButton />
             <Notification />
-            {/*TODO: Add messages here later */}
             <HamburgerMenu />
           </div>
         ) : (

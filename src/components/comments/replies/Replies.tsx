@@ -1,12 +1,12 @@
 "use client";
 
 import { CommentData, CommentsPage, PostData } from "@/lib/type";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import api from "@/lib/ky";
 import Reply from "./Reply";
-import { useCommentContext } from "./comment-context";
-import CommentSkeletons from "./CommentSkeletons";
+import { useCommentContext } from "../comment-context";
+import CommentSkeletons from "../CommentSkeletons";
 
 interface RepliesProps {
   post: PostData;
@@ -14,7 +14,7 @@ interface RepliesProps {
 }
 
 export default function Replies({ post, parentComment }: RepliesProps) {
-  const { newReplies } = useCommentContext();
+  const { newLocalReplies, setNewLocalReplies } = useCommentContext();
   const [showReplies, setShowReplies] = useState(false);
 
   const { data, status, hasNextPage, fetchNextPage, isFetchingNextPage } =
@@ -33,12 +33,28 @@ export default function Replies({ post, parentComment }: RepliesProps) {
       enabled: showReplies,
     });
 
-  const fetchedReplies = data?.pages.flatMap((page) => page.comments) || [];
-  const isNewReplyFetched = newReplies
-    ? newReplies.every((newReply) =>
-        fetchedReplies.some((fetchedReply) => fetchedReply.id === newReply.id),
-      )
-    : false;
+  const fetchedReplies = useMemo(
+    () => data?.pages.flatMap((page) => page.comments) || [],
+    [data?.pages],
+  );
+
+  useEffect(() => {
+    if (
+      fetchedReplies.length > 0 &&
+      newLocalReplies &&
+      newLocalReplies.length > 0
+    ) {
+      const fetchedReplyIds = new Set(fetchedReplies.map((r) => r.id));
+
+      const filterednewLocalReplies = newLocalReplies.filter(
+        (newReply) => !fetchedReplyIds.has(newReply.id),
+      );
+
+      if (filterednewLocalReplies.length !== newLocalReplies.length) {
+        setNewLocalReplies(filterednewLocalReplies);
+      }
+    }
+  }, [fetchedReplies, setNewLocalReplies, newLocalReplies]);
 
   return (
     <div className="my-1">
@@ -89,9 +105,8 @@ export default function Replies({ post, parentComment }: RepliesProps) {
         </div>
       )}
 
-      {newReplies &&
-        !isNewReplyFetched &&
-        newReplies.map((r) => (
+      {newLocalReplies &&
+        newLocalReplies.map((r) => (
           <Reply
             reply={r}
             post={post}

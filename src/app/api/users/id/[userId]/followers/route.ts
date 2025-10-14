@@ -17,7 +17,6 @@ export async function GET(
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
-        // TODO: Get followers list if needed
         followers: {
           where: { followerId: session.user.id },
           select: { followerId: true },

@@ -95,8 +95,17 @@ export type PostsPage = {
 export function getCommentDataInclude(SignedInUserId?: string) {
   return {
     user: { select: getUserDataSelect(SignedInUserId) },
+    likes: {
+      where: {
+        userId: SignedInUserId,
+      },
+      select: {
+        userId: true,
+      },
+    },
     _count: {
       select: {
+        likes: true,
         replies: true,
       },
     },
@@ -129,4 +138,9 @@ export type LikeInfo = {
 
 export type BookmarkInfo = {
   isBookmarkedByUser: boolean;
+};
+
+export type CommentLikeInfo = {
+  likes: number;
+  isLikedByUser?: boolean;
 };

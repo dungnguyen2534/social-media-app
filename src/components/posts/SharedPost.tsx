@@ -59,7 +59,7 @@ export default function SharedPost({ post, className }: SharedPostProps) {
         </div>
 
         <Linkify>
-          <div className="text-base break-words whitespace-pre-line">
+          <div className="text-base break-words break-all whitespace-pre-line">
             {post.content}
           </div>
         </Linkify>

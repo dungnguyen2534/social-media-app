@@ -6,15 +6,15 @@ interface CommentSkeletonsProps {
 
 export default function CommentSkeletons({ count }: CommentSkeletonsProps) {
   const widthClasses = [
+    "w-16",
+    "w-20",
+    "w-24",
+    "w-28",
     "w-32",
     "w-36",
     "w-40",
     "w-44",
     "w-48",
-    "w-52",
-    "w-56",
-    "w-60",
-    "w-64",
   ];
 
   const skeletonFixedStyles =

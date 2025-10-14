@@ -179,5 +179,5 @@ model CommentLike {
     comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
     @@unique([userId, commentId])
-    @@map("comments_likes")
+    @@map("comment_likes")
 }

@@ -4,8 +4,8 @@ import { CommentData } from "@/lib/type";
 import { createContext, useContext, useState } from "react";
 
 interface CommentContextType {
-  newReplies: CommentData[];
-  setNewReplies: React.Dispatch<React.SetStateAction<CommentData[]>>;
+  newLocalReplies: CommentData[];
+  setNewLocalReplies: React.Dispatch<React.SetStateAction<CommentData[]>>;
 }
 
 const CommentContext = createContext<CommentContextType | null>(null);
@@ -15,10 +15,10 @@ export function CommentContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [newReplies, setNewReplies] = useState<CommentData[]>([]);
+  const [newLocalReplies, setNewLocalReplies] = useState<CommentData[]>([]);
 
   return (
-    <CommentContext.Provider value={{ newReplies, setNewReplies }}>
+    <CommentContext.Provider value={{ newLocalReplies, setNewLocalReplies }}>
       {children}
     </CommentContext.Provider>
   );

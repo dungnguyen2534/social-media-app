@@ -65,7 +65,6 @@ export default function FollowingFeed() {
         <Post post={post} className="mb-1 lg:mb-2" key={post.id} />
       ))}
 
-      {/* TODO: skeleton*/}
       {isFetchingNextPage && <FeedSkeletons count={2} />}
     </InfiniteScrollContainer>
   );

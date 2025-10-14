@@ -17,7 +17,6 @@ export async function GET(
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
-        // TODO: Get following list if needed
         _count: {
           select: { following: true },
         },
