@@ -42,7 +42,7 @@ export default function CommentButton({ post, ...rest }: LikeButtonProps) {
       </Button>
 
       <Dialog open={openCommentDialog} onOpenChange={setOpenCommentDialog}>
-        <DialogContent className="responsive-dialog [&>button:last-child]:hover:bg-accent !p-0 lg:!max-h-[90dvh] [&>button:last-child]:top-[0.85rem] [&>button:last-child]:flex [&>button:last-child]:aspect-square [&>button:last-child]:h-9 [&>button:last-child]:items-center [&>button:last-child]:justify-center [&>button:last-child]:rounded-full">
+        <DialogContent className="responsive-dialog [&>button:last-child]:hover:bg-accent !p-0 lg:!h-[90dvh] [&>button:last-child]:top-[0.85rem] [&>button:last-child]:flex [&>button:last-child]:aspect-square [&>button:last-child]:h-9 [&>button:last-child]:items-center [&>button:last-child]:justify-center [&>button:last-child]:rounded-full">
           <div className="relative space-y-3">
             <div className="p-0">
               <DialogTitle className="hidden" />
@@ -59,10 +59,9 @@ export default function CommentButton({ post, ...rest }: LikeButtonProps) {
             <div className="mb-0 px-5">
               <Comments post={post} />
             </div>
-
-            <div className="bg-card sticky bottom-0 left-0 p-5">
-              <CommentEditor post={post} />
-            </div>
+          </div>
+          <div className="sticky bottom-0 left-0 mt-auto h-fit">
+            <CommentEditor post={post} />
           </div>
         </DialogContent>
       </Dialog>

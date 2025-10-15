@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-const requiredString = z.string().trim().min(1, "This field is required");
+export const requiredString = z
+  .string()
+  .trim()
+  .min(1, "This field is required");
 
 // Sign in validation
 export const emailSignInSchema = z.object({
@@ -65,10 +68,35 @@ export const createPostSchema = z
 export type createPostData = z.infer<typeof createPostSchema>;
 
 // Create comment validation
-export const createCommentSchema = z.object({
-  parentCommentId: z.string().optional().nullable(),
-  content: requiredString.max(
-    2200,
-    "Comment must be less than 2200 characters", // Instagram limit
-  ),
+export const gifDetailsSchema = z.object({
+  gifId: requiredString,
+  url: requiredString,
+  title: z.string().optional(),
+  width: z.number().int().positive("Width must be a positive integer."),
+  height: z.number().int().positive("Height must be a positive integer."),
 });
+
+export type gifDetails = z.infer<typeof gifDetailsSchema>;
+
+export const createCommentSchema = z
+  .object({
+    parentCommentId: z.string().optional().nullable(),
+    content: z
+      .string()
+      .max(2200, "Comment must be less than 2200 characters (Instagram limit)")
+      .optional(),
+    gifDetails: gifDetailsSchema.optional(),
+  })
+  .refine(
+    (data) => {
+      const hasContent = !!data.content && data.content.trim().length > 0;
+      const hasGif = !!data.gifDetails;
+      return hasContent || hasGif;
+    },
+    {
+      message: "A comment must contain either text content, a GIF, or both.",
+      path: ["content", "gifDetails"],
+    },
+  );
+
+export type createCommentData = z.infer<typeof createCommentSchema>;

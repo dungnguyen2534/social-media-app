@@ -39,11 +39,7 @@ export default function Replies({ post, parentComment }: RepliesProps) {
   );
 
   useEffect(() => {
-    if (
-      fetchedReplies.length > 0 &&
-      newLocalReplies &&
-      newLocalReplies.length > 0
-    ) {
+    if (fetchedReplies.length > 0 && newLocalReplies.length > 0) {
       const fetchedReplyIds = new Set(fetchedReplies.map((r) => r.id));
 
       const filterednewLocalReplies = newLocalReplies.filter(
@@ -105,7 +101,7 @@ export default function Replies({ post, parentComment }: RepliesProps) {
         </div>
       )}
 
-      {newLocalReplies &&
+      {newLocalReplies.length > 0 &&
         newLocalReplies.map((r) => (
           <Reply
             reply={r}

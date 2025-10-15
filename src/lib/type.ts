@@ -95,6 +95,7 @@ export type PostsPage = {
 export function getCommentDataInclude(SignedInUserId?: string) {
   return {
     user: { select: getUserDataSelect(SignedInUserId) },
+    gif: true,
     likes: {
       where: {
         userId: SignedInUserId,
@@ -143,4 +144,15 @@ export type BookmarkInfo = {
 export type CommentLikeInfo = {
   likes: number;
   isLikedByUser?: boolean;
+};
+
+export type Gif = {
+  id: string;
+  title: string;
+  media_formats: {
+    webp: {
+      url: string;
+      dims: number[];
+    };
+  };
 };

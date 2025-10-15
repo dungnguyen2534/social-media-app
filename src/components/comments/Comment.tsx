@@ -13,6 +13,7 @@ import { CommentContextProvider } from "./comment-context";
 import { useAuth } from "@/app/auth-context";
 import CommentLikeButton from "./CommentLikeButton";
 import { Heart } from "lucide-react";
+import Image from "next/image";
 
 interface CommentProps {
   post: PostData;
@@ -28,35 +29,59 @@ export default function Comment({ post, comment, className }: CommentProps) {
 
   return (
     <CommentContextProvider>
-      <div className={cn("flex gap-3", className)}>
-        <MiniProfile user={comment.user}>
-          <Link href={`/users/${comment.userId}`}>
-            <UserAvatar avatarUrl={comment.user.image} />
-          </Link>
-        </MiniProfile>
-        <div className="flex-1">
-          <div className="bg-accent relative min-h-9 w-fit rounded-md px-3 py-2 shadow-sm">
-            <MiniProfile user={comment.user}>
-              <Link href={`/users/${comment.userId}`} className="font-medium">
-                {comment.user.username}
-              </Link>
-            </MiniProfile>
+      <div className={className}>
+        <div className="flex gap-3">
+          <MiniProfile user={comment.user}>
+            <Link href={`/users/${comment.userId}`}>
+              <UserAvatar avatarUrl={comment.user.image} />
+            </Link>
+          </MiniProfile>
+          <div className="w-fit">
+            <div>
+              <div
+                className={cn(
+                  "bg-accent relative min-h-9 w-full px-3 py-2",
+                  comment.gif && !comment.content
+                    ? "rounded-t-md"
+                    : "rounded-md",
+                )}
+              >
+                <MiniProfile user={comment.user}>
+                  <Link
+                    href={`/users/${comment.userId}`}
+                    className="font-medium"
+                  >
+                    {comment.user.username}
+                  </Link>
+                </MiniProfile>
 
-            <Linkify>
-              <p className="text-base break-words break-all whitespace-pre-line">
-                {comment.content}
-              </p>
-            </Linkify>
+                <Linkify>
+                  <p className="text-base break-words break-all whitespace-pre-line">
+                    {comment.content}
+                  </p>
+                </Linkify>
+              </div>
 
-            {comment._count.likes > 0 && (
-              <span className="bg-card absolute -right-3 -bottom-2 flex items-center justify-center gap-1 rounded-full px-1.5 text-xs shadow-sm outline-black/20 dark:outline-1">
-                <Heart className="size-3 fill-red-500 text-red-500" />
-                {formatNumber(comment._count.likes)}
-              </span>
-            )}
+              {comment.gif && (
+                <div className="relative">
+                  <Image
+                    alt={comment.gif.title || "gif"}
+                    src={comment.gif.url}
+                    width={comment.gif.width}
+                    height={comment.gif.height}
+                    key={comment.gif.id}
+                    className={
+                      comment.content ? "mt-1 rounded-md" : "rounded-b-md"
+                    }
+                  />
+                </div>
+              )}
+            </div>
           </div>
+        </div>
 
-          <div className="text-muted-foreground mt-1.5 w-full space-x-3 text-xs">
+        <div className="mt-1.5 ml-12">
+          <div className="text-muted-foreground flex items-center gap-3 text-xs">
             <CommentLikeButton
               postId={post.id}
               commentId={comment.id}
@@ -78,6 +103,8 @@ export default function Comment({ post, comment, className }: CommentProps) {
             <time dateTime={comment.createdAt.toDateString()}>
               {formatRelativeDate(comment.createdAt)}
             </time>
+
+            <CommentLikeCount count={comment._count.likes} />
           </div>
 
           {showReplyEditor && (
@@ -97,5 +124,26 @@ export default function Comment({ post, comment, className }: CommentProps) {
         </div>
       </div>
     </CommentContextProvider>
+  );
+}
+
+interface CommentLikeCountProps {
+  count: number;
+  className?: string;
+}
+
+function CommentLikeCount({ count, className }: CommentLikeCountProps) {
+  if (count === 0) return null;
+
+  return (
+    <span
+      className={cn(
+        "bg-card dark:bg-background/35 flex w-fit items-center justify-center gap-1 rounded-full px-1.5 text-xs shadow-sm outline-black/15 dark:outline-1",
+        className,
+      )}
+    >
+      <Heart className="size-3 fill-red-500 text-red-500" />
+      {formatNumber(count)}
+    </span>
   );
 }

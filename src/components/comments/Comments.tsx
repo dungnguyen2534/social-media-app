@@ -6,6 +6,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import InfiniteScrollContainer from "../common/InfiniteScrollContainer";
 import Comment from "./Comment";
 import CommentSkeletons from "./CommentSkeletons";
+import { MessageCircleDashed } from "lucide-react";
 
 interface CommentsProps {
   post: PostData;
@@ -46,7 +47,15 @@ export default function Comments({ post }: CommentsProps) {
       });
     }) || [];
 
-  if (post._count.comments === 0) return null;
+  if (post._count.comments === 0)
+    return (
+      <div className="bg-card mt-16 flex h-fit flex-col gap-8 p-5">
+        <p className="flex flex-col items-center gap-10 text-center text-base font-medium">
+          <MessageCircleDashed className="size-24" />
+          No comments yet, be the first!
+        </p>
+      </div>
+    );
 
   if (status === "pending") {
     return <CommentSkeletons count={1} />;

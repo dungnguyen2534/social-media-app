@@ -159,12 +159,13 @@ model Comment {
     postId String
     post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-    content String
+    content String?
 
     parentCommentId String?
     parent          Comment?      @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
     replies         Comment[]     @relation("CommentReplies")
     likes           CommentLike[]
+    gif             Gif?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -180,4 +181,19 @@ model CommentLike {
 
     @@unique([userId, commentId])
     @@map("comment_likes")
+}
+
+model Gif {
+    id String @id @default(cuid())
+
+    gifId  String
+    title  String?
+    url    String
+    width  Int
+    height Int
+
+    commentId String  @unique
+    comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+    @@map("gifs")
 }
