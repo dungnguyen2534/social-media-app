@@ -8,8 +8,8 @@ export const useGifSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["gifs-search-results", searchTerm],
+  const { data, isLoading, isError, isFetching, isFetched } = useQuery({
+    queryKey: ["gifs-search-results", debouncedSearchTerm],
     queryFn: async () => {
       const response = await api
         .get(`tenor/search?q=${debouncedSearchTerm}&limit=10`)
@@ -27,6 +27,8 @@ export const useGifSearch = () => {
     setSearchTerm,
     results: data,
     isLoading: isLoading || isFetching,
+    isFetched,
     isError,
+    debouncedSearchTerm,
   };
 };

@@ -87,7 +87,7 @@ export default function CommentEditor({ post }: CommentEditorProps) {
     <div>
       {gif && (
         <div
-          className={`relative mb-0.5 ml-5 sm:ml-20 h-[${gif.media_formats.webp.dims[1]}] w-52`}
+          className={`relative -mb-2 ml-17 h-[${gif.media_formats.webp.dims[1]}] w-32`}
         >
           <Image
             alt={gif.title}
@@ -105,39 +105,42 @@ export default function CommentEditor({ post }: CommentEditorProps) {
           </button>
         </div>
       )}
-      <div className="bg-card flex items-end justify-between gap-3 p-5">
-        <UserAvatar
-          avatarUrl={session?.user.image}
-          className="hidden h-12 w-12 sm:block"
-        />
+      <div className="bg-card flex items-start justify-between gap-3 px-5 py-3">
+        <UserAvatar avatarUrl={session?.user.image} />
 
         <div className="flex flex-1 flex-col gap-1">
-          <div className="group relative flex w-full items-center">
+          <div className="group bg-accent relative w-full items-center rounded-md">
             <EditorContent
               editor={editor}
               className={cn(
-                "bg-accent white max-h-[20rem] w-full overflow-y-auto px-5 py-3 text-base transition-all",
-                "rounded-tl-md rounded-bl-md",
+                "bg-accent white max-h-[20rem] w-full overflow-y-auto rounded-md px-5 pt-3 text-base transition-all",
               )}
               disabled={!session}
             />
-            <GifButton
-              onGifSelect={setGif}
-              className={cn("h-12 rounded-none", "rounded-tr-md rounded-br-md")}
-            />
+            <div className="flex items-center justify-between p-1">
+              <div>
+                <GifButton
+                  onGifSelect={setGif}
+                  className="hover:bg-input/50 text-muted-foreground hover:text-primary shadow-none"
+                />
+              </div>
+              <div>
+                <LoadingButton
+                  loading={mutation.isPending}
+                  onClick={onSubmit}
+                  size="icon"
+                  variant="secondary"
+                  className="hover:bg-input/50 shadow-none"
+                  disabled={!session}
+                >
+                  <SendHorizontal className="size-5" />
+                </LoadingButton>
+              </div>
+            </div>
 
             <div className="group-focus-within:ring-ring/50 pointer-events-none absolute inset-0 rounded-md transition-all group-focus-within:ring-[3px]"></div>
           </div>
         </div>
-
-        <LoadingButton
-          loading={mutation.isPending}
-          onClick={onSubmit}
-          className="h-12 w-20"
-          disabled={!session}
-        >
-          <SendHorizontal className="size-5" />
-        </LoadingButton>
       </div>
     </div>
   );

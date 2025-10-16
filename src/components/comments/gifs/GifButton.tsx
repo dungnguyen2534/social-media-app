@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { ImagePlay } from "lucide-react";
+import { ImagePlay, Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { useGifSearch } from "./useGifSearch";
 import Image from "next/image";
@@ -22,11 +22,19 @@ interface GifButtonProps {
 }
 
 export default function GifButton({ className, onGifSelect }: GifButtonProps) {
-  const { searchTerm, setSearchTerm, results: searchResults } = useGifSearch();
   const [open, setOpen] = useState(false);
 
-  const { data: featuredGifs } = useQuery({
-    queryKey: ["gifs-featured", searchTerm],
+  const {
+    searchTerm,
+    setSearchTerm,
+    results: searchResults,
+    isLoading,
+    isFetched,
+    debouncedSearchTerm,
+  } = useGifSearch();
+
+  const { data: featuredGifs, status } = useQuery({
+    queryKey: ["gifs-featured"],
     queryFn: async () => {
       const response = await api.get(`tenor/featured?limit=10`).json<{
         results: Gif[];
@@ -36,12 +44,17 @@ export default function GifButton({ className, onGifSelect }: GifButtonProps) {
     },
   });
 
-  const gifsData = searchResults || featuredGifs;
+  const gifsData: Gif[] | undefined =
+    debouncedSearchTerm === "" ? featuredGifs : searchResults;
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" className={cn("h-full", className)}>
+        <Button
+          variant="secondary"
+          className={cn("aspect-square h-full p-1", className)}
+          size="icon"
+        >
           <ImagePlay className="size-5" />
         </Button>
       </DropdownMenuTrigger>
@@ -56,23 +69,36 @@ export default function GifButton({ className, onGifSelect }: GifButtonProps) {
           className="mb-1"
         />
 
-        <div className="scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent flex-1 overflow-y-auto">
+        <div className="scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent relative flex-1 overflow-y-auto">
           <div className="flex flex-col">
-            {gifsData &&
-              gifsData.map((r) => (
-                <Image
-                  alt={r.title}
-                  src={r.media_formats.webp.url}
-                  width={r.media_formats.webp.dims[0]}
-                  height={r.media_formats.webp.dims[1]}
-                  key={r.id}
-                  className="mb-1 cursor-pointer rounded-md last:mb-0"
-                  onClick={() => {
-                    onGifSelect(r);
-                    setOpen(false);
-                  }}
-                />
+            {status === "pending" ||
+              (isLoading ? (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="size-5 animate-spin" />
+                </div>
+              ) : (
+                gifsData &&
+                gifsData.map((r) => (
+                  <Image
+                    alt={r.title}
+                    src={r.media_formats.webp.url}
+                    width={r.media_formats.webp.dims[0]}
+                    height={r.media_formats.webp.dims[1]}
+                    key={r.id}
+                    className="mb-1 cursor-pointer rounded-md last:mb-0"
+                    onClick={() => {
+                      onGifSelect(r);
+                      setOpen(false);
+                    }}
+                  />
+                ))
               ))}
+
+            {isFetched && gifsData?.length === 0 && !isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                No gifs found.
+              </div>
+            )}
           </div>
         </div>
       </DropdownMenuContent>

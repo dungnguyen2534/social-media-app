@@ -2,15 +2,16 @@
 
 import { CommentData, PostData } from "@/lib/type";
 import UserAvatar from "../../common/UserAvatar";
-import { cn, formatNumber, formatRelativeDate } from "@/lib/utils";
+import { cn, formatRelativeDate } from "@/lib/utils";
 import Linkify from "../../common/Linkify";
 import { MiniProfile } from "../../common/MiniProfile";
 import Link from "next/link";
 import { useState } from "react";
 import ReplyEditor from "./ReplyEditor";
-import { Heart } from "lucide-react";
 import { useAuth } from "@/app/auth-context";
 import ReplyLikeButton from "./ReplyLikeButton";
+import Image from "next/image";
+import CommentLikeCount from "../CommentLikeCount";
 
 interface ReplyProps {
   post: PostData;
@@ -29,35 +30,52 @@ export default function Reply({
   const [showReplyEditor, setShowReplyEditor] = useState(false);
 
   return (
-    <div className={cn("flex gap-3", className)}>
-      <MiniProfile user={reply.user}>
-        <Link href={`/users/${reply.userId}`}>
-          <UserAvatar avatarUrl={reply.user.image} />
-        </Link>
-      </MiniProfile>
-      <div className="flex-1">
-        <div className="bg-accent relative min-h-9 w-fit rounded-md px-3 py-2 shadow-sm">
-          <MiniProfile user={reply.user}>
-            <Link href={`/users/${reply.userId}`} className="font-medium">
-              {reply.user.username}
-            </Link>
-          </MiniProfile>
+    <div className={className}>
+      <div className="flex gap-3">
+        <MiniProfile user={reply.user}>
+          <Link href={`/users/${reply.userId}`}>
+            <UserAvatar avatarUrl={reply.user.image} />
+          </Link>
+        </MiniProfile>
+        <div className="w-fit">
+          <div>
+            <div
+              className={cn(
+                "bg-accent relative min-h-9 w-full px-3 py-2",
+                reply.gif && !reply.content ? "rounded-t-md" : "rounded-md",
+              )}
+            >
+              <MiniProfile user={reply.user}>
+                <Link href={`/users/${reply.userId}`} className="font-medium">
+                  {reply.user.username}
+                </Link>
+              </MiniProfile>
 
-          <Linkify>
-            <p className="text-base break-words break-all whitespace-pre-line">
-              {reply.content}
-            </p>
-          </Linkify>
+              <Linkify>
+                <p className="text-base break-words break-all whitespace-pre-line">
+                  {reply.content}
+                </p>
+              </Linkify>
+            </div>
 
-          {reply._count.likes > 0 && (
-            <span className="bg-card absolute -right-3 -bottom-1 flex items-center justify-center gap-1 rounded-full px-1.5 text-xs shadow-sm outline-black/20 dark:outline-1">
-              <Heart className="size-3 fill-red-500 text-red-500" />
-              {formatNumber(reply._count.likes)}
-            </span>
-          )}
+            {reply.gif && (
+              <div className="relative">
+                <Image
+                  alt={reply.gif.title || "gif"}
+                  src={reply.gif.url}
+                  width={reply.gif.width}
+                  height={reply.gif.height}
+                  key={reply.gif.id}
+                  className={reply.content ? "mt-1 rounded-md" : "rounded-b-md"}
+                />
+              </div>
+            )}
+          </div>
         </div>
+      </div>
 
-        <div className="text-muted-foreground mt-1.5 w-full space-x-3 text-xs">
+      <div className="mt-1.5 ml-12">
+        <div className="text-muted-foreground flex items-center gap-3 text-xs">
           <ReplyLikeButton
             postId={post.id}
             replyId={reply.id}
@@ -72,6 +90,7 @@ export default function Reply({
           <button
             className="hover:text-primary cursor-pointer"
             onClick={() => setShowReplyEditor((prev) => !prev)}
+            disabled={!session}
           >
             Reply
           </button>
@@ -79,10 +98,12 @@ export default function Reply({
           <time dateTime={reply.createdAt.toDateString()}>
             {formatRelativeDate(reply.createdAt)}
           </time>
+
+          <CommentLikeCount count={reply._count.likes} />
         </div>
 
         {showReplyEditor && (
-          <div className="w-full py-3">
+          <div className="mt-3 mb-3.5 w-full">
             <ReplyEditor
               post={post}
               parentCommentId={parentCommentId}

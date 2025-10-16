@@ -1,7 +1,7 @@
 "use client";
 
 import { CommentData, CommentsPage, PostData } from "@/lib/type";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import api from "@/lib/ky";
 import Reply from "./Reply";
@@ -51,6 +51,30 @@ export default function Replies({ post, parentComment }: RepliesProps) {
       }
     }
   }, [fetchedReplies, setNewLocalReplies, newLocalReplies]);
+
+  const replyRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  useEffect(() => {
+    if (newLocalReplies.length > 0) {
+      const lastReplyId = newLocalReplies[newLocalReplies.length - 1].id;
+      const lastReplyElement = replyRefs.current.get(lastReplyId);
+
+      if (lastReplyElement) {
+        lastReplyElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }
+  }, [newLocalReplies]);
+
+  const setRef = (element: HTMLDivElement | null, id: string) => {
+    if (element) {
+      replyRefs.current.set(id, element);
+    } else {
+      replyRefs.current.delete(id);
+    }
+  };
 
   return (
     <div className="my-1">
@@ -103,13 +127,15 @@ export default function Replies({ post, parentComment }: RepliesProps) {
 
       {newLocalReplies.length > 0 &&
         newLocalReplies.map((r) => (
-          <Reply
-            reply={r}
-            post={post}
-            key={r.id}
-            className="mt-3"
-            parentCommentId={parentComment.id}
-          />
+          <div ref={(el) => setRef(el, r.id)} key={r.id}>
+            <Reply
+              reply={r}
+              post={post}
+              key={r.id}
+              className="mt-3"
+              parentCommentId={parentComment.id}
+            />
+          </div>
         ))}
     </div>
   );

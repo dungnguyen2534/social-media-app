@@ -2,7 +2,7 @@
 
 import { CommentData, PostData } from "@/lib/type";
 import UserAvatar from "../common/UserAvatar";
-import { cn, formatNumber, formatRelativeDate } from "@/lib/utils";
+import { cn, formatRelativeDate } from "@/lib/utils";
 import Linkify from "../common/Linkify";
 import { MiniProfile } from "../common/MiniProfile";
 import Link from "next/link";
@@ -12,8 +12,8 @@ import ReplyEditor from "./replies/ReplyEditor";
 import { CommentContextProvider } from "./comment-context";
 import { useAuth } from "@/app/auth-context";
 import CommentLikeButton from "./CommentLikeButton";
-import { Heart } from "lucide-react";
 import Image from "next/image";
+import CommentLikeCount from "./CommentLikeCount";
 
 interface CommentProps {
   post: PostData;
@@ -108,7 +108,7 @@ export default function Comment({ post, comment, className }: CommentProps) {
           </div>
 
           {showReplyEditor && (
-            <div className="w-full py-3">
+            <div className="mt-3 mb-3.5 w-full">
               <ReplyEditor
                 post={post}
                 parentCommentId={targetParentCommentId}
@@ -124,26 +124,5 @@ export default function Comment({ post, comment, className }: CommentProps) {
         </div>
       </div>
     </CommentContextProvider>
-  );
-}
-
-interface CommentLikeCountProps {
-  count: number;
-  className?: string;
-}
-
-function CommentLikeCount({ count, className }: CommentLikeCountProps) {
-  if (count === 0) return null;
-
-  return (
-    <span
-      className={cn(
-        "bg-card dark:bg-background/35 flex w-fit items-center justify-center gap-1 rounded-full px-1.5 text-xs shadow-sm outline-black/15 dark:outline-1",
-        className,
-      )}
-    >
-      <Heart className="size-3 fill-red-500 text-red-500" />
-      {formatNumber(count)}
-    </span>
   );
 }
