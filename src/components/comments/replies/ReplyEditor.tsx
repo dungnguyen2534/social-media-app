@@ -53,7 +53,7 @@ export default function ReplyEditor({
       }),
       Placeholder.configure({
         placeholder: isReplyToUserOwnComment
-          ? `Reply to @${replyingToUser.username}`
+          ? `@${replyingToUser.username}`
           : "Reply",
       }),
     ],

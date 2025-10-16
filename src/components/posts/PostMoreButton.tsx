@@ -45,12 +45,12 @@ export default function PostMoreButton({
             size="icon"
             variant="ghost"
             className={cn(
-              "rounded-full",
+              "hover:text-primary text-muted-foreground rounded-full",
               className,
               isMenuOpen && "opacity-100",
             )}
           >
-            <MoreHorizontal className="text-muted-foreground size-5" />
+            <MoreHorizontal className="size-5" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="space-y-1">

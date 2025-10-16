@@ -7,13 +7,21 @@ import api from "@/lib/ky";
 import Reply from "./Reply";
 import { useCommentContext } from "../comment-context";
 import CommentSkeletons from "../CommentSkeletons";
+import ReplyEditor from "./ReplyEditor";
 
 interface RepliesProps {
   post: PostData;
   parentComment: CommentData;
+  parentEditorOpen: boolean;
+  setParentEditorOpen: (open: boolean) => void;
 }
 
-export default function Replies({ post, parentComment }: RepliesProps) {
+export default function Replies({
+  post,
+  parentComment,
+  parentEditorOpen,
+  setParentEditorOpen,
+}: RepliesProps) {
   const { newLocalReplies, setNewLocalReplies } = useCommentContext();
   const [showReplies, setShowReplies] = useState(false);
 
@@ -52,6 +60,7 @@ export default function Replies({ post, parentComment }: RepliesProps) {
     }
   }, [fetchedReplies, setNewLocalReplies, newLocalReplies]);
 
+  // Focus on new reply
   const replyRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
@@ -75,6 +84,30 @@ export default function Replies({ post, parentComment }: RepliesProps) {
       replyRefs.current.delete(id);
     }
   };
+
+  // Editor behavior
+  const [editorTarget, setEditorTarget] = useState<{
+    reply: CommentData;
+    parentCommentId: string;
+  } | null>(null);
+
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [editorKey, setEditorKey] = useState(0);
+
+  const handleReplyClick = (reply: CommentData) => {
+    if (parentEditorOpen) setParentEditorOpen(false);
+    setEditorTarget({ reply, parentCommentId: parentComment.id });
+    setEditorKey((prev) => prev + 1); // Forces remount and focus
+    setTimeout(() => {
+      editorRef.current?.scrollIntoView({
+        block: "center",
+      });
+    }, 0);
+  };
+
+  useEffect(() => {
+    if (parentEditorOpen && editorTarget) setEditorTarget(null);
+  }, [parentEditorOpen, editorTarget]);
 
   return (
     <div className="my-1">
@@ -107,6 +140,7 @@ export default function Replies({ post, parentComment }: RepliesProps) {
                   key={r.id}
                   className="mt-3"
                   parentCommentId={parentComment.id}
+                  onReplyClick={handleReplyClick}
                 />
               ))
             )}
@@ -134,9 +168,22 @@ export default function Replies({ post, parentComment }: RepliesProps) {
               key={r.id}
               className="mt-3"
               parentCommentId={parentComment.id}
+              onReplyClick={handleReplyClick}
             />
           </div>
         ))}
+
+      {editorTarget && (
+        <div ref={editorRef} className="mt-3 mb-3.5 w-full">
+          <ReplyEditor
+            key={editorKey}
+            post={post}
+            parentCommentId={editorTarget.parentCommentId}
+            replyingToUser={editorTarget.reply.user}
+            onReplySuccess={() => setEditorTarget(null)}
+          />
+        </div>
+      )}
     </div>
   );
 }

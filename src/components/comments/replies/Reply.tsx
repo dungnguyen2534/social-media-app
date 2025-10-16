@@ -6,8 +6,6 @@ import { cn, formatRelativeDate } from "@/lib/utils";
 import Linkify from "../../common/Linkify";
 import { MiniProfile } from "../../common/MiniProfile";
 import Link from "next/link";
-import { useState } from "react";
-import ReplyEditor from "./ReplyEditor";
 import { useAuth } from "@/app/auth-context";
 import ReplyLikeButton from "./ReplyLikeButton";
 import Image from "next/image";
@@ -18,6 +16,7 @@ interface ReplyProps {
   reply: CommentData;
   parentCommentId: string;
   className?: string;
+  onReplyClick: (reply: CommentData) => void;
 }
 
 export default function Reply({
@@ -25,9 +24,9 @@ export default function Reply({
   reply,
   parentCommentId,
   className,
+  onReplyClick,
 }: ReplyProps) {
   const session = useAuth();
-  const [showReplyEditor, setShowReplyEditor] = useState(false);
 
   return (
     <div className={className}>
@@ -89,7 +88,7 @@ export default function Reply({
           />
           <button
             className="hover:text-primary cursor-pointer"
-            onClick={() => setShowReplyEditor((prev) => !prev)}
+            onClick={() => onReplyClick(reply)}
             disabled={!session}
           >
             Reply
@@ -101,19 +100,6 @@ export default function Reply({
 
           <CommentLikeCount count={reply._count.likes} />
         </div>
-
-        {showReplyEditor && (
-          <div className="mt-3 mb-3.5 w-full">
-            <ReplyEditor
-              post={post}
-              parentCommentId={parentCommentId}
-              replyingToUser={reply.user}
-              onReplySuccess={() => {
-                setShowReplyEditor(false);
-              }}
-            />
-          </div>
-        )}
       </div>
     </div>
   );

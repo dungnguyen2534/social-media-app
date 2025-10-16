@@ -7,7 +7,7 @@ import Linkify from "../common/Linkify";
 import { MiniProfile } from "../common/MiniProfile";
 import Link from "next/link";
 import Replies from "./replies/Replies";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReplyEditor from "./replies/ReplyEditor";
 import { CommentContextProvider } from "./comment-context";
 import { useAuth } from "@/app/auth-context";
@@ -26,6 +26,16 @@ export default function Comment({ post, comment, className }: CommentProps) {
 
   const targetParentCommentId = comment.parentCommentId || comment.id;
   const [showReplyEditor, setShowReplyEditor] = useState(false);
+
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showReplyEditor && editorRef.current) {
+      editorRef.current.scrollIntoView({
+        block: "center",
+      });
+    }
+  }, [showReplyEditor]);
 
   return (
     <CommentContextProvider>
@@ -107,8 +117,15 @@ export default function Comment({ post, comment, className }: CommentProps) {
             <CommentLikeCount count={comment._count.likes} />
           </div>
 
+          <Replies
+            post={post}
+            parentComment={comment}
+            parentEditorOpen={showReplyEditor}
+            setParentEditorOpen={setShowReplyEditor}
+          />
+
           {showReplyEditor && (
-            <div className="mt-3 mb-3.5 w-full">
+            <div ref={editorRef} className="mt-3 mb-3.5 w-full">
               <ReplyEditor
                 post={post}
                 parentCommentId={targetParentCommentId}
@@ -119,8 +136,6 @@ export default function Comment({ post, comment, className }: CommentProps) {
               />
             </div>
           )}
-
-          <Replies post={post} parentComment={comment} />
         </div>
       </div>
     </CommentContextProvider>

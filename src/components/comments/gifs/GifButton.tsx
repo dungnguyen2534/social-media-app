@@ -105,5 +105,3 @@ export default function GifButton({ className, onGifSelect }: GifButtonProps) {
     </DropdownMenu>
   );
 }
-
-// TODO: Gifs for replies, loading state for the gif picker, edit/delete comment
