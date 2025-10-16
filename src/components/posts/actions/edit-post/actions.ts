@@ -25,20 +25,17 @@ export async function editPost({
   try {
     const { content, mediaIds, sharedPostId } = createPostSchema.parse(data);
 
-    if (mediaIds !== undefined && sharedPostId !== undefined) {
-      return {
-        error:
-          "A post cannot have both media attachments and a shared post simultaneously.",
-      };
-    }
-
     const currentPost = await prisma.post.findUnique({
       where: { id: postId },
-      select: { attachments: { select: { id: true } } },
+      select: { attachments: { select: { id: true } }, userId: true },
     });
 
     if (!currentPost) {
       return { error: "Post not found." };
+    }
+
+    if (currentPost.userId !== session.user.id) {
+      return { error: "You are not authorized to edit this post" };
     }
 
     // Filter attachments that are not in the new mediaIds

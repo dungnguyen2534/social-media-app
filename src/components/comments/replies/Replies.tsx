@@ -7,7 +7,7 @@ import api from "@/lib/ky";
 import Reply from "./Reply";
 import { useCommentContext } from "../comment-context";
 import CommentSkeletons from "../CommentSkeletons";
-import ReplyEditor from "./ReplyEditor";
+import ReplyEditor from "./ReplyCreator";
 
 interface RepliesProps {
   post: PostData;
@@ -39,6 +39,8 @@ export default function Replies({
       initialPageParam: null as string | null,
       getNextPageParam: (firstPage) => firstPage.nextCursor,
       enabled: showReplies,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     });
 
   const fetchedReplies = useMemo(
@@ -95,6 +97,11 @@ export default function Replies({
   const [editorKey, setEditorKey] = useState(0);
 
   const handleReplyClick = (reply: CommentData) => {
+    if (editorTarget && reply.id === editorTarget.reply.id) {
+      setEditorTarget(null);
+      return;
+    }
+
     if (parentEditorOpen) setParentEditorOpen(false);
     setEditorTarget({ reply, parentCommentId: parentComment.id });
     setEditorKey((prev) => prev + 1); // Forces remount and focus

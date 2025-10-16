@@ -12,7 +12,7 @@ import {
 } from "../ui/dialog";
 import Post from "./Post";
 import Comments from "../comments/Comments";
-import CommentEditor from "../comments/CommentEditor";
+import CommentCreator from "../comments/CommentCreator";
 import { formatNumber } from "@/lib/utils";
 
 interface LikeButtonProps
@@ -61,7 +61,7 @@ export default function CommentButton({ post, ...rest }: LikeButtonProps) {
             </div>
           </div>
           <div className="sticky bottom-0 left-0 mt-auto h-fit">
-            <CommentEditor post={post} />
+            <CommentCreator post={post} />
           </div>
         </DialogContent>
       </Dialog>

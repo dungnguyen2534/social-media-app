@@ -14,11 +14,13 @@ export async function deletePost(
   try {
     const post = await prisma.post.findUnique({ where: { id: postId } });
     if (!post) return { error: "Post not found" };
-    if (post.userId !== session.user.id) return { error: "Unauthorized" };
+    if (post.userId !== session.user.id) {
+      return { error: "You are not authorized to delete this post" };
+    }
 
     const deletedPost = await prisma.post.delete({
       where: { id: postId },
-      include: getPostDataInclude(),
+      include: getPostDataInclude(session.user.id),
     });
 
     return deletedPost;

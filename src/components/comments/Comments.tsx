@@ -32,6 +32,9 @@ export default function Comments({ post }: CommentsProps) {
     },
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const renderedCommentIds = new Set<string>();
@@ -49,8 +52,8 @@ export default function Comments({ post }: CommentsProps) {
 
   if (post._count.comments === 0)
     return (
-      <div className="bg-card mt-16 flex h-fit flex-col gap-8 p-5">
-        <p className="flex flex-col items-center gap-10 text-center text-base font-medium">
+      <div className="bg-card text-muted-foreground mt-16 flex h-fit flex-col gap-8 p-5">
+        <p className="flex flex-col items-center gap-5 text-center text-base font-medium">
           <MessageCircleDashed className="size-24" />
           No comments yet, be the first!
         </p>
