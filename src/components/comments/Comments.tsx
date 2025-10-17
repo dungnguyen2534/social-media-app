@@ -10,9 +10,10 @@ import { MessageCircleDashed } from "lucide-react";
 
 interface CommentsProps {
   post: PostData;
+  className?: string;
 }
 
-export default function Comments({ post }: CommentsProps) {
+export default function Comments({ post, className }: CommentsProps) {
   const {
     data,
     hasNextPage,
@@ -69,7 +70,7 @@ export default function Comments({ post }: CommentsProps) {
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
       {comments.map((c) => (
-        <Comment post={post} comment={c} key={c.id} className="mt-3" />
+        <Comment post={post} comment={c} key={c.id} className={className} />
       ))}
 
       {isFetchingNextPage && <CommentSkeletons count={2} />}

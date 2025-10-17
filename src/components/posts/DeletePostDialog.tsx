@@ -12,6 +12,8 @@ import { Button } from "../ui/button";
 import { PostData } from "@/lib/type";
 import { useDeletePostMutation } from "./actions/delete-post/mutations";
 import LoadingButton from "../common/LoadingButton";
+import { usePathname, useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 interface DeletePostDialogProps {
   post: PostData;
@@ -25,6 +27,10 @@ export default function DeletePostDialog({
   setIsDeletePostDialog,
 }: DeletePostDialogProps) {
   const mutation = useDeletePostMutation();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const [isTransitioning, startTransition] = useTransition();
 
   return (
     <Dialog open={isDeletePostDialog} onOpenChange={setIsDeletePostDialog}>
@@ -39,12 +45,21 @@ export default function DeletePostDialog({
         </DialogHeader>
         <DialogFooter>
           <LoadingButton
-            onClick={() =>
+            onClick={() => {
               mutation.mutate(post.id, {
-                onSuccess: () => setIsDeletePostDialog(false),
-              })
-            }
-            loading={mutation.isPending}
+                onSuccess: () => {
+                  if (pathname === `/posts/${post.id}`) {
+                    startTransition(() => {
+                      router.push("/");
+                      setIsDeletePostDialog(false);
+                    });
+                  } else {
+                    setIsDeletePostDialog(false);
+                  }
+                },
+              });
+            }}
+            loading={mutation.isPending || isTransitioning}
             className="w-24"
           >
             Delete
@@ -52,7 +67,7 @@ export default function DeletePostDialog({
           <Button
             variant="custom"
             onClick={() => setIsDeletePostDialog(false)}
-            disabled={mutation.isPending}
+            disabled={mutation.isPending || isTransitioning}
             className="w-24"
           >
             Cancel

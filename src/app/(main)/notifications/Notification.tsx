@@ -22,14 +22,14 @@ export default function Notification({
     LIKE: {
       message: "liked your post.",
       icon: <Heart className="dark:text-card size-4 fill-red-500 text-white" />,
-      href: `/post/${notification.postId}`,
+      href: `/posts/${notification.postId}`,
     },
     COMMENT: {
       message: "commented on your post.",
       icon: (
         <MessageCircle className="dark:text-card size-4 fill-blue-500 text-white" />
       ),
-      href: `/post/${notification.postId}`,
+      href: `/posts/${notification.postId}`,
     },
     FOLLOW: {
       message: "started following you.",
@@ -70,7 +70,7 @@ export default function Notification({
           </div>
         )}
       </div>
-      <div className="text-muted-foreground absolute right-2 bottom-1.5 text-xs">
+      <div className="text-muted-foreground absolute right-2.5 bottom-1.5 text-xs">
         {formatRelativeDate(notification.createdAt)}
       </div>
     </Link>

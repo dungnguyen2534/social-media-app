@@ -71,28 +71,27 @@ export default function GifButton({ className, onGifSelect }: GifButtonProps) {
 
         <div className="scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent relative flex-1 overflow-y-auto">
           <div className="flex flex-col">
-            {status === "pending" ||
-              (isLoading ? (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Loader2 className="size-5 animate-spin" />
-                </div>
-              ) : (
-                gifsData &&
-                gifsData.map((r) => (
-                  <Image
-                    alt={r.title}
-                    src={r.media_formats.webp.url}
-                    width={r.media_formats.webp.dims[0]}
-                    height={r.media_formats.webp.dims[1]}
-                    key={r.id}
-                    className="mb-1 cursor-pointer rounded-md last:mb-0"
-                    onClick={() => {
-                      onGifSelect(r);
-                      setOpen(false);
-                    }}
-                  />
-                ))
-              ))}
+            {status === "pending" || isLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader2 className="size-5 animate-spin" />
+              </div>
+            ) : (
+              gifsData &&
+              gifsData.map((r) => (
+                <Image
+                  alt={r.title}
+                  src={r.media_formats.webp.url}
+                  width={r.media_formats.webp.dims[0]}
+                  height={r.media_formats.webp.dims[1]}
+                  key={r.id}
+                  className="mb-1 cursor-pointer rounded-md last:mb-0"
+                  onClick={() => {
+                    onGifSelect(r);
+                    setOpen(false);
+                  }}
+                />
+              ))
+            )}
 
             {isFetched && gifsData?.length === 0 && !isLoading && (
               <div className="absolute inset-0 flex items-center justify-center">

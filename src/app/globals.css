@@ -142,5 +142,5 @@
 }
 
 .responsive-dialog {
-  @apply scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent flex h-screen !max-w-screen flex-col overflow-x-hidden overflow-y-auto rounded-none p-5 lg:grid lg:h-fit lg:max-h-dvh lg:!max-w-[36.875rem] lg:rounded-md;
+  @apply scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent flex h-screen !max-w-screen flex-col overflow-x-hidden overflow-y-auto rounded-none p-5 lg:grid lg:h-fit lg:max-h-[calc(100dvh-1rem)] lg:!max-w-[36.875rem] lg:rounded-md;
 }
