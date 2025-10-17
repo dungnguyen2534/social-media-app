@@ -10,6 +10,7 @@ import { cache } from "react";
 
 interface PageProps {
   params: Promise<{ postId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 const getPost = cache(async (postId: string, signedInUserId?: string) => {
@@ -29,6 +30,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { postId } = await params;
+
   const session = await getSessionData();
   if (!session) return {};
 
@@ -43,8 +45,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function PostPage({ params }: PageProps) {
+export default async function PostPage({ params, searchParams }: PageProps) {
   const { postId } = await params;
+  const { priorityCommentId } = await searchParams;
+
   const session = await getSessionData();
   const post = await getPost(postId, session?.user.id);
 
@@ -52,7 +56,7 @@ export default async function PostPage({ params }: PageProps) {
     <div className="bg-card scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent relative flex h-[calc(100dvh-1rem)] flex-col overflow-y-scroll shadow-md lg:rounded-md">
       <Post post={post} noCommentButton className="!rounded-none shadow-none" />
       <div className="px-5">
-        <Comments post={post} />
+        <Comments post={post} priorityCommentId={priorityCommentId as string} />
       </div>
       <div className="sticky bottom-0 mt-auto h-fit w-full">
         <CommentCreator post={post} />

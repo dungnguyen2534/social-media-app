@@ -7,13 +7,19 @@ import InfiniteScrollContainer from "../common/InfiniteScrollContainer";
 import Comment from "./Comment";
 import CommentSkeletons from "./CommentSkeletons";
 import { MessageCircleDashed } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface CommentsProps {
   post: PostData;
   className?: string;
+  priorityCommentId?: string;
 }
 
-export default function Comments({ post, className }: CommentsProps) {
+export default function Comments({
+  post,
+  priorityCommentId,
+  className,
+}: CommentsProps) {
   const {
     data,
     hasNextPage,
@@ -26,7 +32,7 @@ export default function Comments({ post, className }: CommentsProps) {
     queryFn: ({ pageParam }) => {
       return api
         .get(
-          `posts/${post.id}/comments`,
+          `posts/${post.id}/comments?priorityCommentId=${priorityCommentId}`,
           pageParam ? { searchParams: { cursor: pageParam } } : {},
         )
         .json<CommentsPage>();
@@ -51,6 +57,32 @@ export default function Comments({ post, className }: CommentsProps) {
       });
     }) || [];
 
+  const priorityCommentRef = useRef<HTMLDivElement>(null);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (priorityCommentId && status === "success") {
+      if (priorityCommentRef.current) {
+        const timer = setTimeout(() => {
+          priorityCommentRef.current?.scrollIntoView({
+            block: "center",
+          });
+        }, 0);
+
+        setHighlightedId(priorityCommentId);
+
+        const highlightTimer = setTimeout(() => {
+          setHighlightedId(null);
+        }, 5000);
+
+        return () => {
+          clearTimeout(timer);
+          clearTimeout(highlightTimer);
+        };
+      }
+    }
+  }, [priorityCommentId, status]);
+
   if (post._count.comments === 0)
     return (
       <div className="bg-card text-muted-foreground mt-16 flex h-fit flex-col gap-8 p-5">
@@ -70,7 +102,14 @@ export default function Comments({ post, className }: CommentsProps) {
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
       {comments.map((c) => (
-        <Comment post={post} comment={c} key={c.id} className={className} />
+        <Comment
+          post={post}
+          comment={c}
+          key={c.id}
+          className={className}
+          ref={c.id === priorityCommentId ? priorityCommentRef : undefined}
+          isHighlighted={c.id === highlightedId}
+        />
       ))}
 
       {isFetchingNextPage && <CommentSkeletons count={2} />}

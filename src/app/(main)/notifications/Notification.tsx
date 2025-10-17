@@ -29,7 +29,7 @@ export default function Notification({
       icon: (
         <MessageCircle className="dark:text-card size-4 fill-blue-500 text-white" />
       ),
-      href: `/posts/${notification.postId}`,
+      href: `/posts/${notification.postId}?priorityCommentId=${notification.commentId}`,
     },
     FOLLOW: {
       message: "started following you.",

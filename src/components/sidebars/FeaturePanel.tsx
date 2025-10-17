@@ -76,29 +76,31 @@ export default function FeaturePanel({
         )}
       </div>
 
-      <div className="bg-card space-y-1 overflow-hidden rounded-md p-2 shadow-sm">
-        <Button
-          variant="ghost"
-          className="h-14 w-full justify-start rounded-sm"
-        >
-          <Mail className="size-5" />
-          Messages
-        </Button>
+      {session && (
+        <div className="bg-card space-y-1 overflow-hidden rounded-md p-2 shadow-sm">
+          <Button
+            variant="ghost"
+            className="h-14 w-full justify-start rounded-sm"
+          >
+            <Mail className="size-5" />
+            Messages
+          </Button>
 
-        <NotificationButton
-          variant={pathname === "/notifications" ? "secondary" : "ghost"}
-          className="h-14 w-full justify-start rounded-sm !px-3"
-          initialState={{
-            unreadCount: userInitialDisplayData.unreadNotificationCount,
-          }}
-        />
+          <NotificationButton
+            variant={pathname === "/notifications" ? "secondary" : "ghost"}
+            className="h-14 w-full justify-start rounded-sm !px-3"
+            initialState={{
+              unreadCount: userInitialDisplayData.unreadNotificationCount,
+            }}
+          />
 
-        <hr />
-        <div className="mt-2 ml-1 flex h-14 items-center gap-2">
-          <UserButton className="h-12 w-12 shadow-sm" iconStyle="size-6" />
-          <PostEditor />
+          <hr />
+          <div className="mt-2 ml-1 flex h-14 items-center gap-2">
+            <UserButton className="h-12 w-12 shadow-sm" iconStyle="size-6" />
+            <PostEditor />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

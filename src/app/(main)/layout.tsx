@@ -26,12 +26,15 @@ export default async function Layout({
   const session = await getSessionData();
   if (session && !session.user.username) redirect("/complete-profile");
 
-  const unreadNotificationCount = await prisma.notification.count({
-    where: {
-      recipientId: session!.user.id,
-      read: false,
-    },
-  });
+  let unreadNotificationCount = 0;
+  if (session?.user.id) {
+    unreadNotificationCount = await prisma.notification.count({
+      where: {
+        recipientId: session!.user.id,
+        read: false,
+      },
+    });
+  }
 
   // for more info later if needed
   const userInitialDisplayData: UserInitialDisplayData = {

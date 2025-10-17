@@ -1,6 +1,6 @@
 import { getSessionData } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { CommentsPage, getCommentDataInclude } from "@/lib/type";
+import { CommentData, CommentsPage, getCommentDataInclude } from "@/lib/type";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -11,25 +11,51 @@ export async function GET(
   const { postId } = await params;
 
   const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
+  const initialCommentId =
+    req.nextUrl.searchParams.get("priorityCommentId") || undefined;
   const pageSize = 10;
+  const userId = session?.user.id;
 
   try {
-    const comments = await prisma.comment.findMany({
+    let initialComment = null;
+    const loadedComments: CommentData[] = [];
+
+    if (initialCommentId && !cursor) {
+      initialComment = await prisma.comment.findUnique({
+        where: {
+          id: initialCommentId,
+          postId,
+          parentCommentId: null,
+        },
+        include: getCommentDataInclude(userId),
+      });
+
+      if (initialComment) {
+        loadedComments.push(initialComment);
+      }
+    }
+
+    const fetchCount = pageSize + 1 - loadedComments.length;
+
+    const otherComments = await prisma.comment.findMany({
       where: {
         postId,
         parentCommentId: null,
+        id: initialCommentId ? { not: initialCommentId } : undefined,
       },
-      include: getCommentDataInclude(session?.user.id),
+      include: getCommentDataInclude(userId),
       orderBy: { createdAt: "asc" },
-      take: pageSize + 1,
+      take: fetchCount,
       cursor: cursor ? { id: cursor } : undefined,
     });
 
+    const allComments = [...loadedComments, ...otherComments];
+
     const nextCursor =
-      comments.length > pageSize ? comments[pageSize].id : null;
+      allComments.length > pageSize ? allComments[pageSize].id : null;
 
     const data: CommentsPage = {
-      comments: comments.slice(0, pageSize),
+      comments: allComments.slice(0, pageSize),
       nextCursor,
     };
 
