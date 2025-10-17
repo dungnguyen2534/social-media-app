@@ -9,29 +9,46 @@ export async function deleteComment(
   commentId: string,
 ): ActionResult<CommentData> {
   const session = await getSessionData();
-  const userId = session?.user.id;
+  const signedInUserId = session?.user.id;
 
-  if (!session || !userId) {
+  if (!signedInUserId) {
     return { error: "Unauthorized" };
   }
 
   try {
     const commentToDelete = await prisma.comment.findUnique({
       where: { id: commentId },
+      include: {
+        post: true,
+      },
     });
 
     if (!commentToDelete) {
       return { error: "Comment not found." };
     }
 
-    if (commentToDelete.userId !== userId) {
+    if (commentToDelete.userId !== signedInUserId) {
       return { error: "You are not authorized to delete this comment." };
     }
 
-    const deletedComment = await prisma.comment.delete({
-      where: { id: commentId },
-      include: getCommentDataInclude(userId),
-    });
+    const [deletedComment] = await prisma.$transaction([
+      prisma.comment.delete({
+        where: { id: commentId },
+        include: getCommentDataInclude(signedInUserId),
+      }),
+      ...(signedInUserId !== commentToDelete.post.userId
+        ? [
+            prisma.notification.deleteMany({
+              where: {
+                issuerId: signedInUserId,
+                recipientId: commentToDelete.post.userId,
+                commentId: commentToDelete.id,
+                type: "COMMENT",
+              },
+            }),
+          ]
+        : []),
+    ]);
 
     return deletedComment;
   } catch (err) {

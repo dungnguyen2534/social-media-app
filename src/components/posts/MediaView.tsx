@@ -60,7 +60,10 @@ export default function MediaView({ attachments, className }: MediaViewProps) {
 
             if (a.type === "VIDEO") {
               return (
-                <CarouselItem key={a.id} className="pl-1">
+                <CarouselItem
+                  key={a.id}
+                  className="flex items-center bg-black pl-1"
+                >
                   <video controls className="aspect-video w-full">
                     <source src={a.url} />
                   </video>

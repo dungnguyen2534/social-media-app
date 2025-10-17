@@ -1,15 +1,23 @@
 "use client";
 
-import { Bell, Bookmark, House, Mail, SearchIcon } from "lucide-react";
+import { Bookmark, House, Mail, SearchIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import PostEditor from "../posts/editor/PostEditor";
-import UserButton from "../common/UserButton";
-import { useAuth } from "@/app/auth-context";
 import { ThemeSwitcher } from "../ui/theme-switcher";
+import { UserInitialDisplayData } from "@/app/(main)/layout";
+import NotificationButton from "../common/NotificationButton";
+import UserButton from "../common/UserButton";
+import PostEditor from "../posts/editor/PostEditor";
+import { useAuth } from "@/app/auth-context";
+import { usePathname } from "next/navigation";
 
-export default function FeaturePanel() {
+interface FeaturePanelProps {
+  userInitialDisplayData: UserInitialDisplayData;
+}
+
+export default function FeaturePanel({
+  userInitialDisplayData,
+}: FeaturePanelProps) {
   const session = useAuth();
   const pathname = usePathname();
 
@@ -49,9 +57,7 @@ export default function FeaturePanel() {
             </Button>
 
             <Button
-              variant={
-                pathname.startsWith("/bookmarks") ? "secondary" : "ghost"
-              }
+              variant={pathname === "/bookmarks" ? "secondary" : "ghost"}
               className="h-14 w-full justify-start rounded-sm"
               asChild
             >
@@ -70,32 +76,29 @@ export default function FeaturePanel() {
         )}
       </div>
 
-      {session && (
-        <div className="bg-card space-y-1 overflow-hidden rounded-md p-2 shadow-sm">
-          <Button
-            variant="ghost"
-            className="h-14 w-full justify-start rounded-sm"
-          >
-            <Mail className="size-5" />
-            Messages
-          </Button>
+      <div className="bg-card space-y-1 overflow-hidden rounded-md p-2 shadow-sm">
+        <Button
+          variant="ghost"
+          className="h-14 w-full justify-start rounded-sm"
+        >
+          <Mail className="size-5" />
+          Messages
+        </Button>
 
-          <Button
-            variant="ghost"
-            className="h-14 w-full justify-start rounded-sm"
-          >
-            <Bell className="size-5" />
-            Notifications
-          </Button>
+        <NotificationButton
+          variant={pathname === "/notifications" ? "secondary" : "ghost"}
+          className="h-14 w-full justify-start rounded-sm !px-3"
+          initialState={{
+            unreadCount: userInitialDisplayData.unreadNotificationCount,
+          }}
+        />
 
-          <hr />
-
-          <div className="mt-2 ml-1 flex h-14 items-center gap-2">
-            <UserButton className="h-12 w-12 shadow-sm" iconStyle="size-6" />
-            <PostEditor />
-          </div>
+        <hr />
+        <div className="mt-2 ml-1 flex h-14 items-center gap-2">
+          <UserButton className="h-12 w-12 shadow-sm" iconStyle="size-6" />
+          <PostEditor />
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -1,13 +1,5 @@
 import { getSessionData } from "@/auth";
 import UserProfileFeed from "@/components/feeds/UserProfileFeed";
-import {
-  TrendingTopics,
-  TrendingTopicsSkeleton,
-} from "@/components/sidebars/TrendingTopics";
-import {
-  WhoToFollow,
-  WhoToFollowSkeleton,
-} from "@/components/sidebars/WhoToFollow";
 import { prisma } from "@/lib/prisma";
 import {
   FollowerInfo,
@@ -17,14 +9,13 @@ import {
 } from "@/lib/type";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cache, Suspense } from "react";
+import { cache } from "react";
 import UserAvatar from "@/components/common/UserAvatar";
 import { formatDate } from "date-fns";
 import FollowButton from "@/components/common/FollowButton";
 import { FollowerCount, FollowingCount } from "@/components/common/FollowCount";
 import Linkify from "@/components/common/Linkify";
 import { ProfileEditor } from "./ProfileEditor";
-import FeaturePanel from "@/components/sidebars/FeaturePanel";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -73,25 +64,10 @@ export default async function UserProfilePage({ params }: PageProps) {
   const { user, signedInUser } = await getProfilePageData(username);
 
   return (
-    <main className="app-container app-grid mt-1 !px-0 lg:mt-2 lg:px-3">
-      <aside className="app-sidebar">
-        <FeaturePanel />
-      </aside>
-
-      <div className="space-y-1 lg:space-y-2">
-        <UserProfile user={user} signedInUserId={signedInUser?.id} />
-        <UserProfileFeed user={user} />
-      </div>
-
-      <aside className="app-sidebar">
-        <Suspense fallback={<TrendingTopicsSkeleton count={5} />}>
-          <TrendingTopics />
-        </Suspense>
-        <Suspense fallback={<WhoToFollowSkeleton count={5} />}>
-          <WhoToFollow />
-        </Suspense>
-      </aside>
-    </main>
+    <div className="space-y-1 lg:space-y-2">
+      <UserProfile user={user} signedInUserId={signedInUser?.id} />
+      <UserProfileFeed user={user} />
+    </div>
   );
 }
 

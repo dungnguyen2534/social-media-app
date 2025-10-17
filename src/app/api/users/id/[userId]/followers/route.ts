@@ -49,28 +49,37 @@ export async function POST(
 ) {
   try {
     const session = await getSessionData();
-    if (!session?.user.id) {
+    const signedInUserId = session?.user.id;
+    if (!signedInUserId) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { userId } = await params;
 
-    // upsert (update and insert) ignore the operation instead of throwing error if the follow already exists
-    await prisma.follow.upsert({
-      where: {
-        followerId_followingId: {
-          followerId: session.user.id,
+    await prisma.$transaction([
+      prisma.follow.upsert({
+        where: {
+          followerId_followingId: {
+            followerId: signedInUserId,
+            followingId: userId,
+          },
+        },
+        create: {
+          followerId: signedInUserId,
           followingId: userId,
         },
-      },
-      create: {
-        followerId: session.user.id,
-        followingId: userId,
-      },
-      update: {},
-    });
+        update: {},
+      }),
+      prisma.notification.create({
+        data: {
+          issuerId: signedInUserId,
+          recipientId: userId,
+          type: "FOLLOW",
+        },
+      }),
+    ]);
 
-    return new Response(); // empty success response
+    return new Response();
   } catch (err) {
     console.error(err);
     return Response.json({ error: "Internal server error" }, { status: 500 });
@@ -83,19 +92,28 @@ export async function DELETE(
 ) {
   try {
     const session = await getSessionData();
-    if (!session) {
+    const signedInUserId = session?.user.id;
+    if (!signedInUserId) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { userId } = await params;
 
-    // the couter part of upsert, if things don't exists - do nothing
-    await prisma.follow.deleteMany({
-      where: {
-        followerId: session.user.id,
-        followingId: userId,
-      },
-    });
+    await prisma.$transaction([
+      prisma.follow.deleteMany({
+        where: {
+          followerId: signedInUserId,
+          followingId: userId,
+        },
+      }),
+      prisma.notification.deleteMany({
+        where: {
+          issuerId: signedInUserId,
+          recipientId: userId,
+          type: "FOLLOW",
+        },
+      }),
+    ]);
 
     return new Response();
   } catch (err) {

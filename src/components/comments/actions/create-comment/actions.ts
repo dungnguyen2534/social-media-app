@@ -18,7 +18,8 @@ export async function submitComment({
   };
 }): ActionResult<CommentData> {
   const session = await getSessionData();
-  if (!session || !session.user.id) {
+  const signedInUserId = session?.user.id;
+  if (!signedInUserId) {
     return { error: "Unauthorized" };
   }
 
@@ -26,27 +27,42 @@ export async function submitComment({
     const { gifDetails, parentCommentId, content } =
       createCommentSchema.parse(data);
 
-    const newComment = await prisma.comment.create({
-      data: {
-        userId: session.user.id,
-        postId: post.id,
-        parentCommentId,
-        content,
-        ...(gifDetails
-          ? {
-              gif: {
-                create: {
-                  gifId: gifDetails.gifId,
-                  url: gifDetails.url,
-                  width: gifDetails.width,
-                  height: gifDetails.height,
-                  title: gifDetails.title || null,
+    const newComment = await prisma.$transaction(async (tx) => {
+      const comment = await tx.comment.create({
+        data: {
+          userId: signedInUserId,
+          postId: post.id,
+          parentCommentId,
+          content,
+          ...(gifDetails
+            ? {
+                gif: {
+                  create: {
+                    gifId: gifDetails.gifId,
+                    url: gifDetails.url,
+                    width: gifDetails.width,
+                    height: gifDetails.height,
+                    title: gifDetails.title || null,
+                  },
                 },
-              },
-            }
-          : {}),
-      },
-      include: getCommentDataInclude(session.user.id),
+              }
+            : {}),
+        },
+        include: getCommentDataInclude(signedInUserId),
+      });
+
+      if (signedInUserId !== post.userId) {
+        await tx.notification.create({
+          data: {
+            issuerId: signedInUserId,
+            recipientId: post.userId,
+            commentId: comment.id,
+            postId: post.id,
+            type: "COMMENT",
+          },
+        });
+      }
+      return comment;
     });
 
     return newComment;

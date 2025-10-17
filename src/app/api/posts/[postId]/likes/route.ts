@@ -8,8 +8,8 @@ export async function GET(
   { params }: { params: Promise<{ postId: string }> },
 ) {
   const session = await getSessionData();
-  const userId = session?.user.id;
-  if (!userId) {
+  const signedInUserId = session?.user.id;
+  if (!signedInUserId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -23,7 +23,7 @@ export async function GET(
       select: {
         likes: {
           where: {
-            userId,
+            userId: signedInUserId,
           },
           select: {
             userId: true,
@@ -58,27 +58,54 @@ export async function POST(
   { params }: { params: Promise<{ postId: string }> },
 ) {
   const session = await getSessionData();
-  const userId = session?.user.id;
-  if (!userId) {
+  const signedInUserId = session?.user.id;
+  if (!signedInUserId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { postId } = await params;
 
   try {
-    await prisma.postLike.upsert({
+    const post = await prisma.post.findUnique({
       where: {
-        userId_postId: {
-          userId,
+        id: postId,
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (!post) {
+      return Response.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    await prisma.$transaction([
+      prisma.postLike.upsert({
+        where: {
+          userId_postId: {
+            userId: signedInUserId,
+            postId,
+          },
+        },
+        create: {
+          userId: signedInUserId,
           postId,
         },
-      },
-      create: {
-        userId,
-        postId,
-      },
-      update: {},
-    });
+        update: {},
+      }),
+      ...(signedInUserId !== post.userId
+        ? [
+            prisma.notification.create({
+              data: {
+                issuerId: signedInUserId,
+                recipientId: post.userId,
+                postId,
+                type: "LIKE",
+              },
+            }),
+          ]
+        : []),
+    ]);
 
     return new Response();
   } catch (err) {
@@ -92,20 +119,43 @@ export async function DELETE(
   { params }: { params: Promise<{ postId: string }> },
 ) {
   const session = await getSessionData();
-  const userId = session?.user.id;
-  if (!userId) {
+  const signedInUserId = session?.user.id;
+  if (!signedInUserId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { postId } = await params;
 
   try {
-    await prisma.postLike.deleteMany({
+    const post = await prisma.post.findUnique({
       where: {
-        userId,
-        postId,
+        id: postId,
+      },
+      select: {
+        userId: true,
       },
     });
+
+    if (!post) {
+      return Response.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    await prisma.$transaction([
+      prisma.postLike.deleteMany({
+        where: {
+          userId: signedInUserId,
+          postId,
+        },
+      }),
+      prisma.notification.deleteMany({
+        where: {
+          issuerId: signedInUserId,
+          recipientId: post.userId,
+          postId,
+          type: "LIKE",
+        },
+      }),
+    ]);
 
     return new Response();
   } catch (err) {

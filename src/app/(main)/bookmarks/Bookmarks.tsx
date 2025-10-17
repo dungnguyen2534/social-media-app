@@ -2,11 +2,11 @@
 
 import api from "@/lib/ky";
 import { PostsPage } from "@/lib/type";
-import Post from "../posts/Post";
+import Post from "../../../components/posts/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import InfiniteScrollContainer from "../common/InfiniteScrollContainer";
+import InfiniteScrollContainer from "../../../components/common/InfiniteScrollContainer";
 import { Annoyed } from "lucide-react";
-import FeedSkeletons from "./FeedSkeletons";
+import FeedSkeletons from "../../../components/feeds/FeedSkeletons";
 
 export default function Bookmarks() {
   const {

@@ -122,6 +122,51 @@ export type CommentsPage = {
   nextCursor: string | null;
 };
 
+export type Gif = {
+  id: string;
+  title: string;
+  media_formats: {
+    webp: {
+      url: string;
+      dims: number[];
+    };
+  };
+};
+
+// Notification data
+export function getNotificationDataInclude() {
+  return {
+    issuer: {
+      select: {
+        username: true,
+        name: true,
+        image: true,
+      },
+    },
+    recipient: {
+      select: {
+        username: true,
+        name: true,
+      },
+    },
+
+    post: {
+      select: {
+        content: true,
+      },
+    },
+  } satisfies Prisma.NotificationInclude;
+}
+
+export type NotificationData = Prisma.NotificationGetPayload<{
+  include: ReturnType<typeof getNotificationDataInclude>;
+}>;
+
+export type NotificationsPage = {
+  notifications: NotificationData[];
+  nextCursor: string | null;
+};
+
 // Additional info types
 export type FollowerInfo = {
   followerCount: number;
@@ -146,13 +191,6 @@ export type CommentLikeInfo = {
   isLikedByUser?: boolean;
 };
 
-export type Gif = {
-  id: string;
-  title: string;
-  media_formats: {
-    webp: {
-      url: string;
-      dims: number[];
-    };
-  };
+export type NotificationCountInfo = {
+  unreadCount: number;
 };

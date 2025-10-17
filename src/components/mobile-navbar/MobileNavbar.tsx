@@ -1,12 +1,19 @@
 import Link from "next/link";
-import Notification from "./Notification";
 import { MobileSearchButton } from "./Search";
 import { getSessionData } from "@/auth";
 import { Button } from "../ui/button";
 import PostEditor from "../posts/editor/PostEditor";
 import HamburgerMenu from "./HamburgerMenu";
+import { UserInitialDisplayData } from "@/app/(main)/layout";
+import NotificationButton from "../common/NotificationButton";
 
-export default async function MobileNavbar() {
+interface MobileNavbarProps {
+  userInitialDisplayData: UserInitialDisplayData;
+}
+
+export default async function MobileNavbar({
+  userInitialDisplayData,
+}: MobileNavbarProps) {
   const session = await getSessionData();
 
   return (
@@ -20,7 +27,13 @@ export default async function MobileNavbar() {
           <div className="flex items-center justify-end gap-3">
             <PostEditor />
             <MobileSearchButton />
-            <Notification />
+            <NotificationButton
+              onMobileNav
+              variant="ghost"
+              initialState={{
+                unreadCount: userInitialDisplayData.unreadNotificationCount,
+              }}
+            />
             <HamburgerMenu />
           </div>
         ) : (

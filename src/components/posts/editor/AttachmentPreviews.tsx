@@ -134,7 +134,7 @@ function AttachmentPreview({
 
   if (isVideo) {
     return (
-      <CarouselItem className="bg-background relative flex items-center pl-1">
+      <CarouselItem className="relative flex items-center bg-black pl-1">
         <video
           controls
           className={cn("aspect-video w-full", isUploading && "opacity-50")}
