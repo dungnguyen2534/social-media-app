@@ -8,7 +8,6 @@ import { MiniProfile } from "../common/MiniProfile";
 import Link from "next/link";
 import Replies from "./replies/Replies";
 import { forwardRef, useEffect, useRef, useState } from "react";
-import ReplyEditor from "./replies/ReplyCreator";
 import { CommentContextProvider } from "./comment-context";
 import { useAuth } from "@/app/auth-context";
 import CommentLikeButton from "./CommentLikeButton";
@@ -16,16 +15,18 @@ import Image from "next/image";
 import CommentLikeCount from "./CommentLikeCount";
 import CommentMoreButton from "./CommentMoreButton";
 import CommentEditor from "./CommentEditor";
+import ReplyCreator from "./replies/ReplyCreator";
 
 interface CommentProps {
   post: PostData;
   comment: CommentData;
   className?: string;
   isHighlighted?: boolean;
+  targetReplyId?: string;
 }
 
 const Comment = forwardRef<HTMLDivElement, CommentProps>(
-  ({ post, comment, isHighlighted, className }, ref) => {
+  ({ post, comment, isHighlighted, targetReplyId, className }, ref) => {
     const session = useAuth();
 
     const targetParentCommentId = comment.parentCommentId || comment.id;
@@ -68,7 +69,7 @@ const Comment = forwardRef<HTMLDivElement, CommentProps>(
                       comment.gif && !comment.content
                         ? "rounded-t-md"
                         : "rounded-md",
-                      isHighlighted ? "outline-primary outline-2" : "",
+                      isHighlighted && "outline-primary outline-2",
                     )}
                   >
                     <MiniProfile user={comment.user}>
@@ -152,13 +153,15 @@ const Comment = forwardRef<HTMLDivElement, CommentProps>(
                 parentComment={comment}
                 parentEditorOpen={showReplyEditor}
                 setParentEditorOpen={setShowReplyEditor}
+                targetReplyId={targetReplyId}
               />
 
               {showReplyEditor && (
                 <div ref={editorRef} className="mt-3 mb-3.5 w-full">
-                  <ReplyEditor
+                  <ReplyCreator
                     post={post}
                     parentCommentId={targetParentCommentId}
+                    replyingToId={comment.id}
                     replyingToUser={comment.user}
                     onReplySuccess={() => {
                       setShowReplyEditor(false);

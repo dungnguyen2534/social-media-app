@@ -33,6 +33,7 @@ export function useSubmitCommentMutation(postId: string) {
                 {
                   comments: [result, ...firstPage.comments],
                   nextCursor: firstPage.nextCursor,
+                  prevCursor: null,
                 },
                 ...oldData.pages.slice(1),
               ],

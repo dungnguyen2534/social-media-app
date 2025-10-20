@@ -21,6 +21,7 @@ import useUpdatePostCommentCount from "../hooks/useUpdatePostCommentCount";
 interface ReplyCreatorProps {
   post: PostData;
   parentCommentId: string;
+  replyingToId?: string;
   replyingToUser: CommentData["user"];
   onReplySuccess?: (result: CommentData) => void;
 }
@@ -28,6 +29,7 @@ interface ReplyCreatorProps {
 export default function ReplyCreator({
   post,
   parentCommentId,
+  replyingToId,
   replyingToUser,
   onReplySuccess,
 }: ReplyCreatorProps) {
@@ -75,7 +77,8 @@ export default function ReplyCreator({
       {
         post,
         data: {
-          parentCommentId: parentCommentId,
+          parentCommentId,
+          replyingToId,
           gifDetails: gif
             ? {
                 gifId: gif.id,

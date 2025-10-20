@@ -81,6 +81,7 @@ export type gifDetails = z.infer<typeof gifDetailsSchema>;
 export const createCommentSchema = z
   .object({
     parentCommentId: z.string().optional().nullable(),
+    replyingToId: z.string().optional().nullable(),
     content: z
       .string()
       .max(2200, "Comment must be less than 2200 characters (Instagram limit)")

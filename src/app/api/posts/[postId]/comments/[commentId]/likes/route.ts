@@ -58,27 +58,54 @@ export async function POST(
   { params }: { params: Promise<{ commentId: string }> },
 ) {
   const session = await getSessionData();
-  const userId = session?.user.id;
-  if (!userId) {
+  const signedInUserId = session?.user.id;
+  if (!signedInUserId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { commentId } = await params;
 
   try {
-    await prisma.commentLike.upsert({
+    const comment = await prisma.comment.findUnique({
       where: {
-        userId_commentId: {
-          userId,
+        id: commentId,
+      },
+    });
+
+    if (!comment) {
+      return Response.json({ error: "Comment not found" }, { status: 404 });
+    }
+
+    const isReply = !!comment.parentCommentId;
+
+    await prisma.$transaction([
+      prisma.commentLike.upsert({
+        where: {
+          userId_commentId: {
+            userId: signedInUserId,
+            commentId,
+          },
+        },
+        create: {
+          userId: signedInUserId,
           commentId,
         },
-      },
-      create: {
-        userId,
-        commentId,
-      },
-      update: {},
-    });
+        update: {},
+      }),
+      ...(signedInUserId !== comment.userId
+        ? [
+            prisma.notification.create({
+              data: {
+                issuerId: signedInUserId,
+                recipientId: comment.userId,
+                postId: comment.postId,
+                commentId,
+                type: isReply ? "LIKE_REPLY" : "LIKE_COMMENT",
+              },
+            }),
+          ]
+        : []),
+    ]);
 
     return new Response();
   } catch (err) {
@@ -92,20 +119,42 @@ export async function DELETE(
   { params }: { params: Promise<{ commentId: string }> },
 ) {
   const session = await getSessionData();
-  const userId = session?.user.id;
-  if (!userId) {
+  const signedInUserId = session?.user.id;
+  if (!signedInUserId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { commentId } = await params;
 
   try {
-    await prisma.commentLike.deleteMany({
+    const comment = await prisma.comment.findUnique({
       where: {
-        userId,
-        commentId,
+        id: commentId,
       },
     });
+
+    if (!comment) {
+      return Response.json({ error: "Comment not found" }, { status: 404 });
+    }
+
+    const isReply = !!comment.parentCommentId;
+
+    await prisma.$transaction([
+      prisma.commentLike.deleteMany({
+        where: {
+          userId: signedInUserId,
+          commentId,
+        },
+      }),
+      prisma.notification.deleteMany({
+        where: {
+          issuerId: signedInUserId,
+          recipientId: comment.userId,
+          commentId: comment.id,
+          type: isReply ? "LIKE_REPLY" : "LIKE_COMMENT",
+        },
+      }),
+    ]);
 
     return new Response();
   } catch (err) {

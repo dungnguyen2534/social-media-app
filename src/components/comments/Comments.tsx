@@ -12,12 +12,14 @@ import { useEffect, useRef, useState } from "react";
 interface CommentsProps {
   post: PostData;
   className?: string;
-  priorityCommentId?: string;
+  targetCommentId?: string;
+  targetReplyId?: string;
 }
 
 export default function Comments({
   post,
-  priorityCommentId,
+  targetCommentId,
+  targetReplyId,
   className,
 }: CommentsProps) {
   const {
@@ -32,7 +34,7 @@ export default function Comments({
     queryFn: ({ pageParam }) => {
       return api
         .get(
-          `posts/${post.id}/comments?priorityCommentId=${priorityCommentId}`,
+          `posts/${post.id}/comments?targetCommentId=${targetCommentId}`,
           pageParam ? { searchParams: { cursor: pageParam } } : {},
         )
         .json<CommentsPage>();
@@ -57,19 +59,19 @@ export default function Comments({
       });
     }) || [];
 
-  const priorityCommentRef = useRef<HTMLDivElement>(null);
+  const targetCommentRef = useRef<HTMLDivElement>(null);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (priorityCommentId && status === "success") {
-      if (priorityCommentRef.current) {
+    if (targetCommentId && status === "success") {
+      if (targetCommentRef.current) {
         const timer = setTimeout(() => {
-          priorityCommentRef.current?.scrollIntoView({
+          targetCommentRef.current?.scrollIntoView({
             block: "center",
           });
         }, 0);
 
-        setHighlightedId(priorityCommentId);
+        setHighlightedId(targetCommentId);
 
         const highlightTimer = setTimeout(() => {
           setHighlightedId(null);
@@ -81,7 +83,7 @@ export default function Comments({
         };
       }
     }
-  }, [priorityCommentId, status]);
+  }, [targetCommentId, status]);
 
   if (post._count.comments === 0)
     return (
@@ -107,8 +109,9 @@ export default function Comments({
           comment={c}
           key={c.id}
           className={className}
-          ref={c.id === priorityCommentId ? priorityCommentRef : undefined}
-          isHighlighted={c.id === highlightedId}
+          isHighlighted={c.id === highlightedId && !targetReplyId}
+          ref={c.id === targetCommentId ? targetCommentRef : undefined}
+          targetReplyId={c.id === targetCommentId ? targetReplyId : undefined}
         />
       ))}
 

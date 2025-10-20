@@ -10,7 +10,7 @@ import { useAuth } from "@/app/auth-context";
 import ReplyLikeButton from "./ReplyLikeButton";
 import Image from "next/image";
 import CommentLikeCount from "../CommentLikeCount";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommentMoreButton from "../CommentMoreButton";
 import ReplyEditor from "./ReplyEditor";
 
@@ -20,6 +20,7 @@ interface ReplyProps {
   parentCommentId: string;
   className?: string;
   onReplyClick: (reply: CommentData) => void;
+  isTarget?: boolean;
 }
 
 export default function Reply({
@@ -28,10 +29,24 @@ export default function Reply({
   parentCommentId,
   className,
   onReplyClick,
+  isTarget = false,
 }: ReplyProps) {
   const session = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [isHighlighted, setIsHighlighted] = useState(false);
+
+  useEffect(() => {
+    if (isTarget) {
+      setIsHighlighted(true);
+      const timer = setTimeout(() => {
+        setIsHighlighted(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isTarget]);
 
   return (
     <div>
@@ -55,6 +70,7 @@ export default function Reply({
                   className={cn(
                     "bg-accent relative min-h-9 w-full px-3 py-2",
                     reply.gif && !reply.content ? "rounded-t-md" : "rounded-md",
+                    isHighlighted && "outline-primary outline-2",
                   )}
                 >
                   <MiniProfile user={reply.user}>

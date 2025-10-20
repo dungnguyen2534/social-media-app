@@ -20,6 +20,11 @@ interface ReplyLikeButtonProps {
   disabled?: boolean;
 }
 
+type PreviousRepliesData = {
+  queryKey: QueryKey;
+  data: InfiniteData<CommentsPage>;
+};
+
 export default function ReplyLikeButton({
   postId,
   parentCommentId,
@@ -34,7 +39,7 @@ export default function ReplyLikeButton({
 
   const queryClient = useQueryClient();
   const queryKey: QueryKey = ["reply-like-info", replyId];
-  const repliesQueryKey: QueryKey = ["replies", parentCommentId];
+  const repliesQueryKeyPrefix: QueryKey = ["replies", parentCommentId];
 
   const apiUrl = `posts/${postId}/comments/${replyId}/likes`;
 
@@ -51,82 +56,88 @@ export default function ReplyLikeButton({
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
-      await queryClient.cancelQueries({ queryKey: repliesQueryKey });
+      await queryClient.cancelQueries({ queryKey: repliesQueryKeyPrefix });
 
       const prevState = queryClient.getQueryData<CommentLikeInfo>(queryKey);
-      const prevRepliesData =
-        queryClient.getQueryData<CommentsPage>(repliesQueryKey);
 
       const isCurrentlyLiked = prevState?.isLikedByUser ?? false;
-
       const newLikeCount =
         (prevState?.likes || 0) + (isCurrentlyLiked ? -1 : 1);
 
-      const newLikeInfo: CommentLikeInfo = {
+      queryClient.setQueryData<CommentLikeInfo>(queryKey, {
         likes: newLikeCount,
         isLikedByUser: !isCurrentlyLiked,
+      });
+
+      const relevantQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: repliesQueryKeyPrefix });
+
+      const previousReplies: PreviousRepliesData[] = [];
+      relevantQueries.forEach((query) => {
+        if (query.state.data) {
+          previousReplies.push({
+            queryKey: query.queryKey,
+            data: query.state.data as InfiniteData<CommentsPage>,
+          });
+        }
+      });
+
+      const updater = (
+        oldData: InfiniteData<CommentsPage> | undefined,
+      ): InfiniteData<CommentsPage> | undefined => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            comments: page.comments.map((comment) => {
+              if (comment.id === replyId) {
+                return {
+                  ...comment,
+                  likes: !isCurrentlyLiked && userId ? [{ userId }] : [],
+                  _count: {
+                    ...comment._count,
+                    likes: newLikeCount,
+                  },
+                };
+              }
+              return comment;
+            }),
+          })),
+        };
       };
 
-      queryClient.setQueryData<CommentLikeInfo>(queryKey, newLikeInfo);
-
-      if (prevRepliesData) {
-        queryClient.setQueryData<InfiniteData<CommentsPage, string | null>>(
-          repliesQueryKey,
-          (oldData) => {
-            if (!oldData) return oldData;
-
-            return {
-              ...oldData,
-              pages: oldData.pages.map((page) => ({
-                ...page,
-                comments: page.comments.map((comment) => {
-                  if (comment.id === replyId) {
-                    return {
-                      ...comment,
-                      likes: isCurrentlyLiked && userId ? [{ userId }] : [],
-                      _count: {
-                        ...comment._count,
-                        likes: newLikeCount,
-                      },
-                    };
-                  }
-                  return comment;
-                }),
-              })),
-            };
-          },
-        );
-      }
+      previousReplies.forEach(({ queryKey }) => {
+        queryClient.setQueryData(queryKey, updater);
+      });
 
       if (newLocalReplies) {
         const updatedReplies = newLocalReplies.map((reply) => {
           if (reply.id === replyId) {
             return {
               ...reply,
-              likes: isCurrentlyLiked && userId ? [{ userId }] : [],
+              likes: !isCurrentlyLiked && userId ? [{ userId }] : [],
               _count: {
                 ...reply._count,
                 likes: newLikeCount,
               },
             };
           }
-
           return reply;
         });
-
-        console.log(updatedReplies);
         setNewLocalReplies(updatedReplies);
       }
 
-      return { prevState, prevRepliesData, isCurrentlyLiked };
+      return { prevState, previousReplies, isCurrentlyLiked };
     },
     onError: (error, _, context) => {
       queryClient.setQueryData(queryKey, context?.prevState);
-      if (context?.prevRepliesData) {
-        queryClient.setQueryData(repliesQueryKey, context.prevRepliesData);
-      }
+      context?.previousReplies?.forEach(({ queryKey, data }) => {
+        queryClient.setQueryData(queryKey, data);
+      });
 
-      console.log(error);
+      console.error(error);
       toast.error("Something went wrong, please try again.");
     },
   });

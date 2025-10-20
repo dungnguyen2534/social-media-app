@@ -33,11 +33,7 @@ export default function CommentMoreButton({
 
   return (
     <>
-      <DropdownMenu
-        open={isMenuOpen}
-        onOpenChange={setIsMenuOpen}
-        modal={false}
-      >
+      <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             title="More options"
@@ -59,7 +55,12 @@ export default function CommentMoreButton({
             Edit
           </DropdownMenuItem>
           <hr />
-          <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
+          <DropdownMenuItem
+            onClick={() => {
+              setIsMenuOpen(false);
+              setIsDeleteDialogOpen(true);
+            }}
+          >
             <Trash2 className="mt-[0.1rem] mr-2 size-4" /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>

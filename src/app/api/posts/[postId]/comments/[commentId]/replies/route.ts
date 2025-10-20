@@ -10,8 +10,11 @@ export async function GET(
   const session = await getSessionData();
   const { commentId } = await params;
 
-  const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
+  const cursor = req.nextUrl.searchParams.get("cursor") || null;
+  const direction = req.nextUrl.searchParams.get("direction") || "next";
   const pageSize = 6;
+
+  const isNext = direction === "next";
 
   try {
     const comments = await prisma.comment.findMany({
@@ -19,18 +22,34 @@ export async function GET(
         parentCommentId: commentId,
       },
       include: getCommentDataInclude(session?.user.id),
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: isNext ? "asc" : "desc" },
       take: pageSize + 1,
+      skip: cursor ? 1 : 0,
       cursor: cursor ? { id: cursor } : undefined,
     });
 
-    const nextCursor =
-      comments.length > pageSize ? comments[pageSize].id : null;
+    let data: CommentsPage;
 
-    const data: CommentsPage = {
-      comments: comments.slice(0, pageSize),
-      nextCursor,
-    };
+    if (isNext) {
+      const hasMore = comments.length > pageSize;
+      const items = comments.slice(0, pageSize);
+
+      data = {
+        comments: items,
+        nextCursor: hasMore ? items[pageSize - 1].id : null,
+        prevCursor: cursor,
+      };
+    } else {
+      const hasPrevious = comments.length > pageSize;
+      const items = comments.slice(0, pageSize);
+      const commentsToSend = [...items].reverse();
+
+      data = {
+        comments: commentsToSend,
+        nextCursor: cursor,
+        prevCursor: hasPrevious ? commentsToSend[0].id : null,
+      };
+    }
 
     return Response.json(data);
   } catch (err) {

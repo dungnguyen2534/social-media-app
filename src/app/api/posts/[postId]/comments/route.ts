@@ -12,7 +12,7 @@ export async function GET(
 
   const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
   const initialCommentId =
-    req.nextUrl.searchParams.get("priorityCommentId") || undefined;
+    req.nextUrl.searchParams.get("targetCommentId") || undefined;
   const pageSize = 10;
   const userId = session?.user.id;
 
@@ -57,6 +57,7 @@ export async function GET(
     const data: CommentsPage = {
       comments: allComments.slice(0, pageSize),
       nextCursor,
+      prevCursor: null,
     };
 
     return Response.json(data);

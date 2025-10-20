@@ -29,14 +29,39 @@ export default function Notification({
       icon: (
         <MessageCircle className="dark:text-card size-4 fill-blue-500 text-white" />
       ),
-      href: `/posts/${notification.postId}?priorityCommentId=${notification.commentId}`,
+      href: `/posts/${notification.postId}?targetCommentId=${notification.commentId}`,
     },
+
     FOLLOW: {
       message: "started following you.",
       icon: (
         <Smile className="dark:text-card size-4 fill-green-500 text-white" />
       ),
       href: `/users/${notification.issuer.username}`,
+    },
+    LIKE_COMMENT: {
+      message: "liked your comment.",
+      icon: <Heart className="dark:text-card size-4 fill-red-500 text-white" />,
+      href: `/posts/${notification.postId}?targetCommentId=${notification.commentId}`,
+    },
+    LIKE_REPLY: {
+      message: "liked your reply in a comment thread.",
+      icon: <Heart className="dark:text-card size-4 fill-red-500 text-white" />,
+      href: `/posts/${notification.postId}?targetCommentId=${notification.comment?.parentCommentId}&targetReplyId=${notification.comment?.id}`,
+    },
+    REPLY_TO_COMMENT: {
+      message: "reply to your comment.",
+      icon: (
+        <MessageCircle className="dark:text-card size-4 fill-blue-500 text-white" />
+      ),
+      href: `/posts/${notification.postId}?targetCommentId=${notification.comment?.parentCommentId}&targetReplyId=${notification.comment?.id}`,
+    },
+    REPLY_TO_REPLY: {
+      message: "reply to you in a comment thread.",
+      icon: (
+        <MessageCircle className="dark:text-card size-4 fill-blue-500 text-white" />
+      ),
+      href: `/posts/${notification.postId}?targetCommentId=${notification.comment?.parentCommentId}&targetReplyId=${notification.comment?.id}`,
     },
   };
 
@@ -76,3 +101,5 @@ export default function Notification({
     </Link>
   );
 }
+
+// TODO: improve this component

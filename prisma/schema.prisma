@@ -16,6 +16,10 @@ enum NotificationType {
     LIKE
     COMMENT
     FOLLOW
+    LIKE_COMMENT
+    LIKE_REPLY
+    REPLY_TO_COMMENT
+    REPLY_TO_REPLY
 }
 
 model User {
@@ -173,10 +177,15 @@ model Comment {
     content String?
 
     parentCommentId String?
-    parent          Comment?      @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
-    replies         Comment[]     @relation("CommentReplies")
-    likes           CommentLike[]
-    gif             Gif?
+    parent          Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+    replies         Comment[] @relation("CommentReplies")
+
+    replyingToId String?
+    replyingTo   Comment?  @relation("CommentReplyTo", fields: [replyingToId], references: [id], onDelete: NoAction)
+    repliedBy    Comment[] @relation("CommentReplyTo")
+
+    likes CommentLike[]
+    gif   Gif?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

@@ -120,6 +120,7 @@ export type CommentData = Prisma.CommentGetPayload<{
 export type CommentsPage = {
   comments: CommentData[];
   nextCursor: string | null;
+  prevCursor: string | null;
 };
 
 export type Gif = {
@@ -152,6 +153,14 @@ export function getNotificationDataInclude() {
 
     post: {
       select: {
+        content: true,
+      },
+    },
+
+    comment: {
+      select: {
+        id: true,
+        parentCommentId: true,
         content: true,
       },
     },

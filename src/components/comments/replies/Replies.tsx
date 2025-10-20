@@ -7,37 +7,39 @@ import api from "@/lib/ky";
 import Reply from "./Reply";
 import { useCommentContext } from "../comment-context";
 import CommentSkeletons from "../CommentSkeletons";
-import ReplyEditor from "./ReplyCreator";
+import ReplyCreator from "./ReplyCreator";
 
 interface RepliesProps {
   post: PostData;
   parentComment: CommentData;
   parentEditorOpen: boolean;
   setParentEditorOpen: (open: boolean) => void;
+  targetReplyId?: string;
 }
 
-export default function Replies({
+function StandardRepliesView({
   post,
   parentComment,
-  parentEditorOpen,
-  setParentEditorOpen,
-}: RepliesProps) {
-  const { newLocalReplies, setNewLocalReplies } = useCommentContext();
-  const [showReplies, setShowReplies] = useState(false);
-
+  showReplies,
+  onReplyClick,
+}: {
+  post: PostData;
+  parentComment: CommentData;
+  showReplies: boolean;
+  onReplyClick: (reply: CommentData) => void;
+}) {
   const { data, status, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["replies", parentComment.id],
-      queryFn: ({ pageParam }) => {
-        return api
+      queryFn: ({ pageParam }) =>
+        api
           .get(
             `posts/${post.id}/comments/${parentComment.id}/replies`,
             pageParam ? { searchParams: { cursor: pageParam } } : {},
           )
-          .json<CommentsPage>();
-      },
+          .json<CommentsPage>(),
       initialPageParam: null as string | null,
-      getNextPageParam: (firstPage) => firstPage.nextCursor,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
       enabled: showReplies,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -48,21 +50,153 @@ export default function Replies({
     [data?.pages],
   );
 
-  useEffect(() => {
-    if (fetchedReplies.length > 0 && newLocalReplies.length > 0) {
-      const fetchedReplyIds = new Set(fetchedReplies.map((r) => r.id));
+  return (
+    <div>
+      <div>
+        {status === "pending" ? (
+          <CommentSkeletons
+            count={
+              parentComment._count.replies >= 6
+                ? 6
+                : parentComment._count.replies
+            }
+          />
+        ) : (
+          fetchedReplies.map((r) => (
+            <Reply
+              reply={r}
+              post={post}
+              key={r.id}
+              className="mt-3"
+              parentCommentId={parentComment.id}
+              onReplyClick={onReplyClick}
+            />
+          ))
+        )}
+        {isFetchingNextPage && <CommentSkeletons count={1} />}
+      </div>
+      {hasNextPage && (
+        <button
+          className="text-muted-foreground hover:text-primary my-1 flex cursor-pointer items-center gap-2 text-xs"
+          onClick={() => fetchNextPage()}
+        >
+          <span className="bg-muted-foreground block h-[1px] w-5"></span>
+          Load more
+        </button>
+      )}
+    </div>
+  );
+}
 
-      const filterednewLocalReplies = newLocalReplies.filter(
-        (newReply) => !fetchedReplyIds.has(newReply.id),
-      );
+function InitialReplyView({
+  post,
+  parentComment,
+  targetReplyId,
+  onReplyClick,
+}: {
+  post: PostData;
+  parentComment: CommentData;
+  targetReplyId: string;
+  onReplyClick: (reply: CommentData) => void;
+}) {
+  const {
+    data,
+    status,
+    fetchNextPage,
+    fetchPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+    isFetchingNextPage,
+    isFetchingPreviousPage,
+  } = useInfiniteQuery({
+    queryKey: ["replies", parentComment.id, targetReplyId],
+    queryFn: async ({ pageParam }) => {
+      const { cursor, direction } = pageParam;
+      let url = `posts/${post.id}/comments/${parentComment.id}/replies`;
+      let options = {};
 
-      if (filterednewLocalReplies.length !== newLocalReplies.length) {
-        setNewLocalReplies(filterednewLocalReplies);
+      if (direction === "initial") {
+        url += `/${cursor}`;
+      } else {
+        options = { searchParams: { cursor, direction } };
       }
-    }
-  }, [fetchedReplies, setNewLocalReplies, newLocalReplies]);
 
-  // Focus on new reply
+      return api.get(url, options).json<CommentsPage>();
+    },
+    initialPageParam: { cursor: targetReplyId, direction: "initial" },
+    getNextPageParam: (lastPage) =>
+      lastPage.nextCursor
+        ? { cursor: lastPage.nextCursor, direction: "next" }
+        : undefined,
+    getPreviousPageParam: (firstPage) =>
+      firstPage.prevCursor
+        ? { cursor: firstPage.prevCursor, direction: "prev" }
+        : undefined,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  });
+
+  const allReplies = useMemo(
+    () => data?.pages.flatMap((page) => page.comments) || [],
+    [data?.pages],
+  );
+
+  if (status === "pending") {
+    return <CommentSkeletons count={1} />;
+  }
+
+  return (
+    <div>
+      {isFetchingPreviousPage && <CommentSkeletons count={1} />}
+      {hasPreviousPage && (
+        <button
+          className="text-muted-foreground hover:text-primary my-1 flex cursor-pointer items-center gap-2 text-xs"
+          onClick={() => fetchPreviousPage()}
+          disabled={isFetchingPreviousPage}
+        >
+          <span className="bg-muted-foreground block h-[1px] w-5"></span>
+          {isFetchingPreviousPage ? "Loading..." : "Load previous"}
+        </button>
+      )}
+
+      {allReplies.map((r) => (
+        <Reply
+          reply={r}
+          post={post}
+          key={r.id}
+          className="mt-3"
+          parentCommentId={parentComment.id}
+          onReplyClick={onReplyClick}
+          isTarget={r.id === targetReplyId}
+        />
+      ))}
+
+      {isFetchingNextPage && <CommentSkeletons count={1} />}
+      {hasNextPage && (
+        <button
+          className="text-muted-foreground hover:text-primary my-1 flex cursor-pointer items-center gap-2 text-xs"
+          onClick={() => fetchNextPage()}
+          disabled={isFetchingNextPage}
+        >
+          <span className="bg-muted-foreground block h-[1px] w-5"></span>
+          {isFetchingNextPage ? "Loading..." : "Load more"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+export default function Replies({
+  post,
+  parentComment,
+  parentEditorOpen,
+  setParentEditorOpen,
+  targetReplyId,
+}: RepliesProps) {
+  const { newLocalReplies } = useCommentContext();
+  const [showReplies, setShowReplies] = useState(!!targetReplyId);
+
   const replyRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
@@ -87,8 +221,8 @@ export default function Replies({
     }
   };
 
-  // Editor behavior
   const [editorTarget, setEditorTarget] = useState<{
+    id: string;
     reply: CommentData;
     parentCommentId: string;
   } | null>(null);
@@ -103,8 +237,8 @@ export default function Replies({
     }
 
     if (parentEditorOpen) setParentEditorOpen(false);
-    setEditorTarget({ reply, parentCommentId: parentComment.id });
-    setEditorKey((prev) => prev + 1); // Forces remount and focus
+    setEditorTarget({ id: reply.id, reply, parentCommentId: parentComment.id });
+    setEditorKey((prev) => prev + 1);
     setTimeout(() => {
       editorRef.current?.scrollIntoView({
         block: "center",
@@ -128,42 +262,20 @@ export default function Replies({
             View replies ({parentComment._count.replies})
           </button>
         )
+      ) : targetReplyId ? (
+        <InitialReplyView
+          post={post}
+          parentComment={parentComment}
+          targetReplyId={targetReplyId}
+          onReplyClick={handleReplyClick}
+        />
       ) : (
-        <div>
-          <div>
-            {status === "pending" ? (
-              <CommentSkeletons
-                count={
-                  parentComment._count.replies >= 6
-                    ? 6
-                    : parentComment._count.replies
-                }
-              />
-            ) : (
-              fetchedReplies.map((r) => (
-                <Reply
-                  reply={r}
-                  post={post}
-                  key={r.id}
-                  className="mt-3"
-                  parentCommentId={parentComment.id}
-                  onReplyClick={handleReplyClick}
-                />
-              ))
-            )}
-
-            {isFetchingNextPage && <CommentSkeletons count={1} />}
-          </div>
-          {hasNextPage && (
-            <button
-              className="text-muted-foreground hover:text-primary my-1 flex cursor-pointer items-center gap-2 text-xs"
-              onClick={() => fetchNextPage()}
-            >
-              <span className="bg-muted-foreground block h-[1px] w-5"></span>
-              Load more
-            </button>
-          )}
-        </div>
+        <StandardRepliesView
+          post={post}
+          parentComment={parentComment}
+          showReplies={showReplies}
+          onReplyClick={handleReplyClick}
+        />
       )}
 
       {newLocalReplies.length > 0 &&
@@ -182,10 +294,11 @@ export default function Replies({
 
       {editorTarget && (
         <div ref={editorRef} className="mt-3 mb-3.5 w-full">
-          <ReplyEditor
+          <ReplyCreator
             key={editorKey}
             post={post}
             parentCommentId={editorTarget.parentCommentId}
+            replyingToId={editorTarget.id}
             replyingToUser={editorTarget.reply.user}
             onReplySuccess={() => setEditorTarget(null)}
           />

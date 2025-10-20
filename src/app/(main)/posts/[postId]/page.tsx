@@ -47,7 +47,7 @@ export async function generateMetadata({
 
 export default async function PostPage({ params, searchParams }: PageProps) {
   const { postId } = await params;
-  const { priorityCommentId } = await searchParams;
+  const { targetCommentId, targetReplyId } = await searchParams;
 
   const session = await getSessionData();
   const post = await getPost(postId, session?.user.id);
@@ -56,7 +56,11 @@ export default async function PostPage({ params, searchParams }: PageProps) {
     <div className="bg-card scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent relative flex h-[calc(100dvh-1rem)] flex-col overflow-y-scroll shadow-md lg:rounded-md">
       <Post post={post} noCommentButton className="!rounded-none shadow-none" />
       <div className="px-5">
-        <Comments post={post} priorityCommentId={priorityCommentId as string} />
+        <Comments
+          post={post}
+          targetCommentId={targetCommentId as string}
+          targetReplyId={targetReplyId as string}
+        />
       </div>
       <div className="sticky bottom-0 mt-auto h-fit w-full">
         <CommentCreator post={post} />
