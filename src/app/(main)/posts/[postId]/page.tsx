@@ -63,7 +63,10 @@ export default async function PostPage({ params, searchParams }: PageProps) {
         />
       </div>
       <div className="sticky bottom-0 mt-auto h-fit w-full">
-        <CommentCreator post={post} />
+        <CommentCreator
+          post={post}
+          autoFocus={targetReplyId || targetCommentId ? false : true}
+        />
       </div>
     </div>
   );

@@ -78,6 +78,7 @@ export function MiniProfile({ children, user }: MiniProfileProps) {
               {signedInUser && (
                 <FollowButton
                   user={user}
+                  noDialog
                   initialState={followerInfo}
                   className="w-full"
                 />

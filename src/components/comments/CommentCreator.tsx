@@ -19,9 +19,13 @@ import useUpdatePostCommentCount from "./hooks/useUpdatePostCommentCount";
 
 interface CommentCreatorProps {
   post: PostData;
+  autoFocus?: boolean;
 }
 
-export default function CommentCreator({ post }: CommentCreatorProps) {
+export default function CommentCreator({
+  post,
+  autoFocus = true,
+}: CommentCreatorProps) {
   const session = useAuth();
 
   const mutation = useSubmitCommentMutation(post.id);
@@ -47,7 +51,7 @@ export default function CommentCreator({ post }: CommentCreatorProps) {
     },
 
     immediatelyRender: false,
-    autofocus: true,
+    autofocus: autoFocus,
   });
 
   const onSubmit = async () => {

@@ -20,12 +20,14 @@ import { useState } from "react";
 interface FollowButtonProps {
   user: UserData;
   initialState: FollowerInfo;
+  noDialog?: boolean;
   className?: string;
 }
 
 export default function FollowButton({
   user,
   initialState,
+  noDialog,
   className,
 }: FollowButtonProps) {
   const { data } = useFollowerInfo(user.id, initialState);
@@ -83,7 +85,7 @@ export default function FollowButton({
         variant="custom"
         onClick={
           data.isFollowing
-            ? () => setIsUnfollowDialogOpen(true)
+            ? () => (noDialog ? mutate() : setIsUnfollowDialogOpen(true))
             : () => mutate()
         }
         className={className}

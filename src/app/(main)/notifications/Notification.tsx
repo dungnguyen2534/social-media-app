@@ -17,65 +17,74 @@ export default function Notification({
 }: NotificationProps) {
   const notificationTypeMap: Record<
     NotificationType,
-    { message: string; icon: JSX.Element | null; href: string }
+    { message: string; icon: JSX.Element | null; color: string; href: string }
   > = {
     LIKE: {
       message: "liked your post.",
       icon: <Heart className="dark:text-card size-4 fill-red-500 text-white" />,
       href: `/posts/${notification.postId}`,
+      color: "bg-red-500",
     },
     COMMENT: {
-      message: "commented on your post.",
+      message: `commented on your post: ${notification.comment?.content}`,
       icon: (
         <MessageCircle className="dark:text-card size-4 fill-blue-500 text-white" />
       ),
       href: `/posts/${notification.postId}?targetCommentId=${notification.commentId}`,
+      color: "bg-blue-500",
     },
-
     FOLLOW: {
       message: "started following you.",
       icon: (
         <Smile className="dark:text-card size-4 fill-green-500 text-white" />
       ),
       href: `/users/${notification.issuer.username}`,
+      color: "bg-green-500",
     },
     LIKE_COMMENT: {
       message: "liked your comment.",
       icon: <Heart className="dark:text-card size-4 fill-red-500 text-white" />,
       href: `/posts/${notification.postId}?targetCommentId=${notification.commentId}`,
+      color: "bg-red-500",
     },
     LIKE_REPLY: {
       message: "liked your reply in a comment thread.",
       icon: <Heart className="dark:text-card size-4 fill-red-500 text-white" />,
       href: `/posts/${notification.postId}?targetCommentId=${notification.comment?.parentCommentId}&targetReplyId=${notification.comment?.id}`,
+      color: "bg-red-500",
     },
     REPLY_TO_COMMENT: {
-      message: "reply to your comment.",
+      message: `reply to your comment: ${notification.comment?.content}`,
       icon: (
         <MessageCircle className="dark:text-card size-4 fill-blue-500 text-white" />
       ),
       href: `/posts/${notification.postId}?targetCommentId=${notification.comment?.parentCommentId}&targetReplyId=${notification.comment?.id}`,
+      color: "bg-blue-500",
     },
     REPLY_TO_REPLY: {
-      message: "reply to you in a comment thread.",
+      message: `reply to you in a comment thread: ${notification.comment?.content}`,
       icon: (
         <MessageCircle className="dark:text-card size-4 fill-blue-500 text-white" />
       ),
       href: `/posts/${notification.postId}?targetCommentId=${notification.comment?.parentCommentId}&targetReplyId=${notification.comment?.id}`,
+      color: "bg-blue-500",
     },
   };
 
-  const { message, icon, href } = notificationTypeMap[notification.type];
+  const { message, icon, href, color } = notificationTypeMap[notification.type];
 
   return (
     <Link
       href={href}
       className={cn(
-        "bg-card relative mb-1 flex items-center gap-3 rounded-sm p-5 shadow-sm lg:mb-2",
-        notification.read ? "bg-card" : "bg-accent",
+        "bg-card relative mb-1 flex items-center gap-3 overflow-hidden p-5 shadow-sm hover:outline-2 lg:mb-2 lg:rounded-md",
         className,
       )}
     >
+      {!notification.read && (
+        <div className={`absolute -left-10 h-full w-1/12 ${color}`}></div>
+      )}
+
       <div className="relative">
         <UserAvatar avatarUrl={notification.issuer.image} className="size-12" />
 
@@ -87,13 +96,26 @@ export default function Notification({
           <span className="font-medium">{notification.issuer.username}</span>{" "}
           {message}
         </div>
-        {notification.post?.content && (
-          <div className="text-muted-foreground line-clamp-1 text-sm">
-            {notification.recipient.username +
-              ": " +
-              notification.post?.content}
-          </div>
-        )}
+        {(notification.type === "LIKE" || notification.type === "COMMENT") &&
+          notification.post?.content && (
+            <div className="text-muted-foreground line-clamp-1 text-sm">
+              {notification.post?.content}
+            </div>
+          )}
+        {(notification.type === "LIKE_COMMENT" ||
+          notification.type === "LIKE_REPLY") &&
+          notification.comment?.content && (
+            <div className="text-muted-foreground line-clamp-1 text-sm">
+              {notification.comment?.content}
+            </div>
+          )}
+        {(notification.type === "REPLY_TO_COMMENT" ||
+          notification.type === "REPLY_TO_REPLY") &&
+          notification.comment?.replyingTo?.content && (
+            <div className="text-muted-foreground line-clamp-1 text-sm">
+              {notification.comment?.replyingTo?.content}
+            </div>
+          )}
       </div>
       <div className="text-muted-foreground absolute right-2.5 bottom-1.5 text-xs">
         {formatRelativeDate(notification.createdAt)}
@@ -101,5 +123,3 @@ export default function Notification({
     </Link>
   );
 }
-
-// TODO: improve this component

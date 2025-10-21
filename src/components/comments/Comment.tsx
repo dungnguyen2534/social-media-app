@@ -65,7 +65,7 @@ const Comment = forwardRef<HTMLDivElement, CommentProps>(
                 <div>
                   <div
                     className={cn(
-                      "bg-accent relative min-h-9 w-full px-3 py-2",
+                      "bg-accent relative min-h-9 w-full px-3 py-2 shadow-sm",
                       comment.gif && !comment.content
                         ? "rounded-t-md"
                         : "rounded-md",

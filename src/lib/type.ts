@@ -162,6 +162,7 @@ export function getNotificationDataInclude() {
         id: true,
         parentCommentId: true,
         content: true,
+        replyingTo: true,
       },
     },
   } satisfies Prisma.NotificationInclude;

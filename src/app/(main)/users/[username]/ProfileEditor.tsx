@@ -110,7 +110,6 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
               name="bio"
               label="Bio"
               placeholder="A short bio about yourself"
-              autoFocus
             />
 
             <DialogFooter>

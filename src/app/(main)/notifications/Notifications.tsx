@@ -9,9 +9,9 @@ import {
 } from "@tanstack/react-query";
 import InfiniteScrollContainer from "../../../components/common/InfiniteScrollContainer";
 import { Annoyed } from "lucide-react";
-import FeedSkeletons from "../../../components/feeds/FeedSkeletons";
 import Notification from "./Notification";
 import { useEffect } from "react";
+import NotificationSkeletons from "./NotificationSkeletons";
 
 export default function Notifications() {
   const {
@@ -56,7 +56,7 @@ export default function Notifications() {
   const notifications = data?.pages.flatMap((page) => page.notifications) || [];
 
   if (status === "pending") {
-    return <FeedSkeletons count={4} />;
+    return <NotificationSkeletons count={10} />;
   }
 
   if (status === "success" && notifications.length === 0 && !hasNextPage) {
@@ -88,7 +88,7 @@ export default function Notifications() {
         <Notification notification={notification} key={notification.id} />
       ))}
 
-      {isFetchingNextPage && <FeedSkeletons count={2} />}
+      {isFetchingNextPage && <NotificationSkeletons count={2} />}
     </InfiniteScrollContainer>
   );
 }
