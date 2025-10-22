@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, House, Mail, SearchIcon } from "lucide-react";
+import { Bookmark, House, SearchIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { ThemeSwitcher } from "../ui/theme-switcher";
@@ -10,6 +10,7 @@ import UserButton from "../common/UserButton";
 import PostEditor from "../posts/editor/PostEditor";
 import { useAuth } from "@/app/auth-context";
 import { usePathname } from "next/navigation";
+import MessageButton from "../common/MessageButton";
 
 interface FeaturePanelProps {
   userInitialDisplayData: UserInitialDisplayData;
@@ -78,13 +79,10 @@ export default function FeaturePanel({
 
       {session && (
         <div className="bg-card space-y-1 overflow-hidden rounded-md p-2 shadow-sm">
-          <Button
-            variant="ghost"
-            className="h-14 w-full justify-start rounded-sm"
-          >
-            <Mail className="size-5" />
-            Messages
-          </Button>
+          <MessageButton
+            variant={pathname === "/messages" ? "secondary" : "ghost"}
+            className="h-14 w-full justify-start rounded-sm !px-3"
+          />
 
           <NotificationButton
             variant={pathname === "/notifications" ? "secondary" : "ghost"}

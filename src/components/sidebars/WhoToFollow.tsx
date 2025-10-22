@@ -4,16 +4,11 @@ import Link from "next/link";
 import UserAvatar from "../common/UserAvatar";
 import FollowButton from "../common/FollowButton";
 import { getUserDataSelect } from "@/lib/type";
-import { headers } from "next/headers";
 import { MiniProfile } from "../common/MiniProfile";
 import SidebarSkeletonWrapper from "./SidebarSkeletonWrapper";
 import { Skeleton } from "../ui/skeleton";
 
 export async function WhoToFollow() {
-  const headerList = await headers();
-  const pathname = headerList.get("x-current-path");
-  if (!pathname) return null;
-
   const session = await getSessionData();
   if (!session?.user.id) return null;
 

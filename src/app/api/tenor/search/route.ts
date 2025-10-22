@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
 import ky, { HTTPError } from "ky";
 import { getSessionData } from "@/auth";
+import { env } from "@/env";
 
-const TENOR_API_KEY = process.env.TENOR_API_KEY;
+const TENOR_API_KEY = env.TENOR_API_KEY;
 const BASE_TENOR_SEARCH_URL = "https://tenor.googleapis.com/v2/search";
 
 export async function GET(req: NextRequest) {

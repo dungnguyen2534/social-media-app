@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { AuthProvider } from "../auth-context";
 import MobileNavbar from "@/components/mobile-navbar/MobileNavbar";
 import FeaturePanel from "@/components/sidebars/FeaturePanel";
+import { prisma } from "@/lib/prisma";
+import { DiscoveryPanel } from "@/components/sidebars/DiscoveryPanel";
 import { Suspense } from "react";
 import {
   TrendingTopics,
@@ -12,7 +14,8 @@ import {
   WhoToFollow,
   WhoToFollowSkeleton,
 } from "@/components/sidebars/WhoToFollow";
-import { prisma } from "@/lib/prisma";
+import MainGrid from "./MainGrid";
+import { StreamClientProvider } from "./StreamClientProvider";
 
 export interface UserInitialDisplayData {
   unreadNotificationCount: number;
@@ -36,31 +39,33 @@ export default async function Layout({
     });
   }
 
-  // for more info later if needed
   const userInitialDisplayData: UserInitialDisplayData = {
     unreadNotificationCount,
   };
 
   return (
     <AuthProvider session={session}>
-      <MobileNavbar userInitialDisplayData={userInitialDisplayData} />
+      <StreamClientProvider>
+        <MobileNavbar userInitialDisplayData={userInitialDisplayData} />
+        <MainGrid>
+          <aside className="app-sidebar">
+            <FeaturePanel userInitialDisplayData={userInitialDisplayData} />
+          </aside>
 
-      <main className="app-container app-grid mt-1 !px-0 lg:mt-2 lg:px-3">
-        <aside className="app-sidebar">
-          <FeaturePanel userInitialDisplayData={userInitialDisplayData} />
-        </aside>
+          <main>{children}</main>
 
-        {children}
-
-        <aside className="app-sidebar">
-          <Suspense fallback={<TrendingTopicsSkeleton count={5} />}>
-            <TrendingTopics />
-          </Suspense>
-          <Suspense fallback={<WhoToFollowSkeleton count={5} />}>
-            <WhoToFollow />
-          </Suspense>
-        </aside>
-      </main>
+          <aside className="app-sidebar">
+            <DiscoveryPanel>
+              <Suspense fallback={<TrendingTopicsSkeleton count={5} />}>
+                <TrendingTopics />
+              </Suspense>
+              <Suspense fallback={<WhoToFollowSkeleton count={5} />}>
+                <WhoToFollow />
+              </Suspense>
+            </DiscoveryPanel>
+          </aside>
+        </MainGrid>
+      </StreamClientProvider>
     </AuthProvider>
   );
 }

@@ -3,6 +3,7 @@
 import { getSessionData } from "@/auth";
 import { ActionResult } from "@/lib/action-error";
 import { prisma } from "@/lib/prisma";
+import streamSeverClient from "@/lib/stream";
 import { getUserDataSelect, UserData } from "@/lib/type";
 import { userProfileData, userProfileSchema } from "@/lib/validation";
 
@@ -46,10 +47,22 @@ export async function updateUserProfile(
       updateData.usernameUpdatedAt = new Date();
     }
 
-    const updatedUser = await prisma.user.update({
-      where: { id: session.user.id },
-      data: updateData,
-      select: getUserDataSelect(session.user.id),
+    const updatedUser = await prisma.$transaction(async (tx) => {
+      const updatedData = await tx.user.update({
+        where: { id: session.user.id },
+        data: updateData,
+        select: getUserDataSelect(session.user.id),
+      });
+
+      await streamSeverClient.partialUpdateUser({
+        id: updatedData.id,
+        set: {
+          name: updatedData.name!,
+          username: updatedData.username!,
+        },
+      });
+
+      return updatedData;
     });
 
     return updatedUser;

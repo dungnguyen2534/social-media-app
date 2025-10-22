@@ -1,5 +1,6 @@
 import { getSessionData } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import streamSeverClient from "@/lib/stream";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError, UTApi } from "uploadthing/server";
 
@@ -17,7 +18,7 @@ export const ourFileRouter = {
       if (!session?.user) throw new UploadThingError("Unauthorized");
 
       // Accessible in onUploadComplete as `metadata`
-      return { user: session?.user };
+      return { user: session!.user };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       const oldAvatarUrl = metadata.user.image;
@@ -26,12 +27,21 @@ export const ourFileRouter = {
       }
 
       const avatarUrl = file.ufsUrl;
-      await prisma.user.update({
-        where: { id: metadata.user.id },
-        data: {
-          image: avatarUrl,
-        },
-      });
+
+      await Promise.all([
+        await prisma.user.update({
+          where: { id: metadata.user.id },
+          data: {
+            image: avatarUrl,
+          },
+        }),
+        await streamSeverClient.partialUpdateUser({
+          id: metadata.user.id!,
+          set: {
+            image: avatarUrl,
+          },
+        }),
+      ]);
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { avatarUrl };

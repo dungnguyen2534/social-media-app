@@ -204,3 +204,7 @@ export type CommentLikeInfo = {
 export type NotificationCountInfo = {
   unreadCount: number;
 };
+
+export type MessageCountInfo = {
+  unreadCount: number;
+};

@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -16,7 +17,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: `${process.env.UPLOADTHING_APP_ID}.ufs.sh`,
+        hostname: `${env.UPLOADTHING_APP_ID}.ufs.sh`,
         port: "",
         pathname: "/**",
       },

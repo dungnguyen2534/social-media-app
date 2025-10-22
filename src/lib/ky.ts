@@ -1,6 +1,7 @@
+import { env } from "@/env";
 import ky from "ky";
 
-const apiURL = process.env.NEXT_PUBLIC_API_URL;
+const apiURL = env.NEXT_PUBLIC_API_URL;
 if (!apiURL) {
   throw new ReferenceError(
     "The environment variable NEXT_PUBLIC_API_URL is not defined.",
