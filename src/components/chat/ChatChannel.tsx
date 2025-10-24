@@ -6,19 +6,20 @@ import {
   ChannelHeaderProps,
   MessageInput,
   MessageList,
+  useChatContext,
   Window,
 } from "stream-chat-react";
 
 interface ChatChanelProps {
-  backToSidebar: () => void;
+  backToChannelList: () => void;
 }
 
-export default function ChatChanel({ backToSidebar }: ChatChanelProps) {
+export default function ChatChanel({ backToChannelList }: ChatChanelProps) {
   return (
-    <div className="w-full lg:block">
+    <div className="flex-1 lg:block">
       <Channel>
         <Window>
-          <CustomChanelHeader backToSidebar={backToSidebar} />
+          <CustomChanelHeader backToChannelList={backToChannelList} />
           <MessageList />
           <MessageInput />
         </Window>
@@ -28,18 +29,28 @@ export default function ChatChanel({ backToSidebar }: ChatChanelProps) {
 }
 
 interface CustomChanelHeaderProps extends ChannelHeaderProps {
-  backToSidebar: () => void;
+  backToChannelList: () => void;
 }
 
 function CustomChanelHeader({
-  backToSidebar,
+  backToChannelList,
   ...props
 }: CustomChanelHeaderProps) {
+  const { setActiveChannel } = useChatContext();
+
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center">
       <div className="h-full p-2 lg:hidden">
-        <Button size="icon" variant="ghost" onClick={backToSidebar}>
-          <ChevronLeft className="size-4" />
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => {
+            backToChannelList();
+            setActiveChannel(undefined);
+          }}
+          className="h-full"
+        >
+          <ChevronLeft className="size-5" />
         </Button>
       </div>
       <ChannelHeader {...props} />

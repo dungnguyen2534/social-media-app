@@ -16,11 +16,15 @@ export function StreamClientProvider({
   children: React.ReactNode;
 }) {
   const session = useAuth();
-  const signedInUser = session!.user;
+  const signedInUser = session?.user;
 
-  const [chatClient, setChatClient] = useState<StreamChat | null>(null);
+  const [chatClient, setChatClient] = useState<StreamChat | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
+    if (!signedInUser) return;
+
     const client = StreamChat.getInstance(env.NEXT_PUBLIC_STREAM_KEY);
     client
       .connectUser(
@@ -40,21 +44,12 @@ export function StreamClientProvider({
       .then(() => setChatClient(client));
 
     return () => {
-      setChatClient(null);
+      setChatClient(undefined);
       client
         .disconnectUser()
         .catch((error) => console.error("Failed to disconnect user", error));
     };
-  }, [
-    signedInUser.id,
-    signedInUser.username,
-    signedInUser.name,
-    signedInUser.image, // only rerun when these specific values change
-  ]);
-
-  if (!chatClient) {
-    return null;
-  }
+  }, [signedInUser]);
 
   return (
     <StreamClientContext.Provider value={chatClient}>
@@ -63,14 +58,7 @@ export function StreamClientProvider({
   );
 }
 
-export function useStreamClient(): StreamChat {
+export function useStreamClient(): StreamChat | undefined {
   const context = useContext(StreamClientContext);
-
-  if (context === undefined) {
-    throw new Error(
-      "useStreamClient must be used within an StreamClientProvider",
-    );
-  }
-
   return context;
 }

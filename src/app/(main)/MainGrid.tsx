@@ -14,7 +14,7 @@ export default function MainGrid({ children }: MainGridProps) {
   return (
     <div
       className={cn(
-        "app-container app-grid mt-1 !px-0 lg:mt-2 lg:px-3",
+        "app-container app-grid !px-0 lg:mt-2 lg:px-3",
         pathname === "/messages" &&
           "lg:!grid-cols-[minmax(0,0.99145fr)_minmax(0,2.75fr))]",
       )}

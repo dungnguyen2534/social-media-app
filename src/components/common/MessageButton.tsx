@@ -23,12 +23,14 @@ export default function MessageButton({
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
+    if (!client) return;
+
     client
       .getUnreadCount(session?.user.id)
       .then((data) => setUnreadCount(data.total_unread_count));
   }, [client, session?.user.id]);
 
-  client.on((event) => {
+  client?.on((event) => {
     if (event.total_unread_count !== undefined) {
       setUnreadCount(event.total_unread_count);
     }
@@ -38,7 +40,7 @@ export default function MessageButton({
     <Button asChild size={onMobileNav ? "icon" : "default"} {...rest}>
       <Link href="/messages" className={className}>
         <div className="relative">
-          <Mail className="size-5" />
+          <Mail className="size-4 lg:size-5" />
           {unreadCount > 0 && (
             <span className="text-primary absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500 text-xs font-medium tabular-nums"></span>
           )}

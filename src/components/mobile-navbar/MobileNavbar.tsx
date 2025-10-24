@@ -1,20 +1,30 @@
+"use client";
+
 import Link from "next/link";
 import { MobileSearchButton } from "./Search";
-import { getSessionData } from "@/auth";
 import { Button } from "../ui/button";
 import PostEditor from "../posts/editor/PostEditor";
 import HamburgerMenu from "./HamburgerMenu";
 import { UserInitialDisplayData } from "@/app/(main)/layout";
 import NotificationButton from "../common/NotificationButton";
+import { useAuth } from "@/app/auth-context";
+import { usePathname } from "next/navigation";
 
 interface MobileNavbarProps {
   userInitialDisplayData: UserInitialDisplayData;
 }
 
-export default async function MobileNavbar({
+export default function MobileNavbar({
   userInitialDisplayData,
 }: MobileNavbarProps) {
-  const session = await getSessionData();
+  const session = useAuth();
+
+  const pathname = usePathname();
+
+  const pathsToHide = ["/messages"];
+  if (pathsToHide.includes(pathname)) {
+    return null;
+  }
 
   return (
     <header className="bg-card sticky top-0 z-10 h-[var(--navbar-height)] border-b lg:hidden">

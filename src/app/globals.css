@@ -176,14 +176,42 @@
   --str-chat__cta-button-border-radius: var(--radius);
 }
 
-.str-chat-channel-list {
-  border-right: none;
+.str-chat {
+  @apply !border-none;
 }
 
 .str-chat__channel-list-react .str-chat__channel-list-messenger-react {
-  padding-bottom: 0;
+  @apply mt-2 pb-0;
+}
+
+.str-chat__channel-search {
+  @apply !block;
+}
+
+.str-chat__channel-search-bar {
+  @apply !h-16;
 }
 
 .str-chat__channel-search-bar-button--exit-search {
-  display: none;
+  @apply hidden;
+}
+
+.str-chat__channel-search-input {
+  @apply !text-base;
+}
+
+.str-chat__channel-search-input--wrapper {
+  @apply focus-within:ring-ring/50 bg-accent rounded-md border-none transition-all focus-within:ring-[3px];
+}
+
+.str-chat__channel-search-input--icon {
+  @apply !pr-3 !pl-1;
+}
+
+.str-chat__channel-preview__action-buttons {
+  @apply !hidden;
+}
+
+.str-chat__channel-preview-messenger--last-message {
+  @apply text-muted-foreground;
 }
