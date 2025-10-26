@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { CommentData } from "@/lib/type";
@@ -50,7 +49,7 @@ export default function DeleteCommentDialog({
             {forReply ? "reply" : "comment"}? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <div className="grid grid-cols-2 gap-2">
           <LoadingButton
             onClick={() => {
               setIsDeleting(true);
@@ -63,7 +62,7 @@ export default function DeleteCommentDialog({
               });
             }}
             loading={mutation.isPending}
-            className="w-24"
+            variant="destructive"
           >
             Delete
           </LoadingButton>
@@ -71,11 +70,10 @@ export default function DeleteCommentDialog({
             variant="custom"
             onClick={() => setIsDeleteDialogOpen(false)}
             disabled={mutation.isPending}
-            className="w-24"
           >
             Cancel
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

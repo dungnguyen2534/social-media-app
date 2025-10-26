@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
@@ -36,9 +35,8 @@ export default function SignOutDialog({
             Are you sure you want to sign out?
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <div className="grid grid-cols-2 gap-2">
           <LoadingButton
-            className="sm:w-24"
             loading={isSignOutClicked}
             onClick={() => {
               setIsSignOutClicked(true);
@@ -49,13 +47,12 @@ export default function SignOutDialog({
             Sign out
           </LoadingButton>
           <Button
-            className="sm:w-24"
             variant="outline"
             onClick={() => setIsSignOutDialogOpen(false)}
           >
             Cancel
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

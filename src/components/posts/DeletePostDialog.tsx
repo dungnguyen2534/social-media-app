@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { PostData } from "@/lib/type";
@@ -43,7 +42,7 @@ export default function DeletePostDialog({
             undone.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <div className="grid grid-cols-2 gap-2">
           <LoadingButton
             onClick={() => {
               mutation.mutate(post.id, {
@@ -60,7 +59,7 @@ export default function DeletePostDialog({
               });
             }}
             loading={mutation.isPending || isTransitioning}
-            className="w-24"
+            variant="destructive"
           >
             Delete
           </LoadingButton>
@@ -68,11 +67,10 @@ export default function DeletePostDialog({
             variant="custom"
             onClick={() => setIsDeletePostDialog(false)}
             disabled={mutation.isPending || isTransitioning}
-            className="w-24"
           >
             Cancel
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

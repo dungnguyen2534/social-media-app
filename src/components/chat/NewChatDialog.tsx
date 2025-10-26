@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import useDebounce from "@/hooks/useDebounce";
@@ -18,11 +19,13 @@ import { useChatContext } from "stream-chat-react";
 import UserAvatar from "../common/UserAvatar";
 
 interface NewChatDialogProps {
+  open: boolean;
   onOpenChange: (open: boolean) => void;
   onChatCreated: () => void;
 }
 
 export default function NewChatDialog({
+  open,
   onOpenChange,
   onChatCreated,
 }: NewChatDialogProps) {
@@ -35,6 +38,9 @@ export default function NewChatDialog({
 
   const [searchInput, setSearchInput] = useState("");
   const searchInputDebounced = useDebounce(searchInput, 300);
+
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [groupName, setGroupName] = useState("");
 
   const { data, isSuccess } = useQuery({
     queryKey: ["stream-search-users", searchInputDebounced],
@@ -60,27 +66,27 @@ export default function NewChatDialog({
 
       return { ...response, users: filteredUsers };
     },
+    enabled: open,
   });
 
-  const memberList = [
-    signedInUser.id!,
-    ...selectedUsers.map((user) => user.id),
-  ];
+  const memberIds = [signedInUser.id!, ...selectedUsers.map((user) => user.id)];
+  const isGroup = selectedUsers.length > 1;
 
-  // TODO: create a dialog to set group name...
-  // TODO: create a server action for the mutation instead, and create group with id (a group with no id will not be able to add more members)
   const mutation = useMutation({
     mutationFn: async () => {
-      const channel = client.channel("messaging", undefined, {
-        members: memberList,
-        name:
-          selectedUsers.length > 1
-            ? signedInUser.name +
+      const channel = client.channel(
+        "messaging",
+        isGroup ? crypto.randomUUID() : undefined,
+        {
+          members: memberIds,
+          name: isGroup
+            ? groupName
+            : signedInUser.name +
               ", " +
-              selectedUsers.map((user) => user.name).join(", ")
-            : undefined,
-        isGroup: memberList.length > 2,
-      } as ChannelData);
+              selectedUsers.map((user) => user.name).join(", "),
+          isGroup: isGroup,
+        } as ChannelData,
+      );
 
       await channel.create();
       return channel;
@@ -98,52 +104,87 @@ export default function NewChatDialog({
   });
 
   return (
-    <Dialog open onOpenChange={onOpenChange}>
-      <DialogContent className="responsive-dialog !flex !flex-col lg:!h-[calc(100dvh-1rem)]">
-        <DialogTitle className="-mb-1 text-lg font-semibold">
-          New chat
-        </DialogTitle>
-        <DialogDescription className="hidden" />
-        <hr className="my-1" />
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="responsive-dialog !flex !flex-col lg:!h-[calc(100dvh-1rem)]">
+          <DialogHeader>
+            <DialogTitle className="-mb-1 text-lg font-semibold">
+              New chat
+            </DialogTitle>
+            <hr />
+            <DialogDescription className="hidden" />
+          </DialogHeader>
 
-        <div className="group bg-accent focus-within:ring-ring/50 relative mb-auto rounded-md transition-all focus-within:ring-[3px]">
-          <SearchIcon className="text-muted-foreground group-focus-within:text-primary absolute top-1/2 left-5 size-5 -translate-y-1/2 transform" />
-          <input
-            type="text"
-            placeholder="Search users..."
-            className="h-12 w-full ps-14 pe-4 text-base focus:outline-none"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
-        <div className="scrollbar-thin flex-1 overflow-y-auto">
-          {isSuccess &&
-            data.users.map((user) => (
-              <NewChatUserResult
-                key={user.id}
-                user={user}
-                selected={selectedUsers.some((u) => u.id === user.id)}
-                onClick={() => {
-                  setSelectedUsers((prev) =>
-                    prev.some((u) => u.id === user.id)
-                      ? prev.filter((u) => u.id !== user.id)
-                      : [...prev, user],
-                  );
-                }}
-              />
-            ))}
-        </div>
+          <div className="group bg-accent focus-within:ring-ring/50 relative mb-auto rounded-md transition-all focus-within:ring-[3px]">
+            <SearchIcon className="text-muted-foreground group-focus-within:text-primary absolute top-1/2 left-5 size-5 -translate-y-1/2 transform" />
+            <input
+              type="text"
+              placeholder="Search users..."
+              className="h-12 w-full ps-14 pe-4 text-base focus:outline-none"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </div>
+          <div className="scrollbar-thin flex-1 overflow-y-auto">
+            {isSuccess &&
+              data.users.map((user) => (
+                <NewChatUserResult
+                  key={user.id}
+                  user={user}
+                  selected={selectedUsers.some((u) => u.id === user.id)}
+                  onClick={() => {
+                    setSelectedUsers((prev) =>
+                      prev.some((u) => u.id === user.id)
+                        ? prev.filter((u) => u.id !== user.id)
+                        : [...prev, user],
+                    );
+                  }}
+                />
+              ))}
+          </div>
 
-        <LoadingButton
-          disabled={!selectedUsers.length}
-          loading={mutation.isPending}
-          onClick={() => mutation.mutate()}
-          className=""
-        >
-          Start chat
-        </LoadingButton>
-      </DialogContent>
-    </Dialog>
+          <LoadingButton
+            disabled={!selectedUsers.length}
+            loading={mutation.isPending}
+            onClick={() =>
+              isGroup ? setIsCreatingGroup(true) : mutation.mutate()
+            }
+          >
+            {isGroup ? "Create group" : "Start chat"}
+          </LoadingButton>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isCreatingGroup} onOpenChange={setIsCreatingGroup}>
+        <DialogContent className="responsive-dialog">
+          <DialogHeader>
+            <DialogTitle className="-mb-1 text-lg font-semibold">
+              What&apos;s your group name?
+            </DialogTitle>
+            <hr />
+            <DialogDescription className="hidden" />
+          </DialogHeader>
+
+          <div className="group bg-accent focus-within:ring-ring/50 relative rounded-md transition-all focus-within:ring-[3px]">
+            <input
+              placeholder="New group name"
+              className="h-12 w-full px-4 text-base focus:outline-none"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+            />
+          </div>
+
+          <LoadingButton
+            disabled={!selectedUsers.length}
+            loading={mutation.isPending}
+            onClick={() => mutation.mutate()}
+            className=""
+          >
+            Start chat
+          </LoadingButton>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 

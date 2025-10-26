@@ -26,6 +26,7 @@ export default function MenuHeader({ onChannelListClose }: MenuHeaderProps) {
 
       {showNewChatDialog && (
         <NewChatDialog
+          open={showNewChatDialog}
           onOpenChange={setShowNewChatDialog}
           onChatCreated={() => {
             setShowNewChatDialog(false);

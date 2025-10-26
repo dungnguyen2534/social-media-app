@@ -11,7 +11,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
@@ -105,9 +104,9 @@ export default function FollowButton({
               Their posts will no longer show up in your following feed.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <div className="grid grid-cols-2 gap-2">
             <Button
-              className="sm:w-24"
+              variant="destructive"
               onClick={() => {
                 mutate();
                 setIsUnfollowDialogOpen(false);
@@ -116,13 +115,12 @@ export default function FollowButton({
               Unfollow
             </Button>
             <Button
-              className="sm:w-24"
               variant="outline"
               onClick={() => setIsUnfollowDialogOpen(false)}
             >
               Cancel
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </>
