@@ -1,15 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
 import {
   Channel,
-  ChannelHeader,
-  ChannelHeaderProps,
   MessageInput,
   MessageList,
-  useChatContext,
+  useAttachmentManagerState,
+  useMessageComposerHasSendableData,
+  useMessageInputContext,
   Window,
 } from "stream-chat-react";
-
+import CustomChannelHeader from "./CustomChannelHeader";
+import { Button } from "../ui/button";
+import { SendHorizontal } from "lucide-react";
+import {
+  CustomEditMessageModal,
+  CustomMessage,
+  CustomMessageStatus,
+  CustomMessageTimestamp,
+} from "./CustomeMessage";
+import CustomAvatar from "./CustomAvatar";
 interface ChatChanelProps {
   backToChannelList: () => void;
 }
@@ -17,43 +24,40 @@ interface ChatChanelProps {
 export default function ChatChanel({ backToChannelList }: ChatChanelProps) {
   return (
     <div className="flex-1 lg:block">
-      <Channel>
+      <Channel
+        SendButton={CustomSendButton}
+        Message={CustomMessage}
+        MessageTimestamp={CustomMessageTimestamp}
+        MessageStatus={CustomMessageStatus}
+        Avatar={CustomAvatar}
+        EditMessageModal={CustomEditMessageModal}
+      >
         <Window>
-          <CustomChanelHeader backToChannelList={backToChannelList} />
-          <MessageList />
-          <MessageInput />
+          <CustomChannelHeader backToChannelList={backToChannelList} />
+          <MessageList messageActions={["edit", "delete"]} />
+          <MessageInput maxRows={6} />
         </Window>
       </Channel>
     </div>
   );
 }
 
-interface CustomChanelHeaderProps extends ChannelHeaderProps {
-  backToChannelList: () => void;
-}
+function CustomSendButton() {
+  const { handleSubmit } = useMessageInputContext();
+  const hasSendableData = useMessageComposerHasSendableData();
+  const { uploadsInProgressCount } = useAttachmentManagerState();
 
-function CustomChanelHeader({
-  backToChannelList,
-  ...props
-}: CustomChanelHeaderProps) {
-  const { setActiveChannel } = useChatContext();
+  const isDisabled = !hasSendableData || uploadsInProgressCount > 0;
 
   return (
-    <div className="flex items-center">
-      <div className="h-full p-2 lg:hidden">
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => {
-            backToChannelList();
-            setActiveChannel(undefined);
-          }}
-          className="h-full"
-        >
-          <ChevronLeft className="size-5" />
-        </Button>
-      </div>
-      <ChannelHeader {...props} />
-    </div>
+    <Button
+      size="icon"
+      variant="ghost"
+      className="hover:bg-input/50 ml-1.5 rounded-full shadow-none"
+      onClick={handleSubmit}
+      disabled={isDisabled}
+    >
+      <SendHorizontal className="size-5.5 text-[#72767E]" />
+    </Button>
   );
 }

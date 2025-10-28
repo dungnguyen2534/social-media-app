@@ -33,9 +33,7 @@ export default function Messages() {
             onChannelListClose={() => setSidebarOpen(false)}
           />
 
-          {!sidebarOpen && (
-            <ChatChanel backToChannelList={() => setSidebarOpen(true)} />
-          )}
+          <ChatChanel backToChannelList={() => setSidebarOpen(true)} />
         </Chat>
       </div>
     </div>

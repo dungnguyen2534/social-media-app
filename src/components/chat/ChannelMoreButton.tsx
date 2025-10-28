@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Bell, BellOff, LogOut, MoreHorizontal, Trash2 } from "lucide-react";
+import { Bell, BellOff, MoreHorizontal, Trash2 } from "lucide-react";
 import { useChatContext } from "stream-chat-react";
 import {
   Dialog,
@@ -18,56 +18,62 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
-interface ChannelItemMoreButtonProps {
+interface ChannelMoreButtonProps {
   channel: Channel;
   signedInUserId: string;
-  muted: boolean;
+  className?: string;
 }
 
-export default function ChannelItemMoreButton({
+export default function ChannelMoreButton({
   channel,
   signedInUserId,
-  muted,
-}: ChannelItemMoreButtonProps) {
+  className,
+}: ChannelMoreButtonProps) {
   const { setActiveChannel } = useChatContext();
 
+  const [isMuted, setIsMuted] = useState(channel.muteStatus().muted);
+  const handleMuteToggle = async () => {
+    if (isMuted) {
+      await channel.unmute();
+      setIsMuted(false);
+    } else {
+      await channel.mute();
+      setIsMuted(true);
+    }
+  };
+
   const [isDelDialogOpen, setIsDelDialogOpen] = useState(false);
-  const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
 
   return (
     <>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger>
-          <div className="group-hover:bg-card hover:bg-accent cursor-pointer rounded-full p-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div
+            className={cn(
+              "hover:bg-accent cursor-pointer rounded-full p-1",
+              className,
+            )}
+          >
             <MoreHorizontal className="size-5" />
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem
-            onClick={async () =>
-              muted ? await channel.unmute() : await channel.mute()
-            }
-          >
-            {muted ? (
+          <DropdownMenuItem onClick={handleMuteToggle}>
+            {isMuted ? (
               <Bell className="mt-[0.1rem] mr-2 size-4" />
             ) : (
               <BellOff className="mt-[0.1rem] mr-2 size-4" />
             )}
 
-            {muted ? "Unmute" : "Mute"}
+            {isMuted ? "Unmute" : "Mute"}
           </DropdownMenuItem>
           <hr className="my-1" />
 
           <DropdownMenuItem onClick={() => setIsDelDialogOpen(true)}>
             <Trash2 className="mt-[0.1rem] mr-2 size-4" /> Delete
           </DropdownMenuItem>
-
-          {channel.data?.isGroup && (
-            <DropdownMenuItem onClick={() => setIsLeaveDialogOpen(true)}>
-              <LogOut className="mt-[0.1rem] mr-2 size-4" /> Leave
-            </DropdownMenuItem>
-          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -93,36 +99,6 @@ export default function ChannelItemMoreButton({
             </Button>
             <Button
               onClick={async () => setIsDelDialogOpen(false)}
-              variant="secondary"
-            >
-              Cancel
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isLeaveDialogOpen} onOpenChange={setIsLeaveDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="-mb-1 text-lg font-semibold">
-              Leave this chat?
-            </DialogTitle>
-            <hr />
-            <DialogDescription className="hidden" />
-          </DialogHeader>
-
-          <div className="grid grid-cols-2 gap-2">
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                await channel.removeMembers([signedInUserId]);
-                setActiveChannel(undefined);
-              }}
-            >
-              Delete
-            </Button>
-            <Button
-              onClick={async () => setIsLeaveDialogOpen(false)}
               variant="secondary"
             >
               Cancel

@@ -3,8 +3,8 @@ import streamSeverClient from "@/lib/stream";
 
 export async function GET() {
   const session = await getSessionData();
-  const signedInUser = session?.user;
-  if (!signedInUser) {
+  const signedInUserId = session?.user.id;
+  if (!signedInUserId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -13,7 +13,7 @@ export async function GET() {
     const issuedAt = Math.floor(Date.now() / 1000) - 60;
 
     const token = streamSeverClient.createToken(
-      signedInUser.id!,
+      signedInUserId,
       expirationTime,
       issuedAt,
     );

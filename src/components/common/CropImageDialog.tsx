@@ -1,11 +1,6 @@
 import { useRef } from "react";
 import { Cropper, ReactCropperElement } from "react-cropper";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import "cropperjs/dist/cropper.css";
@@ -38,23 +33,25 @@ export default function CropImageDialog({
       <DialogContent className="responsive-dialog">
         <DialogHeader>
           <DialogTitle>Crop image</DialogTitle>
+          <hr />
         </DialogHeader>
-        <Cropper
-          src={src}
-          aspectRatio={cropAspectRatio}
-          guides={false}
-          zoomable={false}
-          ref={cropperRef}
-          className="mx-auto size-fit"
-        />
-        <DialogFooter>
-          <Button variant="secondary" onClick={onClose} className="w-20">
+        <div className="ring-ring/50 ring-1">
+          <Cropper
+            src={src}
+            aspectRatio={cropAspectRatio}
+            guides={false}
+            zoomable={false}
+            ref={cropperRef}
+            className="mx-auto size-fit"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Button onClick={crop}>Crop</Button>
+          <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button className="w-20" onClick={crop}>
-            Crop
-          </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

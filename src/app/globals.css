@@ -215,3 +215,90 @@
 .str-chat__channel-preview-messenger--last-message {
   @apply text-muted-foreground;
 }
+
+.str-chat__channel-list-messenger__main,
+.str-chat__list {
+  @apply scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent;
+}
+
+.str-chat__unread-messages-separator {
+  @apply rounded-md;
+}
+
+.str-chat__suggestion-list-container {
+  @apply !hidden;
+}
+
+.str-chat__message-textarea-container {
+  @apply focus-within:!ring-ring/50 !bg-accent !border-none !ring-[3px] ring-transparent transition-all !outline-none;
+}
+
+.str-chat__file-input-container {
+  @apply hover:!bg-accent mr-1.5 aspect-square !h-9 rounded-full transition-colors;
+}
+
+.str-chat__message-input {
+  @apply pb-3;
+}
+
+.str-chat__message-textarea {
+  @apply scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-transparent;
+}
+
+.str-chat__message-simple-name {
+  @apply hidden;
+}
+
+.str-chat__message-edited-timestamp,
+.str-chat__mesage-simple-edited {
+  @apply !hidden;
+}
+
+.str-chat__message-mention {
+  @apply text-inherit;
+}
+
+.str-chat__message-simple__actions {
+  @apply !items-center hover:!flex;
+}
+
+.str-chat__message-actions-list-item {
+  @apply !rounded-md;
+}
+
+.str-chat__message-actions-box-button {
+  @apply hover:!bg-accent transition-colors;
+}
+
+.str-chat__message-actions-box {
+  @apply !border-border !rounded-md !border !p-1 !shadow-md;
+}
+
+.str-chat__message-attachment {
+  @apply mb-1;
+}
+
+.str-chat__modal__inner,
+.str-chat-react__modal__inner {
+  @apply !border-border !rounded-md !border !p-5 !pl-2;
+}
+
+.str-chat__edit-message-form {
+  @apply !gap-1;
+}
+
+.str-chat__edit-message-form-options {
+  @apply mr-2 ml-14 !grid !grid-cols-2 !gap-2;
+}
+
+.str-chat__edit-message-cancel,
+.str-chat__edit-message-send {
+  @apply !rounded-md !p-2 !shadow-xs;
+}
+
+.str-chat__edit-message-cancel {
+  @apply !bg-accent !text-secondary-foreground hover:!bg-secondary/80;
+}
+.str-chat__edit-message-send {
+  @apply !bg-primary !text-primary-foreground hover:!bg-primary/90 !font-medium !lowercase first-letter:!capitalize;
+}
