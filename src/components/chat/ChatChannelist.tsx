@@ -2,25 +2,22 @@
 
 import { useAuth } from "@/app/auth-context";
 import { cn } from "@/lib/utils";
-import { BellOff, ChevronLeft, Circle } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import React, { useCallback, useRef } from "react";
 import {
-  AvatarProps,
   ChannelList,
-  ChannelPreviewMessenger,
   ChannelPreviewUIComponentProps,
   ChannelSearchFunctionParams,
   InfiniteScroll,
   SearchResultItemProps,
   useChatContext,
 } from "stream-chat-react";
-import ChannelMoreButton from "./ChannelMoreButton";
 import { StreamChat, UserResponse } from "stream-chat";
 import UserAvatar from "../common/UserAvatar";
-import CustomAvatar from "./CustomAvatar";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
+import CustomChannelPreview from "./CustomChannelPreview";
 
 interface ChatChannelistProps {
   open: boolean;
@@ -37,56 +34,17 @@ export default function ChatChannelist({
   const router = useRouter();
   const { client } = useChatContext();
 
-  const ChanelPreviewCustom = useCallback(
-    (props: ChannelPreviewUIComponentProps) => {
-      const { channel } = props;
+  const ChannelPreviewWrapper = (props: ChannelPreviewUIComponentProps) => {
+    return (
+      <CustomChannelPreview
+        {...props}
+        signedInUserId={signedInUserId}
+        onChannelListClose={onChannelListClose}
+      />
+    );
+  };
 
-      const members = Object.values(channel.state.members);
-      const onlineMembers = members.filter(
-        (member) => member.user?.online && member.user_id !== signedInUserId,
-      );
-
-      const AvatarWrapper = (avatarProps: AvatarProps) => {
-        return (
-          <div className="relative">
-            <CustomAvatar {...avatarProps} />
-            <Circle
-              className={cn(
-                "text-card absolute -right-1 bottom-0 size-2.5 fill-green-500",
-                !!onlineMembers.length ? "fill-green-500" : "hidden",
-              )}
-            />
-          </div>
-        );
-      };
-
-      return (
-        <div className="group relative">
-          <div className="absolute top-1/2 right-3 z-1 -translate-y-1/2">
-            <ChannelMoreButton
-              className="group-hover:bg-card opacity-0 transition-opacity group-hover:opacity-100"
-              channel={props.channel}
-              signedInUserId={signedInUserId}
-            />
-          </div>
-          <ChannelPreviewMessenger
-            {...props}
-            onSelect={() => {
-              props.setActiveChannel?.(props.channel, props.watchers);
-              onChannelListClose();
-            }}
-            Avatar={AvatarWrapper}
-          />
-
-          <div className="text-muted-foreground absolute top-1/2 right-4.5 z-1 -translate-y-1/2 group-hover:hidden">
-            {props.channel.muteStatus().muted && <BellOff className="size-4" />}
-          </div>
-        </div>
-      );
-    },
-    [onChannelListClose, signedInUserId],
-  );
-
+  // Custom search with debounce
   const DEBOUNCE_DELAY = 500;
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -120,8 +78,11 @@ export default function ChatChannelist({
                 { name: { $autocomplete: value } },
                 { username: { $autocomplete: value } },
               ],
+              role: {
+                $eq: "user",
+              },
             },
-            { id: 1, name: 1 },
+            { username: 1, name: 1 },
             { limit: 15 },
           );
 
@@ -168,25 +129,17 @@ export default function ChatChannelist({
         options={{
           state: true,
           presence: true,
-          limit: 10,
+          limit: 15,
         }}
         sort={{ last_message_at: -1 }}
         showChannelSearch
         additionalChannelSearchProps={{
-          searchQueryParams: {
-            userFilters: {
-              filters: {
-                role: { $eq: "user" },
-              },
-            },
-          },
           SearchResultItem: CustomSearchResult,
           searchFunction: (params, event) => {
             return customSearchFunction(params, event, client);
           },
-          searchDebounceIntervalMs: 3000,
         }}
-        Preview={ChanelPreviewCustom}
+        Preview={ChannelPreviewWrapper}
         Paginator={InfiniteScroll}
         setActiveChannelOnMount={false}
       />
@@ -204,8 +157,8 @@ function CustomSearchResult({ result, selectResult }: SearchResultItemProps) {
       onClick={() => selectResult(result)}
     >
       <div className="flex items-center gap-2">
-        <UserAvatar avatarUrl={userResult.image} className="size-12" />
-        <div className="flex flex-col text-start">
+        <UserAvatar avatarUrl={userResult.image} className="size-10" />
+        <div className="flex flex-col gap-0.5 text-start">
           <p className="font-medium">{userResult.name}</p>
           <p className="text-muted-foreground">@{userResult.username}</p>
         </div>

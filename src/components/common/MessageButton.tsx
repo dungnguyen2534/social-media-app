@@ -40,7 +40,7 @@ export default function MessageButton({
     <Button asChild size={onMobileNav ? "icon" : "default"} {...rest}>
       <Link href="/messages" className={className}>
         <div className="relative">
-          <Mail className="size-4 lg:size-5" />
+          <Mail className="mt-[0.15rem] size-4.5 lg:mt-0 lg:size-5" />
           {unreadCount > 0 && (
             <span className="text-primary absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500 text-xs font-medium tabular-nums"></span>
           )}

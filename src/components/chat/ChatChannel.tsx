@@ -1,8 +1,11 @@
+"use client";
+
 import {
   Channel,
   MessageInput,
   MessageList,
   useAttachmentManagerState,
+  useChatContext,
   useMessageComposerHasSendableData,
   useMessageInputContext,
   Window,
@@ -17,11 +20,55 @@ import {
   CustomMessageTimestamp,
 } from "./CustomeMessage";
 import CustomAvatar from "./CustomAvatar";
+import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/app/auth-context";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 interface ChatChanelProps {
   backToChannelList: () => void;
 }
 
 export default function ChatChanel({ backToChannelList }: ChatChanelProps) {
+  const session = useAuth();
+  const signedInUserId = session!.user.id!;
+
+  const { client, setActiveChannel } = useChatContext();
+
+  const searchParams = useSearchParams();
+  const directMessageToId = searchParams.get("userId");
+
+  const {
+    data: channel,
+    isSuccess,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["createDirectChannel", directMessageToId],
+    queryFn: async () => {
+      if (!directMessageToId) return null;
+      const newChannel = client.channel("messaging", undefined, {
+        members: [signedInUserId, directMessageToId],
+      });
+      await newChannel.create();
+      return newChannel;
+    },
+    enabled: !!directMessageToId,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (isSuccess && channel) {
+      setActiveChannel(channel);
+    }
+
+    if (isError) {
+      console.error("Error starting chat", error);
+      toast.error("Error starting chat, please try again.");
+    }
+  }, [isSuccess, isError, channel, error, setActiveChannel]);
+
   return (
     <div className="flex-1 lg:block">
       <Channel

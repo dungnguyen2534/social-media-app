@@ -36,7 +36,7 @@ export function StreamClientProvider({
         },
         async () =>
           api
-            .get("get-stream-token")
+            .get("stream-token")
             .json<{ token: string }>()
             .then((data) => data.token),
       )

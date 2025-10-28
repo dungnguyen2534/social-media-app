@@ -16,6 +16,7 @@ import FollowButton from "@/components/common/FollowButton";
 import { FollowerCount, FollowingCount } from "@/components/common/FollowCount";
 import Linkify from "@/components/common/Linkify";
 import { ProfileEditor } from "./ProfileEditor";
+import DirectMessageButton from "@/components/common/DirectMessageButton";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -90,7 +91,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
 
   return (
     <div className="text-base">
-      <div className="bg-card relative flex h-fit flex-col gap-2 p-5 shadow-sm lg:rounded-md">
+      <div className="bg-card relative flex h-fit flex-col gap-2 p-5 pb-3 shadow-sm lg:rounded-md">
         <div className="flex">
           <div className="flex flex-col gap-2">
             <UserAvatar
@@ -114,11 +115,14 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
               (signedInUserId === user.id ? (
                 <ProfileEditor user={user} />
               ) : (
-                <FollowButton
-                  initialState={followerInfo}
-                  user={user}
-                  className="w-24"
-                />
+                <div className="grid grid-cols-2 gap-2">
+                  <DirectMessageButton userId={user.id} />
+                  <FollowButton
+                    initialState={followerInfo}
+                    user={user}
+                    className="w-22"
+                  />
+                </div>
               ))}
           </div>
         </div>

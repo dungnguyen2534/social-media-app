@@ -72,7 +72,7 @@ export default function CustomChannelHeader({
         >
           <div className="flex h-full min-w-0 items-center space-x-3 p-1 pl-0">
             <div className="outline-card relative rounded-full outline">
-              <UserAvatar avatarUrl={avatarImage} />
+              <UserAvatar avatarUrl={avatarImage} className="size-10" />
               <Circle
                 className={cn(
                   "text-card absolute right-0 bottom-0 size-2.5 fill-green-500",

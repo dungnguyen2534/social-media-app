@@ -33,7 +33,7 @@ export default function HamburgerMenu() {
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild aria-label="Open menu">
           <Button variant="ghost" size="icon">
-            <Menu className="size-6" />
+            <Menu className="mt-[0.15rem] size-5.5" />
           </Button>
         </SheetTrigger>
         <SheetContent className="bg-card [&>button:last-child]:top-5">

@@ -34,7 +34,7 @@ export default function NotificationButton({
     <Button asChild size={onMobileNav ? "icon" : "default"} {...rest}>
       <Link href="/notifications" className={className}>
         <div className="relative">
-          <Bell className="size-4 lg:size-5" />
+          <Bell className="mt-[0.15rem] size-4 lg:mt-0 lg:size-5" />
           {data.unreadCount > 0 && (
             <span className="text-primary absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500 text-xs font-medium tabular-nums"></span>
           )}

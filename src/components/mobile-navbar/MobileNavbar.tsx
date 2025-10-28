@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { MobileSearchButton } from "./Search";
 import { Button } from "../ui/button";
 import PostEditor from "../posts/editor/PostEditor";
 import HamburgerMenu from "./HamburgerMenu";
@@ -9,6 +8,7 @@ import { UserInitialDisplayData } from "@/app/(main)/layout";
 import NotificationButton from "../common/NotificationButton";
 import { useAuth } from "@/app/auth-context";
 import { usePathname } from "next/navigation";
+import MessageButton from "../common/MessageButton";
 
 interface MobileNavbarProps {
   userInitialDisplayData: UserInitialDisplayData;
@@ -36,7 +36,6 @@ export default function MobileNavbar({
         {session ? (
           <div className="flex items-center justify-end gap-3">
             <PostEditor />
-            <MobileSearchButton />
             <NotificationButton
               onMobileNav
               variant="ghost"
@@ -44,6 +43,7 @@ export default function MobileNavbar({
                 unreadCount: userInitialDisplayData.unreadNotificationCount,
               }}
             />
+            <MessageButton onMobileNav variant="ghost" />
             <HamburgerMenu />
           </div>
         ) : (
