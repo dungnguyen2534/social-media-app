@@ -47,7 +47,7 @@ export default function CustomChannelPreview({
     <div className="group relative">
       <div className="absolute top-1/2 right-3 z-1 -translate-y-1/2">
         <ChannelMoreButton
-          className="group-hover:bg-card opacity-0 transition-opacity group-hover:opacity-100"
+          className="group-hover:bg-card opacity-0 transition-opacity lg:group-hover:opacity-100"
           channel={channel}
           signedInUserId={signedInUserId}
         />

@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import CustomChannelPreview from "./CustomChannelPreview";
+import ChannelListSkeleton from "./ChannelListSkeleton";
 
 interface ChatChannelistProps {
   open: boolean;
@@ -41,6 +42,12 @@ export default function ChatChannelist({
         signedInUserId={signedInUserId}
         onChannelListClose={onChannelListClose}
       />
+    );
+  };
+
+  const SearchResultWrapper = (props: SearchResultItemProps) => {
+    return (
+      <CustomSearchResult {...props} onChannelListClose={onChannelListClose} />
     );
   };
 
@@ -134,7 +141,7 @@ export default function ChatChannelist({
         sort={{ last_message_at: -1 }}
         showChannelSearch
         additionalChannelSearchProps={{
-          SearchResultItem: CustomSearchResult,
+          SearchResultItem: SearchResultWrapper,
           searchFunction: (params, event) => {
             return customSearchFunction(params, event, client);
           },
@@ -142,19 +149,31 @@ export default function ChatChannelist({
         Preview={ChannelPreviewWrapper}
         Paginator={InfiniteScroll}
         setActiveChannelOnMount={false}
+        LoadingIndicator={ChannelListSkeleton}
       />
     </div>
   );
 }
 
-function CustomSearchResult({ result, selectResult }: SearchResultItemProps) {
+interface CustomSearchResultProps extends SearchResultItemProps {
+  onChannelListClose: () => void;
+}
+
+function CustomSearchResult({
+  result,
+  selectResult,
+  onChannelListClose,
+}: CustomSearchResultProps) {
   const userResult = result as UserResponse;
   if (!userResult) return;
 
   return (
     <button
-      className="transition-color hover:bg-muted/50 flex w-full cursor-pointer items-center justify-between px-4 py-2.5"
-      onClick={() => selectResult(result)}
+      className="transition-color hover:bg-muted/50 flex w-full cursor-pointer items-center justify-between p-2.5"
+      onClick={() => {
+        selectResult(result);
+        onChannelListClose();
+      }}
     >
       <div className="flex items-center gap-2">
         <UserAvatar avatarUrl={userResult.image} className="size-10" />

@@ -50,7 +50,7 @@ export default function SharedPost({ post, className }: SharedPostProps) {
                   </time>
 
                   {post.createdAt.getTime() !== post.updatedAt.getTime() && (
-                    <>- Edited</>
+                    <>(edited)</>
                   )}
                 </div>
               </div>

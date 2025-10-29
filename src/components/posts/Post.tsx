@@ -62,7 +62,7 @@ export default function Post({
                 </time>
 
                 {post.createdAt.getTime() !== post.updatedAt.getTime() && (
-                  <>- Edited</>
+                  <>(edited)</>
                 )}
               </div>
             </div>

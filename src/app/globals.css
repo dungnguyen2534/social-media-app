@@ -208,6 +208,14 @@
   @apply !pr-3 !pl-1;
 }
 
+.str-chat__channel-preview-messenger {
+  @apply px-3.5;
+}
+
+.str-chat__channel-preview-end {
+  @apply ml-1;
+}
+
 .str-chat__channel-preview-messenger--name {
   @apply font-medium;
 }

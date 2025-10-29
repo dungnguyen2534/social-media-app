@@ -12,7 +12,7 @@ import {
 } from "stream-chat-react";
 import CustomChannelHeader from "./CustomChannelHeader";
 import { Button } from "../ui/button";
-import { SendHorizontal } from "lucide-react";
+import { MessagesSquare, SendHorizontal } from "lucide-react";
 import {
   CustomEditMessageModal,
   CustomMessage,
@@ -72,6 +72,9 @@ export default function ChatChanel({ backToChannelList }: ChatChanelProps) {
   return (
     <div className="flex-1 lg:block">
       <Channel
+        LoadingIndicator={() => null}
+        EmptyPlaceholder={<EmptyPlaceholder />}
+        EmptyStateIndicator={EmptyStateIndicator}
         SendButton={CustomSendButton}
         Message={CustomMessage}
         MessageTimestamp={CustomMessageTimestamp}
@@ -106,5 +109,27 @@ function CustomSendButton() {
     >
       <SendHorizontal className="size-5.5 text-[#72767E]" />
     </Button>
+  );
+}
+
+function EmptyPlaceholder() {
+  return (
+    <div className="text-muted-foreground/30 hidden flex-1 items-center justify-center lg:flex">
+      <div className="flex flex-col items-center justify-center gap-3 text-lg font-medium">
+        <MessagesSquare className="size-28" />
+        Let&apos;s start a conversation!
+      </div>
+    </div>
+  );
+}
+
+function EmptyStateIndicator() {
+  return (
+    <div className="text-muted-foreground/30 mt-57.5 flex flex-1 items-center justify-center">
+      <div className="flex flex-col items-center justify-center gap-3 text-lg font-medium">
+        <MessagesSquare className="size-28" />
+        No chat here yet...
+      </div>
+    </div>
   );
 }

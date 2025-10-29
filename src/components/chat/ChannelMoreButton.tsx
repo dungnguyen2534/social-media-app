@@ -24,18 +24,16 @@ interface ChannelMoreButtonProps {
   channel: Channel;
   signedInUserId: string;
   className?: string;
-  openState?: boolean;
+  backToChannelList?: () => void;
 }
 
 export default function ChannelMoreButton({
   channel,
   signedInUserId,
   className,
-  openState,
+  backToChannelList,
 }: ChannelMoreButtonProps) {
   const { setActiveChannel } = useChatContext();
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(openState || false);
 
   const [isMuted, setIsMuted] = useState(channel.muteStatus().muted);
   const handleMuteToggle = async () => {
@@ -52,11 +50,7 @@ export default function ChannelMoreButton({
 
   return (
     <>
-      <DropdownMenu
-        open={isDropdownOpen}
-        onOpenChange={setIsDropdownOpen}
-        modal={false}
-      >
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger>
           <div
             className={cn(
@@ -101,7 +95,7 @@ export default function ChannelMoreButton({
               onClick={async () => {
                 await channel.hide(signedInUserId, true);
                 setActiveChannel(undefined);
-                setIsDropdownOpen(false);
+                if (backToChannelList) backToChannelList();
               }}
             >
               Delete

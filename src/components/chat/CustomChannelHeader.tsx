@@ -70,7 +70,7 @@ export default function CustomChannelHeader({
           className="hover:bg-accent cursor-pointer rounded-md px-2 transition-colors"
           title={`@${otherMemberUsername}`}
         >
-          <div className="flex h-full min-w-0 items-center space-x-3 p-1 pl-0">
+          <div className="flex h-full min-w-0 items-center space-x-2 p-1 pl-0">
             <div className="outline-card relative rounded-full outline">
               <UserAvatar avatarUrl={avatarImage} className="size-10" />
               <Circle
@@ -94,6 +94,7 @@ export default function CustomChannelHeader({
           className="text-muted-foreground hover:text-primary"
           channel={channel}
           signedInUserId={signedInUserId}
+          backToChannelList={backToChannelList}
         />
       </div>
     </div>
