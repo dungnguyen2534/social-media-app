@@ -16,6 +16,7 @@ import {
 } from "@/components/sidebars/WhoToFollow";
 import MainGrid from "./MainGrid";
 import { StreamClientProvider } from "./StreamClientProvider";
+import { headers } from "next/headers";
 
 export interface UserInitialDisplayData {
   unreadNotificationCount: number;
@@ -26,9 +27,24 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
+  const headerList = await headers();
+  const pathname = headerList.get("x-current-path");
+
+  // If user hasn't set their username on complete-profile page
   const session = await getSessionData();
   if (session && !session.user.username) redirect("/complete-profile");
 
+  // Auth required path
+  const pathsToRedirect = [
+    "/messages",
+    "/notifications",
+    "/search",
+    "/bookmarks",
+  ];
+
+  if (pathname && !session && pathsToRedirect.includes(pathname)) redirect("/");
+
+  // Initial unread notificaiton count data
   let unreadNotificationCount = 0;
   if (session?.user.id) {
     unreadNotificationCount = await prisma.notification.count({

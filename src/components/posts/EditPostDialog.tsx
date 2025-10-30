@@ -199,7 +199,7 @@ export default function EditPostDialog({
 
             {!!post.sharedPost && (
               <div>
-                <SharedPost post={post.sharedPost} />
+                <SharedPost post={post.sharedPost} noMiniProfile />
               </div>
             )}
 

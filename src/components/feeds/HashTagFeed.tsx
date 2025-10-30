@@ -2,13 +2,17 @@
 
 import api from "@/lib/ky";
 import { PostsPage } from "@/lib/type";
-import Post from "../../../components/posts/Post";
+import Post from "../posts/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import InfiniteScrollContainer from "../../../components/common/InfiniteScrollContainer";
+import InfiniteScrollContainer from "../common/InfiniteScrollContainer";
 import { Annoyed } from "lucide-react";
-import FeedSkeletons from "../../../components/feeds/FeedSkeletons";
+import FeedSkeletons from "./FeedSkeletons";
 
-export default function Bookmarks() {
+interface HashTagFeedProps {
+  hashtag: string;
+}
+
+export default function HashTagFeed({ hashtag }: HashTagFeedProps) {
   const {
     data,
     status,
@@ -17,11 +21,11 @@ export default function Bookmarks() {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["feed", "bookmarks"],
+    queryKey: ["feed", "hashtag-feed", hashtag],
     queryFn: ({ pageParam }) => {
       return api
         .get(
-          "posts/bookmarked",
+          `posts/hashtag/${hashtag}`,
           pageParam ? { searchParams: { cursor: pageParam } } : {},
         )
         .json<PostsPage>();
@@ -36,21 +40,11 @@ export default function Bookmarks() {
     return <FeedSkeletons count={4} />;
   }
 
-  if (status === "success" && posts.length === 0 && !hasNextPage) {
-    return (
-      <div className="bg-card flex h-fit flex-col gap-8 p-5 shadow-sm lg:rounded-md">
-        <p className="text-center font-medium">
-          You don&apos;t have any bookmark...
-        </p>
-      </div>
-    );
-  }
-
   if (status === "error") {
     return (
       <div className="mt-8 flex h-full flex-col items-center gap-8">
         <p className="text-xl font-medium">
-          An error occured while loading bookmarks...
+          An error occured while loading posts...
         </p>
         <Annoyed className="size-48" />
       </div>

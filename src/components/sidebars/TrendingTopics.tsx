@@ -58,19 +58,19 @@ export async function TrendingTopics() {
       <hr className="my-1" />
       <div>
         {trendingTopics.map(({ hashtag, count }) => {
-          const title = hashtag.split("#")[1];
+          const tag = hashtag.split("#")[1];
 
           return (
             <Link
-              key={title}
-              href={`/hashtags/${title}`}
+              key={tag}
+              href={`/hashtags/${tag}`}
               className="group hover:bg-accent block min-w-0 rounded-sm p-2 transition-colors duration-75"
             >
               <p
                 className="line-clamp-1 min-w-0 font-medium text-nowrap overflow-ellipsis"
-                title={title}
+                title={tag}
               >
-                #{title}
+                #{tag}
               </p>
               <p className="text-muted-foreground text-sm">
                 {formatNumber(count)}
