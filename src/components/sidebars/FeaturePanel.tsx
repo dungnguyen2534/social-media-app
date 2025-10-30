@@ -50,11 +50,14 @@ export default function FeaturePanel({
               </Link>
             </Button>
             <Button
-              variant="ghost"
+              variant={pathname === "/search" ? "secondary" : "ghost"}
               className="h-14 w-full justify-start rounded-sm"
+              asChild
             >
-              <SearchIcon className="size-5" />
-              Search
+              <Link href="/search">
+                <SearchIcon className="size-5" />
+                Search
+              </Link>
             </Button>
 
             <Button

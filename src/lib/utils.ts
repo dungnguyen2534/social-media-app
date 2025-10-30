@@ -15,11 +15,46 @@ export function formatNumber(n: number): string {
   }).format(n);
 }
 
-export function formatRelativeDate(from: Date) {
+export function formatRelativeDate(from: Date, shortForm?: boolean): string {
   const currentDate = new Date();
+  const diffTime = currentDate.getTime() - from.getTime();
+  const oneDayInMs = 24 * 60 * 60 * 1000;
+  const tenSecondsInMs = 10 * 1000;
 
-  if (currentDate.getTime() - from.getTime() < 24 * 60 * 60 * 1000) {
-    return formatDistanceToNowStrict(from, { addSuffix: true });
+  if (diffTime < oneDayInMs) {
+    if (diffTime < tenSecondsInMs) {
+      return "Just now";
+    }
+
+    const relativeDateString = formatDistanceToNowStrict(from, {
+      addSuffix: true,
+    });
+
+    if (shortForm) {
+      const match = relativeDateString.match(
+        /(\d+)\s(minute|hour|second)s?\sago/,
+      );
+
+      if (match) {
+        const value = match[1];
+        const unit = match[2];
+        let shortUnit = "";
+
+        if (unit.startsWith("minute")) {
+          shortUnit = "m";
+        } else if (unit.startsWith("hour")) {
+          shortUnit = "h";
+        } else if (unit.startsWith("second")) {
+          shortUnit = "s";
+        }
+
+        if (shortUnit) {
+          return `${value}${shortUnit}`;
+        }
+      }
+    }
+
+    return relativeDateString;
   } else {
     if (currentDate.getFullYear() === from.getFullYear()) {
       return formatDate(from, "MMM d");

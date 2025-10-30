@@ -33,7 +33,7 @@ export default function Notifications() {
     },
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
-    staleTime: 0,
+    gcTime: 0,
   });
 
   const queryClient = useQueryClient();

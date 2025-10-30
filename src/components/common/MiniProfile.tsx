@@ -70,7 +70,7 @@ export function MiniProfile({ children, user }: MiniProfileProps) {
             <FollowingCount userId={user.id} initialState={followingInfo} />
           </div>
           {user.id === signedInUser?.id ? (
-            <Button className="w-full" variant="custom">
+            <Button className="w-full min-w-52" variant="custom">
               <Link href={`/users/${user.username}`}>Your profile</Link>
             </Button>
           ) : (
@@ -80,7 +80,7 @@ export function MiniProfile({ children, user }: MiniProfileProps) {
                   user={user}
                   noDialog
                   initialState={followerInfo}
-                  className="w-full"
+                  className="w-full min-w-52"
                 />
               )}
             </>

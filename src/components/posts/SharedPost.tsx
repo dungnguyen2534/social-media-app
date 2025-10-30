@@ -11,9 +11,14 @@ import MediaView from "./MediaView";
 interface SharedPostProps {
   post: SharedPostData;
   className?: string;
+  noMiniProfile?: boolean;
 }
 
-export default function SharedPost({ post, className }: SharedPostProps) {
+export default function SharedPost({
+  post,
+  className,
+  noMiniProfile,
+}: SharedPostProps) {
   return (
     <article
       className={cn(
@@ -26,8 +31,8 @@ export default function SharedPost({ post, className }: SharedPostProps) {
       )}
 
       <div className={cn("p-3", !!post.attachments.length && "pt-1")}>
-        <div className="mb-2 flex items-center">
-          <MiniProfile user={post.user}>
+        {noMiniProfile ? (
+          <div className="mb-2 flex items-center">
             <Link
               className="group flex flex-wrap items-center gap-2"
               href={`/users/${post.user.username}`}
@@ -55,8 +60,40 @@ export default function SharedPost({ post, className }: SharedPostProps) {
                 </div>
               </div>
             </Link>
-          </MiniProfile>
-        </div>
+          </div>
+        ) : (
+          <div className="mb-2 flex items-center">
+            <MiniProfile user={post.user}>
+              <Link
+                className="group flex flex-wrap items-center gap-2"
+                href={`/users/${post.user.username}`}
+              >
+                <div>
+                  <UserAvatar avatarUrl={post.user.image} />
+                </div>
+                <div className="h-9">
+                  <div className="flex gap-1">
+                    <div className="block font-medium underline-offset-2 group-hover:underline">
+                      {post.user.name}
+                    </div>
+                    <div className="text-muted-foreground">
+                      @{post.user.username}
+                    </div>
+                  </div>
+                  <div className="text-muted-foreground flex items-center gap-1 text-xs">
+                    <time dateTime={post.createdAt.toDateString()}>
+                      {formatRelativeDate(post.createdAt)}
+                    </time>
+
+                    {post.createdAt.getTime() !== post.updatedAt.getTime() && (
+                      <>(edited)</>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            </MiniProfile>
+          </div>
+        )}
 
         <Linkify>
           <div className="text-base break-words break-all whitespace-pre-line">

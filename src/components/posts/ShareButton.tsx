@@ -118,7 +118,7 @@ export default function ShareButton({ post, ...rest }: ShareButtonProps) {
             </div>
 
             <div>
-              <SharedPost post={post} />
+              <SharedPost post={post} noMiniProfile />
             </div>
 
             <div className="grid grid-cols-2 gap-2">

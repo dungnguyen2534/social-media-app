@@ -51,6 +51,9 @@ export default function HamburgerMenu() {
             >
               Profile
             </Link>
+            <Link href="/search" className="hover:bg-accent block w-full p-4">
+              Search
+            </Link>
             <Link
               href="/bookmarks"
               className="hover:bg-accent block w-full p-4"

@@ -77,7 +77,7 @@ export default function Notification({
     <Link
       href={href}
       className={cn(
-        "bg-card relative mb-1 flex items-center gap-3 overflow-hidden p-5 shadow-sm hover:outline-2 lg:mb-2 lg:rounded-md",
+        "bg-card dark:hover:ring-accent/80 hover:ring-accent-foreground/5 relative mb-1 flex items-center gap-3 overflow-hidden p-5 shadow-sm ring-2 ring-transparent transition-all lg:mb-2 lg:rounded-md",
         className,
       )}
     >

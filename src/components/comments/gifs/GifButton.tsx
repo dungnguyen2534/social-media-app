@@ -84,7 +84,7 @@ export default function GifButton({ className, onGifSelect }: GifButtonProps) {
                   width={r.media_formats.webp.dims[0]}
                   height={r.media_formats.webp.dims[1]}
                   key={r.id}
-                  className="mb-1 cursor-pointer rounded-md last:mb-0"
+                  className="mb-1 w-full cursor-pointer rounded-md last:mb-0"
                   onClick={() => {
                     onGifSelect(r);
                     setOpen(false);

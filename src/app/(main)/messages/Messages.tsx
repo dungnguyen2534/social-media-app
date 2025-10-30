@@ -89,7 +89,7 @@ function ChatPageSkeleton() {
         </div>
       </div>
 
-      <div className="text-muted-foreground/30 hidden flex-1 items-center justify-center lg:flex">
+      <div className="text-muted-foreground/50 hidden flex-1 items-center justify-center lg:flex">
         <div className="flex flex-col items-center justify-center gap-3 text-lg font-medium">
           <MessagesSquare className="size-28" />
           Let&apos;s start a conversation!

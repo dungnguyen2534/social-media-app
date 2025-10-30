@@ -75,8 +75,10 @@ export default function CustomChannelHeader({
               <UserAvatar avatarUrl={avatarImage} className="size-10" />
               <Circle
                 className={cn(
-                  "text-card absolute right-0 bottom-0 size-2.5 fill-green-500",
-                  isOnline ? "fill-green-500" : "fill-gray-500",
+                  "text-card absolute right-0.5 bottom-0 size-2.5",
+                  isOnline
+                    ? "fill-green-500"
+                    : "fill-gray-300 dark:fill-gray-600",
                 )}
               />
             </div>

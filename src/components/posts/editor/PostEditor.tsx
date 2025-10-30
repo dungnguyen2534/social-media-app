@@ -142,7 +142,7 @@ export default function PostEditor() {
             <div className="flex items-center gap-1">
               Post created,{" "}
               <Link
-                className="flex items-center gap-1 py-4 pr-4 text-blue-400 hover:underline"
+                className="flex items-center gap-1 text-blue-400 hover:underline"
                 href={`/posts/${result.id}`}
               >
                 view <ArrowRight className="mt-[0.2rem] size-3" />

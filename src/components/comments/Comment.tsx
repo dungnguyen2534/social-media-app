@@ -141,9 +141,14 @@ const Comment = forwardRef<HTMLDivElement, CommentProps>(
                   Reply
                 </button>
 
-                <time dateTime={comment.createdAt.toDateString()}>
-                  {formatRelativeDate(comment.createdAt)}
-                </time>
+                <div>
+                  <time dateTime={comment.createdAt.toDateString()}>
+                    {formatRelativeDate(comment.createdAt, true)}
+                  </time>
+
+                  {comment.createdAt.getTime() !==
+                    comment.updatedAt.getTime() && <> (edited)</>}
+                </div>
 
                 <CommentLikeCount count={comment._count.likes} />
               </div>

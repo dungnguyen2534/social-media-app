@@ -39,6 +39,11 @@ export type UserData = Prisma.UserGetPayload<{
   select: ReturnType<typeof getUserDataSelect>;
 }>;
 
+export type UsersPage = {
+  users: UserData[];
+  nextCursor: string | null;
+};
+
 // Post data
 export function getPostDataInclude(SignedInUserId?: string) {
   return {

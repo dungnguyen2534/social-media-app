@@ -24,11 +24,6 @@ export async function WhoToFollow() {
       },
     },
     select: getUserDataSelect(session.user.id),
-    orderBy: {
-      followers: {
-        _count: "desc",
-      },
-    },
     take: 5,
   });
 

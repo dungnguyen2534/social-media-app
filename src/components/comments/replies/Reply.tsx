@@ -143,7 +143,11 @@ export default function Reply({
               </button>
 
               <time dateTime={reply.createdAt.toDateString()}>
-                {formatRelativeDate(reply.createdAt)}
+                {formatRelativeDate(reply.createdAt, true)}
+
+                {reply.createdAt.getTime() !== reply.updatedAt.getTime() && (
+                  <> (edited)</>
+                )}
               </time>
 
               <CommentLikeCount count={reply._count.likes} />
