@@ -64,7 +64,14 @@ export default function MediaView({ attachments, className }: MediaViewProps) {
                   key={a.id}
                   className="flex items-center bg-black pl-1"
                 >
-                  <video controls className="aspect-video w-full">
+                  <video
+                    controls
+                    className="aspect-video w-full"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  >
                     <source src={a.url} />
                   </video>
                 </CarouselItem>

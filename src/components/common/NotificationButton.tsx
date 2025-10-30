@@ -32,7 +32,11 @@ export default function NotificationButton({
 
   return (
     <Button asChild size={onMobileNav ? "icon" : "default"} {...rest}>
-      <Link href="/notifications" className={className}>
+      <Link
+        href="/notifications"
+        className={className}
+        aria-label="Notifications"
+      >
         <div className="relative">
           <Bell className="mt-[0.15rem] size-4 lg:mt-0 lg:size-5" />
           {data.unreadCount > 0 && (

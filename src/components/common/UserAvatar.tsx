@@ -16,7 +16,7 @@ export default function UserAvatar({
 }: UserAvatarProps) {
   return (
     <Avatar className={cn("size-9", className)}>
-      <AvatarImage src={avatarUrl ?? ""} />
+      <AvatarImage src={avatarUrl ?? ""} alt="User Avatar" />
       <AvatarFallback>
         <UserRound className={iconStyle} />
       </AvatarFallback>

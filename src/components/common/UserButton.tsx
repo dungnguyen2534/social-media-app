@@ -27,7 +27,7 @@ export default function UserButton({ className, iconStyle }: UserButtonProps) {
   return (
     <>
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger aria-label="Open user menu">
           <UserAvatar
             avatarUrl={session?.user.image}
             className={className}

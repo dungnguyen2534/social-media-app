@@ -5,10 +5,10 @@ import { getSessionData } from "@/auth";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { hashtag: string } },
+  { params }: { params: Promise<{ hashtag: string }> },
 ) {
   const session = await getSessionData();
-  const { hashtag } = params;
+  const { hashtag } = await params;
 
   const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
   const pageSize = 10;

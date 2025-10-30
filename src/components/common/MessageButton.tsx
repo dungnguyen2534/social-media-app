@@ -38,7 +38,7 @@ export default function MessageButton({
 
   return (
     <Button asChild size={onMobileNav ? "icon" : "default"} {...rest}>
-      <Link href="/messages" className={className}>
+      <Link href="/messages" className={className} aria-label="Messages">
         <div className="relative">
           <Mail className="mt-[0.15rem] size-4.5 lg:mt-0 lg:size-5" />
           {unreadCount > 0 && (

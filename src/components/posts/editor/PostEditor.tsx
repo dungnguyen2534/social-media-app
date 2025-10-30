@@ -255,18 +255,18 @@ export default function PostEditor() {
     <div className="lg:w-full">
       <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
         <DialogTrigger asChild>
-          <div className="w-full">
-            <Button
-              variant="custom"
-              className="hidden h-12 w-full rounded-full !px-4 lg:flex"
-            >
-              <PencilLine className="mt-[0.15rem] size-4" />
-              Create a post
-            </Button>
-            <Button className="lg:hidden" size="icon" variant="ghost">
-              <PencilLine className="mt-[0.15rem] h-[1.1rem] w-[1.1rem]" />
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            className={cn(
+              "flex w-9 items-center justify-center",
+              "lg:!bg-accent lg:text-secondary-foreground lg:hover:!bg-secondary/80 lg:w-full lg:border lg:shadow-xs lg:dark:border-0",
+              "lg:h-12 lg:gap-2 lg:rounded-full lg:!px-4",
+            )}
+            aria-label="Create a post"
+          >
+            <PencilLine className="mt-[0.15rem] h-[1.1rem] w-[1.1rem] lg:size-4" />
+            <span className="hidden lg:inline">Create a post</span>
+          </Button>
         </DialogTrigger>
         <DialogContent className="responsive-dialog">
           <DialogTitle className="-mb-1 text-lg font-semibold">

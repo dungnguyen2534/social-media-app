@@ -26,6 +26,7 @@ function ThemeSwitcher({
       )}
       {...props}
       onClick={toggleTheme}
+      aria-label="Toggle theme"
     >
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"

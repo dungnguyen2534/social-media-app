@@ -116,11 +116,11 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
                 <ProfileEditor user={user} />
               ) : (
                 <div className="grid grid-cols-2 gap-2">
-                  <DirectMessageButton userId={user.id} />
+                  <DirectMessageButton userId={user.id} className="w-24" />
                   <FollowButton
                     initialState={followerInfo}
                     user={user}
-                    className="w-22"
+                    className="w-24"
                   />
                 </div>
               ))}
