@@ -16,7 +16,6 @@ import { useSearchUsers } from "./useSearchUsers";
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [hasSearched, setHasSearched] = useState(false);
 
   const {
     users,
@@ -43,15 +42,12 @@ export default function Search() {
 
     const trimmedSearchTerm = searchTerm.trim();
     if (!trimmedSearchTerm) return;
-
-    if (trimmedSearchTerm !== searchQuery) {
-      setSearchQuery(trimmedSearchTerm);
-      setHasSearched(true);
-    }
+    if (trimmedSearchTerm !== searchQuery) setSearchQuery(trimmedSearchTerm);
   };
 
   const activeQueryIsLoading =
-    isFetchingFirstUsersPage || isFetchingFirstPostsPage;
+    (isFetchingPostsPage && !!searchQuery.trim()) ||
+    (isFetchingUsersPage && !!searchQuery.trim());
 
   return (
     <div>
@@ -90,12 +86,6 @@ export default function Search() {
               hasNextUsersPage && !isFetchingUsersPage && fetchNextUsersPage()
             }
           >
-            {!hasSearched && !isUsersFetched && (
-              <div className="text-muted-foreground mt-24 flex flex-col items-center justify-center text-center">
-                <UserRoundSearch className="mb-2 size-24" />
-              </div>
-            )}
-
             {isFetchingFirstUsersPage && <NotificationSkeletons count={3} />}
             {!isFetchingFirstUsersPage &&
               isUsersFetched &&
@@ -120,11 +110,6 @@ export default function Search() {
               hasNextPostsPage && !isFetchingPostsPage && fetchNextPostPage()
             }
           >
-            {!hasSearched && !isPostsFetched && (
-              <div className="text-muted-foreground mt-24 flex flex-col items-center justify-center text-center">
-                <TextSearch className="mb-2 size-24" />
-              </div>
-            )}
             {isFetchingFirstPostsPage && <FeedSkeletons count={3} />}
             {!isFetchingFirstPostsPage &&
               isPostsFetched &&

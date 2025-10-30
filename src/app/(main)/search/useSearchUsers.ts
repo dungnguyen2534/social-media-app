@@ -1,12 +1,20 @@
 import api from "@/lib/ky";
 import { UsersPage } from "@/lib/type";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 export function useSearchUsers(searchQuery: string) {
+  const trimmedQuery = searchQuery.trim();
+  const isSearching = !!trimmedQuery;
+
+  const { data: usersDataPreview, status: previewStatus } = useQuery({
+    queryKey: ["users", "search-preview"],
+    queryFn: async () => await api.get(`users`).json<UsersPage>(),
+  });
+
   const {
-    data,
+    data: searchData,
     fetchNextPage,
-    hasNextPage,
+    hasNextPage: hasNextSearchPage,
     isFetchingNextPage,
     isFetching,
     isFetched,
@@ -17,6 +25,7 @@ export function useSearchUsers(searchQuery: string) {
         .get("search/users", {
           searchParams: {
             q: searchQuery,
+
             ...(pageParam ? { cursor: pageParam } : {}),
           },
         })
@@ -27,16 +36,29 @@ export function useSearchUsers(searchQuery: string) {
     gcTime: 0,
   });
 
-  const users = data?.pages.flatMap((page) => page.users) || [];
-  const isFetchingFirstUsersPage = users.length === 0 && isFetching;
+  const searchUsers = searchData?.pages.flatMap((page) => page.users) || [];
+  const users = isSearching ? searchUsers : usersDataPreview?.users || [];
+
+  const isFetchingFirstUsersPage = isSearching
+    ? searchUsers.length === 0 && isFetching
+    : previewStatus === "pending";
+
+  const isUsersFetched = isSearching ? isFetched : previewStatus === "success";
+
+  const hasNextUsersPage = isSearching ? hasNextSearchPage : false;
+  const isFetchingNextUsersPage = isSearching ? isFetchingNextPage : false;
+
+  const isFetchingUsersPage = isSearching
+    ? isFetching
+    : isFetchingFirstUsersPage;
 
   return {
     users,
     isFetchingFirstUsersPage,
-    isUsersFetched: isFetched,
+    isUsersFetched,
     fetchNextUsersPage: fetchNextPage,
-    hasNextUsersPage: hasNextPage,
-    isFetchingNextUsersPage: isFetchingNextPage,
-    isFetchingUsersPage: isFetching,
+    hasNextUsersPage,
+    isFetchingNextUsersPage,
+    isFetchingUsersPage,
   };
 }
