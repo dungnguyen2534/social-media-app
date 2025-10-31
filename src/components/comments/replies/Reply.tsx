@@ -60,7 +60,7 @@ export default function Reply({
         <div className={className}>
           <div className="group/reply flex gap-3">
             <MiniProfile user={reply.user}>
-              <Link href={`/users/${reply.userId}`}>
+              <Link href={`/users/${reply.user.username}`}>
                 <UserAvatar avatarUrl={reply.user.image} />
               </Link>
             </MiniProfile>

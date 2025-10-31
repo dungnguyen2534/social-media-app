@@ -74,7 +74,7 @@ const Comment = forwardRef<HTMLDivElement, CommentProps>(
                   >
                     <MiniProfile user={comment.user}>
                       <Link
-                        href={`/users/${comment.userId}`}
+                        href={`/users/${comment.user.username}`}
                         className="font-medium"
                       >
                         {comment.user.username}
