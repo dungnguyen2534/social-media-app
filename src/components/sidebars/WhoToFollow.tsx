@@ -24,6 +24,9 @@ export async function WhoToFollow() {
       },
     },
     select: getUserDataSelect(session.user.id),
+    orderBy: {
+      createdAt: "desc",
+    },
     take: 5,
   });
 

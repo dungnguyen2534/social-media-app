@@ -27,7 +27,7 @@ export default function SharedPost({
       )}
     >
       {!!post.attachments.length && (
-        <MediaView attachments={post.attachments} />
+        <MediaView attachments={post.attachments} className="mb-2" />
       )}
 
       <div className={cn("p-3", !!post.attachments.length && "pt-1")}>

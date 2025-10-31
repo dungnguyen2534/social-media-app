@@ -1,5 +1,5 @@
 import { Media } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Carousel,
   CarouselApi,
@@ -32,6 +32,14 @@ export default function MediaView({ attachments, className }: MediaViewProps) {
     });
   }, [api]);
 
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleMetadataLoad = () => {
+    setIsVideoLoaded(true);
+    videoRef.current?.removeEventListener("loadedmetadata", handleMetadataLoad);
+  };
+
   return (
     <div>
       <Carousel
@@ -52,7 +60,7 @@ export default function MediaView({ attachments, className }: MediaViewProps) {
                     width={500}
                     height={500}
                     alt="Attachment"
-                    className="w-full object-contain"
+                    className="max-h-screen w-full object-contain"
                   />
                 </CarouselItem>
               );
@@ -65,12 +73,15 @@ export default function MediaView({ attachments, className }: MediaViewProps) {
                   className="flex items-center bg-black pl-1"
                 >
                   <video
+                    ref={videoRef as React.RefObject<HTMLVideoElement>}
                     controls
-                    className="aspect-video w-full"
+                    className={cn("w-full", !isVideoLoaded && "aspect-video")}
                     autoPlay
                     loop
                     muted
                     playsInline
+                    onLoadedMetadata={handleMetadataLoad}
+                    preload="metadata"
                   >
                     <source src={a.url} />
                   </video>

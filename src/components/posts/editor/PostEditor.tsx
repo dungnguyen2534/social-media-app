@@ -43,7 +43,6 @@ export default function PostEditor() {
   const userId = session?.user.id;
 
   const mutation = useSubmitPostMutation();
-  const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [isDraftMediaLoaded, setIsDraftMediaLoaded] = useState(false);
 
   const {
@@ -92,6 +91,12 @@ export default function PostEditor() {
   const initialLocalAttachmentIds = initialLocalAttachmentIdsRef.current;
 
   const shouldFetchInitialDraftMedia = initialLocalAttachmentIds.length > 0;
+
+  const [isEditorEmpty, setIsEditorEmpty] = useState(
+    !localDraft.content ||
+      localDraft.content === "<p></p>" ||
+      localDraft.content.trim() === "",
+  );
 
   const editor = useEditor({
     content: localDraft.content || "",

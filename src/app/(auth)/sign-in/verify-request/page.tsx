@@ -10,7 +10,7 @@ import { MailCheck } from "lucide-react";
 export default function SignInPage() {
   return (
     <div className="grid min-h-screen place-items-center">
-      <Card className="h-[21.5rem] w-[85%] px-3 py-10 text-center sm:w-[25rem]">
+      <Card className="h-[21.5rem] w-[95%] px-3 py-10 text-center sm:w-[25rem]">
         <CardHeader>
           <CardTitle className="text-3xl font-bold">Check your Email</CardTitle>
           <CardDescription>

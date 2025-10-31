@@ -41,7 +41,7 @@ export default function SignInPage() {
 
   return (
     <div className="grid min-h-screen place-items-center">
-      <Card className="flex h-[21.5rem] w-[85%] justify-center px-3 sm:w-[25rem]">
+      <Card className="flex h-[21.5rem] w-[95%] justify-center px-3 sm:w-[25rem]">
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold">
             Sign in to Socius

@@ -138,6 +138,9 @@ function AttachmentPreview({
         <video
           controls
           className={cn("aspect-video w-full", isUploading && "opacity-50")}
+          loop
+          muted
+          playsInline
         >
           <source src={src} />
         </video>

@@ -51,6 +51,7 @@ export default function ChatChanel({ backToChannelList }: ChatChanelProps) {
         members: [signedInUserId, directMessageToId],
       });
       await newChannel.create();
+      await newChannel.watch();
       return newChannel;
     },
     enabled: !!directMessageToId,

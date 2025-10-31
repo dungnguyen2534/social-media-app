@@ -66,7 +66,12 @@ export default function useMediaUpload() {
       );
 
       if (e.message.includes("FileSizeMismatch")) {
-        toast.error("One or more files exceed the maximum allowed size.");
+        toast.error(
+          "One or more files exceed the maximum allowed size (image: 4MB, video: 64MB)",
+          {
+            duration: 5000,
+          },
+        );
       } else {
         toast.error(e.message);
       }
