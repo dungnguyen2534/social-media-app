@@ -39,7 +39,7 @@ export default function CompleteProfilePage() {
   };
 
   return (
-    <div className="min-h-vh min-w-vw grid overflow-hidden">
+    <div className="min-w-vw grid min-h-dvh overflow-hidden">
       <div className="mx-auto mt-56 w-[95%] justify-center px-3 sm:w-[30rem]">
         <div>
           <h1 className="text-3xl font-bold">Welcome to Socius!</h1>

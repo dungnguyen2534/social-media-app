@@ -40,7 +40,7 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="grid min-h-screen place-items-center">
+    <div className="grid min-h-dvh place-items-center overflow-hidden">
       <Card className="flex h-[21.5rem] w-[95%] justify-center px-3 sm:w-[25rem]">
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold">

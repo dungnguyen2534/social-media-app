@@ -35,7 +35,7 @@ export default function CustomChannelPreview({
         <CustomAvatar {...avatarProps} />
         <Circle
           className={cn(
-            "text-card absolute -right-1 bottom-0 size-2.5 fill-green-500",
+            "text-card absolute -right-1 -bottom-1 size-2.5 fill-green-500",
             !!onlineMembers.length ? "fill-green-500" : "hidden",
           )}
         />
