@@ -1,7 +1,11 @@
 {
   "crons": [
     {
-      "path": "/api/clear-uploads",
+      "path": "/api/crons/clear-uploads",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/crons/clear-notifications",
       "schedule": "0 2 * * *"
     }
   ]
