@@ -75,7 +75,7 @@ export default function Reply({
                 >
                   <MiniProfile user={reply.user}>
                     <Link
-                      href={`/users/${reply.userId}`}
+                      href={`/users/${reply.user.username}`}
                       className="font-medium"
                     >
                       {reply.user.username}

@@ -57,7 +57,7 @@ const Comment = forwardRef<HTMLDivElement, CommentProps>(
           <div ref={ref} className={className}>
             <div className="group/comment flex gap-3">
               <MiniProfile user={comment.user}>
-                <Link href={`/users/${comment.userId}`}>
+                <Link href={`/users/${comment.user.username}`}>
                   <UserAvatar avatarUrl={comment.user.image} />
                 </Link>
               </MiniProfile>
