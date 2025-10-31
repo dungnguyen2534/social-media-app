@@ -128,7 +128,7 @@
 }
 
 .app-container {
-  @apply mx-auto max-w-7xl px-3;
+  @apply mx-auto max-w-7xl px-2.5;
 }
 
 .app-grid {
@@ -144,7 +144,7 @@
 }
 
 .responsive-dialog {
-  @apply scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent flex h-screen !max-w-screen flex-col overflow-x-hidden overflow-y-auto rounded-none p-5 lg:grid lg:h-fit lg:max-h-[calc(100dvh-1rem)] lg:!max-w-[36.875rem] lg:rounded-md;
+  @apply scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent flex h-dvh !max-w-screen flex-col overflow-x-hidden overflow-y-auto rounded-none p-5 lg:grid lg:h-fit lg:max-h-[calc(100dvh-1rem)] lg:!max-w-[36.875rem] lg:rounded-md;
 }
 
 .str-chat {
@@ -250,11 +250,15 @@
 }
 
 .str-chat__message-input {
-  @apply pb-3;
+  @apply pb-3 text-base;
 }
 
 .str-chat__message-textarea {
   @apply scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-transparent;
+}
+
+.str-chat__message-text {
+  @apply text-base;
 }
 
 .str-chat__message-simple-name {

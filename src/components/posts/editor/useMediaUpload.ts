@@ -65,7 +65,11 @@ export default function useMediaUpload() {
         prev.filter((attachment) => !attachment.isUploading),
       );
 
-      toast.error(e.message);
+      if (e.message.includes("FileSizeMismatch")) {
+        toast.error("One or more files exceed the maximum allowed size.");
+      } else {
+        toast.error(e.message);
+      }
     },
   });
 

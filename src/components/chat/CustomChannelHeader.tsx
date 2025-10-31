@@ -83,9 +83,9 @@ export default function CustomChannelHeader({
               />
             </div>
 
-            <div className="flex min-w-0 flex-col justify-center">
+            <div className="flex min-w-0 flex-col justify-center gap-0.5">
               <h1 className="truncate font-medium">{channelName}</h1>
-              <div className="text-muted-foreground">{statusText}</div>
+              <div className="text-muted-foreground text-xs">{statusText}</div>
             </div>
           </div>
         </Link>

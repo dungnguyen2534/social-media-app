@@ -8,7 +8,7 @@ export default function NotificationSkeletons({
   count,
 }: NotificationSkeletonsProps) {
   const skeletonFixedStyles =
-    "bg-card w-full [animation-duration:1s] h-[5.5rem]";
+    "bg-card w-full [animation-duration:1s] h-[5.5rem] rounded-none";
 
   return (
     <div className="space-y-1 lg:space-y-2">

@@ -56,7 +56,7 @@ export default function Notifications() {
   const notifications = data?.pages.flatMap((page) => page.notifications) || [];
 
   if (status === "pending") {
-    return <NotificationSkeletons count={10} />;
+    return <NotificationSkeletons count={3} />;
   }
 
   if (status === "success" && notifications.length === 0 && !hasNextPage) {

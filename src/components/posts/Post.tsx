@@ -33,7 +33,7 @@ export default function Post({
   return (
     <article
       className={cn(
-        "round bg-card p-5 pb-2 shadow-sm lg:rounded-md",
+        "round bg-card p-2.5 pb-2 shadow-sm lg:rounded-md lg:p-5",
         className,
       )}
     >

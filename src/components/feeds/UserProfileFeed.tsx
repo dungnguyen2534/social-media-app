@@ -45,7 +45,7 @@ export default function UserProfileFeed({ user }: UserProfileFeed) {
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
   const noPostPlaceholder = (
-    <div className="bg-card flex h-fit flex-col gap-8 rounded-md p-5 shadow-sm">
+    <div className="bg-card flex h-fit flex-col gap-8 p-5 shadow-sm lg:rounded-md">
       <p className="text-center font-medium">
         {user.id === session?.user.id ? "You" : "This user"} hasn&apos;t posted
         anything yet...{" "}

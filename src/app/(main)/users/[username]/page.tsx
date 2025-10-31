@@ -91,7 +91,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
 
   return (
     <div className="text-base">
-      <div className="bg-card relative flex h-fit flex-col gap-2 p-5 pb-3 shadow-sm lg:rounded-md">
+      <div className="bg-card relative flex h-fit flex-col gap-2 p-2.5 shadow-sm lg:rounded-md lg:p-5 lg:pb-3">
         <div className="flex">
           <div className="flex flex-col gap-2">
             <UserAvatar
@@ -110,7 +110,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
             </div>
           </div>
 
-          <div className="absolute top-5 right-5">
+          <div className="absolute top-2.5 right-2.5 lg:top-5 lg:right-5">
             {signedInUserId &&
               (signedInUserId === user.id ? (
                 <ProfileEditor user={user} />
