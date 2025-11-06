@@ -5,6 +5,6 @@ export const metadata: Metadata = {
   title: "Search",
 };
 
-export default async function SearchPage() {
+export default function SearchPage() {
   return <Search />;
 }

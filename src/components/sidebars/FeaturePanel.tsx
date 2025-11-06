@@ -4,7 +4,6 @@ import { Bookmark, House, SearchIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { ThemeSwitcher } from "../ui/theme-switcher";
-import { UserInitialDisplayData } from "@/app/(main)/layout";
 import NotificationButton from "../common/NotificationButton";
 import UserButton from "../common/UserButton";
 import PostEditor from "../posts/editor/PostEditor";
@@ -12,13 +11,7 @@ import { useAuth } from "@/app/auth-context";
 import { usePathname } from "next/navigation";
 import MessageButton from "../common/MessageButton";
 
-interface FeaturePanelProps {
-  userInitialDisplayData: UserInitialDisplayData;
-}
-
-export default function FeaturePanel({
-  userInitialDisplayData,
-}: FeaturePanelProps) {
+export default function FeaturePanel() {
   const session = useAuth();
   const pathname = usePathname();
 
@@ -90,9 +83,6 @@ export default function FeaturePanel({
           <NotificationButton
             variant={pathname === "/notifications" ? "secondary" : "ghost"}
             className="h-14 w-full justify-start rounded-sm !px-3"
-            initialState={{
-              unreadCount: userInitialDisplayData.unreadNotificationCount,
-            }}
           />
 
           <hr />

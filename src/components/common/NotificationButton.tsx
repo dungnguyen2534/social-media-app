@@ -11,13 +11,11 @@ import api from "@/lib/ky";
 interface NotificationButtonProps
   extends React.ComponentPropsWithoutRef<typeof Button> {
   className?: string;
-  initialState: NotificationCountInfo;
   onMobileNav?: boolean;
 }
 
 export default function NotificationButton({
   className,
-  initialState,
   onMobileNav,
   ...rest
 }: NotificationButtonProps) {
@@ -26,7 +24,9 @@ export default function NotificationButton({
     queryFn: () =>
       api.get("notifications/unread-count").json<NotificationCountInfo>(),
 
-    initialData: initialState,
+    initialData: {
+      unreadCount: 0,
+    },
     refetchInterval: 30 * 1000,
   });
 

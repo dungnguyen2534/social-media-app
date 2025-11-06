@@ -38,8 +38,6 @@ const getUser = cache(async (username: string, signedInUserId?: string) => {
   return user;
 });
 
-// getSessionData to provide the signedInUserId to `getUser`.
-// This allows `getUser` to be efficiently cached across function calls; getSessionData also uses react cache.
 async function getProfilePageData(username: string) {
   const session = await getSessionData();
   const user = await getUser(username, session?.user.id);
