@@ -61,7 +61,13 @@ function ChatPageSkeleton() {
           <Button
             size="icon"
             variant="ghost"
-            onClick={() => router.back()}
+            onClick={() => {
+              if (window.history.length > 2) {
+                router.back();
+              } else {
+                router.push("/");
+              }
+            }}
             className="mr-2 flex h-full lg:hidden"
           >
             <ChevronLeft className="size-5" />

@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import ky from "ky";
 
-const apiURL = env.NEXT_PUBLIC_API_URL;
+const apiURL = env.NEXT_PUBLIC_URL + "/api";
 
 const api = ky.create({
   prefixUrl: apiURL,

@@ -15,12 +15,12 @@ export const env = createEnv({
     STREAM_SECRET: requiredString,
   },
   client: {
-    NEXT_PUBLIC_API_URL: requiredString,
+    NEXT_PUBLIC_URL: requiredString,
     NEXT_PUBLIC_STREAM_KEY: requiredString,
   },
 
   experimental__runtimeEnv: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
     NEXT_PUBLIC_STREAM_KEY: process.env.NEXT_PUBLIC_STREAM_KEY,
   },
 });

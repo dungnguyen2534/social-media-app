@@ -8,6 +8,7 @@ import { ourFileRouter } from "./api/uploadthing/core";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import ClientToaster from "@/components/common/ClientToaster";
 import NextTopLoader from "nextjs-toploader";
+import { env } from "@/env";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +26,28 @@ export const metadata: Metadata = {
     default: "Socius",
   },
   description: "A place to share thoughts and connect with others.",
+  openGraph: {
+    title: "Socius | A place to share thoughts and connect with others.",
+    description: "A place to share thoughts and connect with others.",
+    url: env.NEXT_PUBLIC_URL,
+    siteName: "Socius",
+    images: [
+      {
+        url: "/images/socius-og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Socius",
+      },
+    ],
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Socius | Share thoughts and connect",
+    description: "A place to share thoughts and connect with others.",
+    images: ["/images/socius-og-image.png"],
+  },
 };
 
 export default function RootLayout({

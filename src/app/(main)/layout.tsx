@@ -14,6 +14,8 @@ import {
 } from "@/components/sidebars/WhoToFollow";
 import MainGrid from "./MainGrid";
 import { StreamClientProvider } from "./StreamClientProvider";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export interface UserInitialDisplayData {
   unreadNotificationCount: number;
@@ -24,7 +26,21 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
+  const headerList = await headers();
+  const pathname = headerList.get("x-current-path");
+
   const session = await getSessionData();
+  if (session && !session.user.username) redirect("/complete-profile");
+
+  // Auth required path
+  const pathsToRedirect = [
+    "/messages",
+    "/notifications",
+    "/search",
+    "/bookmarks",
+  ];
+
+  if (pathname && !session && pathsToRedirect.includes(pathname)) redirect("/");
 
   return (
     <AuthProvider session={session}>
