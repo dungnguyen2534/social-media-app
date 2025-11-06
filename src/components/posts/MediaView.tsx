@@ -14,9 +14,14 @@ import { cn } from "@/lib/utils";
 interface MediaViewProps {
   attachments: Media[];
   className?: string;
+  priority?: boolean;
 }
 
-export default function MediaView({ attachments, className }: MediaViewProps) {
+export default function MediaView({
+  attachments,
+  className,
+  priority,
+}: MediaViewProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -48,7 +53,7 @@ export default function MediaView({ attachments, className }: MediaViewProps) {
         key={attachments.length}
       >
         <CarouselContent className="-ml-1 max-h-dvh">
-          {attachments.map((a) => {
+          {attachments.map((a, i) => {
             if (a.type === "IMAGE") {
               return (
                 <CarouselItem
@@ -61,6 +66,7 @@ export default function MediaView({ attachments, className }: MediaViewProps) {
                     height={500}
                     alt="Attachment"
                     className="max-h-screen w-full object-contain"
+                    priority={priority && i === 0}
                   />
                 </CarouselItem>
               );

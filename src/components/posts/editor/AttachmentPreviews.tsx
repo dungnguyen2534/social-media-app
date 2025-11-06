@@ -12,7 +12,7 @@ import Image from "next/image";
 import { Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Attachment } from "./useMediaUpload";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface AttachmentPreviewsProps {
   attachments: Attachment[];
@@ -110,6 +110,14 @@ function AttachmentPreview({
   const isImage = file.type.startsWith("image");
   const isVideo = file.type.startsWith("video");
 
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleMetadataLoad = () => {
+    setIsVideoLoaded(true);
+    videoRef.current?.removeEventListener("loadedmetadata", handleMetadataLoad);
+  };
+
   if (isImage) {
     return (
       <CarouselItem className="bg-background relative flex items-center pl-1">
@@ -136,11 +144,18 @@ function AttachmentPreview({
     return (
       <CarouselItem className="relative flex items-center bg-black pl-1">
         <video
+          ref={videoRef as React.RefObject<HTMLVideoElement>}
           controls
-          className={cn("aspect-video w-full", isUploading && "opacity-50")}
+          className={cn(
+            "w-full",
+            isUploading && "aspect-video opacity-50",
+            !isVideoLoaded && "aspect-video",
+          )}
           loop
           muted
           playsInline
+          onLoadedMetadata={handleMetadataLoad}
+          preload="metadata"
         >
           <source src={src} />
         </video>

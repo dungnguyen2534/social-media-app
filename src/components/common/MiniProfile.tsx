@@ -50,7 +50,7 @@ export function MiniProfile({ children, user }: MiniProfileProps) {
               className="flex h-9 items-center gap-2"
               href={`/users/${user.username}`}
             >
-              <UserAvatar avatarUrl={user.image} />
+              <UserAvatar avatarUrl={user.image} imagesize="45" />
               <div>
                 <div className="font-medium">{user.name}</div>
                 <div className="text-muted-foreground">@{user.username}</div>

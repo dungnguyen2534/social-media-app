@@ -87,7 +87,7 @@ export default function Comments({
 
   if (post._count.comments === 0)
     return (
-      <div className="bg-card text-muted-foreground mt-16 flex h-fit flex-col gap-8 p-5">
+      <div className="bg-card text-muted-foreground mt-8 flex h-fit flex-col gap-8 p-5">
         <p className="flex flex-col items-center gap-5 text-center text-base font-medium">
           <MessageCircleDashed className="size-24" />
           No comments yet, be the first!

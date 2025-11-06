@@ -96,6 +96,7 @@ function UserProfile({ user, signedInUserId }: UserProfileProps) {
               avatarUrl={user.image}
               className="size-20 md:size-28"
               iconStyle="size-10 md:size-16"
+              imagesize="120"
             />
             <div className="">
               <h1 className="text-lg font-bold md:text-xl">{user.name}</h1>

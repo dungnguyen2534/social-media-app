@@ -86,7 +86,7 @@ export default function Search() {
               hasNextUsersPage && !isFetchingUsersPage && fetchNextUsersPage()
             }
           >
-            {isFetchingFirstUsersPage && <NotificationSkeletons count={3} />}
+            {isFetchingFirstUsersPage && <NotificationSkeletons count={7} />}
             {!isFetchingFirstUsersPage &&
               isUsersFetched &&
               users.length === 0 && (
@@ -110,7 +110,7 @@ export default function Search() {
               hasNextPostsPage && !isFetchingPostsPage && fetchNextPostPage()
             }
           >
-            {isFetchingFirstPostsPage && <FeedSkeletons count={3} />}
+            {isFetchingFirstPostsPage && <FeedSkeletons count={5} />}
             {!isFetchingFirstPostsPage &&
               isPostsFetched &&
               posts.length === 0 && (

@@ -20,6 +20,7 @@ interface PostProps {
   className?: string;
   noCommentButton?: boolean;
   postMoreButtonStyle?: string;
+  imagePriority?: boolean;
 }
 
 export default function Post({
@@ -27,6 +28,7 @@ export default function Post({
   className,
   noCommentButton,
   postMoreButtonStyle,
+  imagePriority,
 }: PostProps) {
   const session = useAuth();
 
@@ -44,7 +46,7 @@ export default function Post({
             href={`/users/${post.user.username}`}
           >
             <div>
-              <UserAvatar avatarUrl={post.user.image} />
+              <UserAvatar avatarUrl={post.user.image} imagesize="45" />
             </div>
             <div className="h-9">
               <div className="flex gap-1">
@@ -81,7 +83,11 @@ export default function Post({
       </Linkify>
 
       {!!post.attachments.length && (
-        <MediaView attachments={post.attachments} className="my-1 rounded-md" />
+        <MediaView
+          attachments={post.attachments}
+          className="my-1 rounded-md"
+          priority={imagePriority}
+        />
       )}
 
       {!!post.sharedPost && <SharedPost post={post.sharedPost} />}

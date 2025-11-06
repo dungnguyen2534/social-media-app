@@ -55,7 +55,7 @@ export default function UserProfileFeed({ user }: UserProfileFeed) {
 
   if (status === "pending") {
     if (userHasNoPosts) return noPostPlaceholder;
-    return <FeedSkeletons count={4} />;
+    return <FeedSkeletons count={3} />;
   }
 
   if (status === "success" && posts.length === 0 && !hasNextPage) {
@@ -64,11 +64,11 @@ export default function UserProfileFeed({ user }: UserProfileFeed) {
 
   if (status === "error") {
     return (
-      <div className="mt-8 flex h-full flex-col items-center gap-8">
+      <div className="text-muted-foreground mt-8 flex h-full flex-col items-center gap-8">
+        <Annoyed className="size-24" />
         <p className="text-xl font-medium">
           An error occured while loading {user.username}&apos;s posts...
         </p>
-        <Annoyed className="size-48" />
       </div>
     );
   }
@@ -77,8 +77,13 @@ export default function UserProfileFeed({ user }: UserProfileFeed) {
     <InfiniteScrollContainer
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
-      {posts.map((post) => (
-        <Post post={post} className="mb-1 lg:mb-2" key={post.id} />
+      {posts.map((post, i) => (
+        <Post
+          post={post}
+          className="mb-1 lg:mb-2"
+          key={post.id}
+          imagePriority={i === 0}
+        />
       ))}
 
       {isFetchingNextPage && <FeedSkeletons count={1} />}
