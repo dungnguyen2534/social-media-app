@@ -74,7 +74,7 @@ export default function Reply({
                 <div
                   className={cn(
                     "bg-accent relative min-h-9 w-full px-3 py-2 shadow-sm",
-                    reply.gif && !reply.content ? "rounded-t-md" : "rounded-md",
+                    reply.gif ? "rounded-t-md" : "rounded-md",
                   )}
                 >
                   <MiniProfile user={reply.user}>
