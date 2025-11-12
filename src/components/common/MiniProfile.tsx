@@ -99,7 +99,7 @@ export function MiniProfileOnTag({
   children,
   username,
 }: MiniProfileOnTagProps) {
-  const { data } = useQuery({
+  const { data, isFetching } = useQuery({
     queryKey: ["user", username],
     queryFn: () => api.get(`users/username/${username}`).json<UserData>(),
     retry: (failureCount, error) => {
@@ -114,7 +114,15 @@ export function MiniProfileOnTag({
 
   if (!data) {
     return (
-      <Link href={`/users/${username}`} className="app-link">
+      <Link
+        href={`/users/${username}`}
+        className="app-link"
+        title={
+          !isFetching && !data
+            ? "This user doesn't exist or may have changed their username"
+            : undefined
+        }
+      >
         {children}
       </Link>
     );
