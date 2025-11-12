@@ -81,7 +81,7 @@ function StandardRepliesView({
           onClick={() => fetchNextPage()}
         >
           <span className="bg-muted-foreground block h-[1px] w-5"></span>
-          Load more
+          {isFetchingNextPage ? "Loading..." : "Load more"}
         </button>
       )}
     </div>
