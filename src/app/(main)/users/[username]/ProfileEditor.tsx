@@ -49,15 +49,9 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
       : undefined;
 
     startTransition(async () => {
-      mutation.mutate(
-        { data, avatar: newAvatarFile },
-        {
-          onSuccess: () => {
-            setCroppedAvatar(null);
-            setShowDialog(false);
-          },
-        },
-      );
+      mutation.mutate({ data, avatar: newAvatarFile });
+      setCroppedAvatar(null);
+      setShowDialog(false);
     });
   };
 
