@@ -289,7 +289,7 @@ export default function PostEditor() {
                 <EditorContent
                   editor={editor}
                   className={cn(
-                    "bg-accent focus-within:ring-ring/50 white max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base break-words break-all transition-all focus-within:ring-[3px]",
+                    "bg-accent focus-within:ring-ring/50 white max-h-[20rem] w-full overflow-y-auto rounded-md px-5 py-3 text-base wrap-anywhere transition-all focus-within:ring-[3px]",
                     isDragActive && "outline-dashed",
                   )}
                   onPaste={onPaste}

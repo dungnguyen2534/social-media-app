@@ -61,15 +61,17 @@ const Comment = forwardRef<HTMLDivElement, CommentProps>(
                   <UserAvatar avatarUrl={comment.user.image} />
                 </Link>
               </MiniProfile>
-              <div className="w-fit">
+              <div
+                className={cn(
+                  "w-fit rounded-md",
+                  isHighlighted && "outline-primary outline-2",
+                )}
+              >
                 <div>
                   <div
                     className={cn(
                       "bg-accent relative min-h-9 w-full px-3 py-2 shadow-sm",
-                      comment.gif && !comment.content
-                        ? "rounded-t-md"
-                        : "rounded-md",
-                      isHighlighted && "outline-primary outline-2",
+                      comment.gif ? "rounded-t-md" : "rounded-md",
                     )}
                   >
                     <MiniProfile user={comment.user}>
@@ -82,7 +84,7 @@ const Comment = forwardRef<HTMLDivElement, CommentProps>(
                     </MiniProfile>
 
                     <Linkify>
-                      <p className="text-base break-words break-all whitespace-pre-line">
+                      <p className="text-base wrap-anywhere whitespace-pre-line">
                         {comment.content}
                       </p>
                     </Linkify>
@@ -96,9 +98,7 @@ const Comment = forwardRef<HTMLDivElement, CommentProps>(
                         width={comment.gif.width}
                         height={comment.gif.height}
                         key={comment.gif.id}
-                        className={
-                          comment.content ? "mt-1 rounded-md" : "rounded-b-md"
-                        }
+                        className="rounded-b-md"
                       />
                     </div>
                   )}

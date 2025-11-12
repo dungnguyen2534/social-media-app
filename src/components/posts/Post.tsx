@@ -77,7 +77,7 @@ export default function Post({
         />
       </div>
       <Linkify>
-        <p className="my-1 text-base break-words break-all whitespace-pre-line">
+        <p className="my-1 text-base wrap-anywhere whitespace-pre-line">
           {post.content}
         </p>
       </Linkify>

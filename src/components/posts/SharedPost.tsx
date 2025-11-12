@@ -96,7 +96,7 @@ export default function SharedPost({
         )}
 
         <Linkify>
-          <div className="text-base break-words break-all whitespace-pre-line">
+          <div className="text-base wrap-anywhere whitespace-pre-line">
             {post.content}
           </div>
         </Linkify>

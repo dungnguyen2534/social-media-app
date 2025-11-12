@@ -64,13 +64,17 @@ export default function Reply({
                 <UserAvatar avatarUrl={reply.user.image} />
               </Link>
             </MiniProfile>
-            <div className="w-fit">
+            <div
+              className={cn(
+                "w-fit rounded-md",
+                isHighlighted && "outline-primary outline-2",
+              )}
+            >
               <div>
                 <div
                   className={cn(
                     "bg-accent relative min-h-9 w-full px-3 py-2 shadow-sm",
                     reply.gif && !reply.content ? "rounded-t-md" : "rounded-md",
-                    isHighlighted && "outline-primary outline-2",
                   )}
                 >
                   <MiniProfile user={reply.user}>
@@ -83,7 +87,7 @@ export default function Reply({
                   </MiniProfile>
 
                   <Linkify>
-                    <p className="text-base break-words break-all whitespace-pre-line">
+                    <p className="text-base wrap-anywhere whitespace-pre-line">
                       {reply.content}
                     </p>
                   </Linkify>
@@ -97,9 +101,7 @@ export default function Reply({
                       width={reply.gif.width}
                       height={reply.gif.height}
                       key={reply.gif.id}
-                      className={
-                        reply.content ? "mt-1 rounded-md" : "rounded-b-md"
-                      }
+                      className="rounded-b-md"
                     />
                   </div>
                 )}

@@ -12,6 +12,7 @@ import UserResult from "./UserResult";
 import NotificationSkeletons from "../notifications/NotificationSkeletons";
 import { useSearchPosts } from "./useSearchPosts";
 import { useSearchUsers } from "./useSearchUsers";
+import { cn } from "@/lib/utils";
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -71,10 +72,21 @@ export default function Search() {
             />
             <LoadingButton
               loading={activeQueryIsLoading}
-              className="text-muted-foreground hover:!bg-card w-10 rounded-sm"
+              className={cn(
+                "text-muted-foreground/50 hover:!bg-card !min-w-10 rounded-sm hover:shadow-sm",
+                searchTerm.trim() !== "" && "text-muted-foreground",
+              )}
               type="submit"
               variant="ghost"
             >
+              <span
+                className={cn(
+                  "hidden",
+                  searchTerm.trim() !== "" && "lg:inline",
+                )}
+              >
+                Enter
+              </span>
               <SearchIcon className="size-5" />
             </LoadingButton>
           </form>

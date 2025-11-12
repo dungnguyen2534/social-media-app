@@ -1,6 +1,5 @@
 .tiptap {
-  word-break: break-word;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 .tiptap p.is-editor-empty:first-child::before {
