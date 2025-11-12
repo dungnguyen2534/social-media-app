@@ -58,7 +58,7 @@ export default async function Layout({
               <Suspense fallback={<TrendingTopicsSkeleton count={5} />}>
                 <TrendingTopics />
               </Suspense>
-              <Suspense fallback={<WhoToFollowSkeleton count={5} />}>
+              <Suspense fallback={<WhoToFollowSkeleton />}>
                 <WhoToFollow />
               </Suspense>
             </DiscoveryPanel>

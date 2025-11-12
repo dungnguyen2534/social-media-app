@@ -27,7 +27,7 @@ export async function WhoToFollow() {
     orderBy: {
       createdAt: "desc",
     },
-    take: 5,
+    take: 4,
   });
 
   if (usersToFollow.length === 0) return null;
@@ -74,7 +74,7 @@ export async function WhoToFollow() {
   );
 }
 
-export function WhoToFollowSkeleton({ count = 5 }: { count?: number }) {
+export function WhoToFollowSkeleton({ count = 4 }: { count?: number }) {
   return (
     <SidebarSkeletonWrapper
       skeletonCount={count}
