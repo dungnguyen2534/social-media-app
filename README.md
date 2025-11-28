@@ -9,4 +9,4 @@ A modern **Next.js** social media platform replicating core Facebook and Instagr
 - **Real-Time Messaging:** Integrated **Stream Chat SDK** to power a robust direct messaging system, fully customizing chat UI components to ensure design consistency across the application.
 - **Media Handling:** Developed a robust file upload interface supporting **drag-and-drop uploads** with image and video previews. Integrated **UploadThing** for efficient client-side validation and media rendering.
 
-![Demo image](./image-preview.png)
+![Demo image](./demo-image.png)
