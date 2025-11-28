@@ -58,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} !mr-0 !overflow-y-scroll text-sm antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} !mr-0 !overflow-y-scroll text-sm antialiased lg:px-2`}
       >
         <ReactQueryProvider>
           {/* Uploadthing SSR Plugin */}
