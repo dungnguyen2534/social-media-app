@@ -113,7 +113,7 @@ export default function CommentCreator({
           </button>
         </div>
       )}
-      <div className="bg-card flex items-start justify-between gap-3 px-5 py-3">
+      <div className="bg-card flex items-start justify-between gap-3 px-2 py-3 lg:px-5">
         <UserAvatar avatarUrl={session?.user.image} />
 
         <div className="flex flex-1 flex-col gap-1">
