@@ -1,5 +1,8 @@
+"use client";
+
 import { Media } from "@prisma/client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import {
   Carousel,
   CarouselApi,
@@ -25,28 +28,88 @@ export default function MediaView({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
+  const { ref: containerRef, inView } = useInView({
+    threshold: 0.5,
+    triggerOnce: false,
+  });
+
+  const videoRefsMap = useRef<Map<string, HTMLVideoElement>>(new Map());
+
+  // Pause all videos except the one at targetIndex
+  const updateVideoPlayback = useCallback(
+    (targetIndex: number) => {
+      videoRefsMap.current.forEach((videoElement, index) => {
+        if (parseInt(index) === targetIndex && inView) {
+          videoElement.play().catch(() => {
+            // Video play might fail due to autoplay policies
+          });
+        } else {
+          videoElement.pause();
+        }
+      });
+    },
+    [inView],
+  );
+
+  // Initialize carousel and setup event listeners
   useEffect(() => {
     if (!api) {
       return;
     }
+
     setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    });
-  }, [api]);
+    const currentIndex = api.selectedScrollSnap();
+    setCurrent(currentIndex + 1);
+    updateVideoPlayback(currentIndex);
 
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+    const handleSelect = () => {
+      const selectedIndex = api.selectedScrollSnap();
+      setCurrent(selectedIndex + 1);
+      updateVideoPlayback(selectedIndex);
+    };
 
-  const handleMetadataLoad = () => {
+    api.on("select", handleSelect);
+
+    return () => {
+      api.off("select", handleSelect);
+    };
+  }, [api, inView, updateVideoPlayback]);
+
+  // Handle viewport visibility changes
+  useEffect(() => {
+    if (!api) return;
+
+    const currentIndex = api.selectedScrollSnap();
+
+    if (inView) {
+      updateVideoPlayback(currentIndex);
+    } else {
+      // Pause all videos when out of view
+      videoRefsMap.current.forEach((videoElement) => {
+        videoElement.pause();
+      });
+    }
+  }, [inView, api, updateVideoPlayback]);
+
+  // Cleanup video refs when attachments change
+  useEffect(() => {
+    const videoMap = videoRefsMap.current;
+    return () => {
+      videoMap.clear();
+    };
+  }, [attachments.length]);
+
+  const handleMetadataLoad = (videoRef: HTMLVideoElement) => {
     setIsVideoLoaded(true);
-    videoRef.current?.removeEventListener("loadedmetadata", handleMetadataLoad);
+
+    // Remove event listener to prevent memory leaks
+    videoRef.removeEventListener("loadedmetadata", () => {});
   };
 
   return (
-    <div>
+    <div ref={containerRef}>
       <Carousel
         className={cn("relative overflow-hidden", className)}
         setApi={setApi}
@@ -79,14 +142,19 @@ export default function MediaView({
                   className="flex items-center bg-black pl-1"
                 >
                   <video
-                    ref={videoRef as React.RefObject<HTMLVideoElement>}
+                    ref={(videoElement) => {
+                      if (videoElement) {
+                        videoRefsMap.current.set(i.toString(), videoElement);
+                      }
+                    }}
                     controls
                     className={cn("w-full", !isVideoLoaded && "aspect-video")}
-                    autoPlay
                     loop
                     muted
                     playsInline
-                    onLoadedMetadata={handleMetadataLoad}
+                    onLoadedMetadata={(e) =>
+                      handleMetadataLoad(e.currentTarget)
+                    }
                     preload="metadata"
                   >
                     <source src={a.url} />
