@@ -16,6 +16,7 @@ import MainGrid from "./MainGrid";
 import { StreamClientProvider } from "./StreamClientProvider";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { VideoMuteProvider } from "../video-mute-context";
 
 export interface UserInitialDisplayData {
   unreadNotificationCount: number;
@@ -45,25 +46,27 @@ export default async function Layout({
   return (
     <AuthProvider session={session}>
       <StreamClientProvider>
-        <MobileNavbar />
-        <MainGrid>
-          <aside className="app-sidebar">
-            <FeaturePanel />
-          </aside>
+        <VideoMuteProvider>
+          <MobileNavbar />
+          <MainGrid>
+            <aside className="app-sidebar">
+              <FeaturePanel />
+            </aside>
 
-          <main>{children}</main>
+            <main>{children}</main>
 
-          <aside className="app-sidebar">
-            <DiscoveryPanel>
-              <Suspense fallback={<TrendingTopicsSkeleton count={5} />}>
-                <TrendingTopics />
-              </Suspense>
-              <Suspense fallback={<WhoToFollowSkeleton />}>
-                <WhoToFollow />
-              </Suspense>
-            </DiscoveryPanel>
-          </aside>
-        </MainGrid>
+            <aside className="app-sidebar">
+              <DiscoveryPanel>
+                <Suspense fallback={<TrendingTopicsSkeleton count={5} />}>
+                  <TrendingTopics />
+                </Suspense>
+                <Suspense fallback={<WhoToFollowSkeleton />}>
+                  <WhoToFollow />
+                </Suspense>
+              </DiscoveryPanel>
+            </aside>
+          </MainGrid>
+        </VideoMuteProvider>
       </StreamClientProvider>
     </AuthProvider>
   );

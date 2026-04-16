@@ -13,6 +13,7 @@ import {
 } from "../ui/carousel";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useVideoMute } from "@/app/video-mute-context";
 
 interface MediaViewProps {
   attachments: Media[];
@@ -29,6 +30,7 @@ export default function MediaView({
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const { isMuted, setIsMuted } = useVideoMute();
 
   const { ref: containerRef, inView } = useInView({
     threshold: 0.5,
@@ -108,6 +110,10 @@ export default function MediaView({
     videoRef.removeEventListener("loadedmetadata", () => {});
   };
 
+  const handleVolumeChange = (videoElement: HTMLVideoElement) => {
+    setIsMuted(videoElement.muted);
+  };
+
   return (
     <div ref={containerRef}>
       <Carousel
@@ -150,11 +156,12 @@ export default function MediaView({
                     controls
                     className={cn("w-full", !isVideoLoaded && "aspect-video")}
                     loop
-                    muted
+                    muted={isMuted}
                     playsInline
                     onLoadedMetadata={(e) =>
                       handleMetadataLoad(e.currentTarget)
                     }
+                    onVolumeChange={(e) => handleVolumeChange(e.currentTarget)} // ← New
                     preload="metadata"
                   >
                     <source src={a.url} />
